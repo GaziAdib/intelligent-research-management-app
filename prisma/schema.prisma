@@ -1,14 +1,151 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mongodb"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String    @id @default(auto()) @map("_id") @db.ObjectId
+  profileImageUrl   String
+  coverPhotoUrl     String?
+  username          String
+  email             String    @unique
+  password          String
+  phone1            String?
+  phone2            String?
+  present_address   String?
+  permanent_address String?
+  facebook          String?
+  youtube           String?
+  twitter           String?
+  linkedIn          String?
+  instagram         String?
+  role              Role      @default(USER)
+  bio               String?
+  permissions       String[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  teams Team[]
+  tasks Task[]
+  TaskLeaderMergedContent TaskLeaderMergedContent[]
+}
+
+model Team {
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  leaderId             String   @db.ObjectId
+  leader               User?    @relation(fields: [leaderId], references: [id])
+  teamName             String
+  teamShortDescription String
+  teamBgColor          String?
+  teamTextColor        String?
+  teamLogoUrl          String?
+  teamMembers          String[] @db.ObjectId
+  tasks Task[]
+  notifications       Notification[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+model Task {
+  id                          String   @id @default(auto()) @map("_id") @db.ObjectId
+  leaderId                    String   @db.ObjectId
+  teamId                      String   @db.ObjectId
+  team                        Team?    @relation(fields: [teamId], references: [id])
+  taskTitle                   String
+  taskShortDescription        String
+  taskMemberDraftContent      String?
+  taskRelatedPdfUrls          String[]
+  taskRelatedImageUrls        String[]
+  remarkByLeader              String?
+  aiGeneratedText             String?
+  aigeneratedCode             String?
+  taskMemberFinalContent      String?
+  taskRelatedReferences       TaskReference[] // Array of references (PDFs, images, etc.)
+  priority                    TaskPriority @default(MEDIUM)
+  status                      TaskStatus   @default(DRAFT)
+  taskAssignedBy              User?        @relation(fields: [leaderId], references: [id])
+  taskBgColor                 String?
+  taskTextColor               String?
+  taskAssignedTo              String[] @db.ObjectId 
+  notifications               Notification[]
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+
+
+model TaskLeaderMergedContent {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  leaderId       String   @db.ObjectId
+  leader         User?    @relation(fields: [leaderId], references: [id])
+  mergedContent  String   // Final content merged by the leader
+  createdAt      DateTime @default(now())
+}
+
+
+model TaskReference {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  taskId        String   @db.ObjectId   // Reference to the Task
+  task          Task     @relation(fields: [taskId], references: [id])
+  mediaType          ReferenceType // Type of the reference (PDF, Image, etc.)
+  mediaUrl      String   // URL of the reference file  
+  uploadedBy    String   @db.ObjectId // ID of the user who uploaded it (if needed)
+  createdAt     DateTime @default(now()) 
+}
+
+
+model Notification {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  recipientIds  String[] @db.ObjectId  // List of users who will receive this notification
+  recipientEmails String[] 
+
+  taskId        String?  @db.ObjectId
+  task          Task?    @relation(fields: [taskId], references: [id])
+
+  teamId        String?  @db.ObjectId
+  team          Team?    @relation(fields: [teamId], references: [id])  // Reference to the team related to the task
+
+  message       String 
+  type          NotificationType // Enum (TASK_APPROVED, TASK_REJECTED, TASK_ASSIGNED)
+  isRead        Boolean[] @default([]) // Track read status for each recipient
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
+
+
+
+enum ReferenceType {
+  PDF
+  IMAGE
+}
+
+enum Role {
+  ADMIN
+  LEADER
+  MEMBER
+  USER
+}
+
+enum TaskStatus {
+  Pending
+  Approved
+  Rejected
+  DRAFT
+}
+
+
+enum TaskPriority {
+ HIGH
+ MEDIUM
+ LOW
+}
+
+
+enum NotificationType {
+  TASK_APPROVED
+  TASK_REJECTED
+  TASK_ASSIGNED
 }
