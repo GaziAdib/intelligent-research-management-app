@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import { useSession } from "next-auth/react";
 // import { Toaster, toast } from "sonner";
 
 const registerSchema = z.object({
@@ -15,6 +16,10 @@ const registerSchema = z.object({
 
 const RegisterPage = () => {
     const router = useRouter();
+
+    const session = useSession();
+
+
 
     const {
         register,

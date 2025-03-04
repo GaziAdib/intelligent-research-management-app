@@ -1,6 +1,7 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProviders } from "./sessionProvider";
+import Navbar from "./components/NavBar";
 
 
 const geistSans = Geist({
@@ -23,7 +24,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
        <body className="bg-gray-50 dark:bg-slate-900">
         <SessionProviders>
-            {/* <Navbar /> */}
+            <Navbar />
             <div className="my-10">
               {children}
             </div>

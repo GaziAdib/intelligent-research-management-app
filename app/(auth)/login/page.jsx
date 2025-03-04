@@ -1,5 +1,5 @@
 "use client";
-import { signIn } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useRef, useState } from "react";
@@ -13,7 +13,11 @@ const loginSchema = z.object({
 });
 
 const LoginPage = () => {
+    const session = useSession()
     const router = useRouter();
+  
+  
+    
     const {
         register,
         handleSubmit,
