@@ -30,7 +30,7 @@ model User {
   updatedAt         DateTime  @updatedAt
   teams Team[]
   tasks Task[]
-  TaskLeaderMergedContent TaskLeaderMergedContent[]
+  taskLeaderMergedContents TaskLeaderMergedContent[]
 }
 
 model Team {

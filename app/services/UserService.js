@@ -15,6 +15,14 @@ class UserService {
         })
     }
 
+    async findUniqueUserByEmail(email) {
+        return await prisma.user.findUnique({
+            where: {
+                email: email
+            }
+        })
+    }
+
 
     async createUser(username, email, hashedPassword, profileImageUrl) {
         return await prisma.user.create({
