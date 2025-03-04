@@ -39,7 +39,7 @@ const RegisterPage = () => {
                 reset();
                 alert('Registration successful!')
                 // toast.success("Registration successful!");
-                router.push("/auth/login");
+                router.push("/login");
             } else {
                 const errorData = await res.json();
                 alert('Registration Error!')
@@ -64,7 +64,8 @@ const RegisterPage = () => {
                     <label className="block text-gray-900 text-sm font-bold mb-2">Profile Image URL</label>
                     <input 
                         className="shadow border rounded w-full py-2 px-3 bg-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                        type="text" 
+                        type="text"
+                        name="profileImageUrl" 
                         placeholder="https://example.com/image.jpg" 
                         {...register("profileImageUrl")} 
                     />
@@ -75,7 +76,8 @@ const RegisterPage = () => {
                     <label className="block text-gray-900 text-sm font-bold mb-2">Username</label>
                     <input 
                         className="shadow border rounded w-full py-2 px-3 bg-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                        type="text" 
+                        type="text"
+                        name="username" 
                         placeholder="Username" 
                         {...register("username")} 
                     />
@@ -86,7 +88,8 @@ const RegisterPage = () => {
                     <label className="block text-gray-900 text-sm font-bold mb-2">Email</label>
                     <input 
                         className="shadow border rounded w-full py-2 px-3 bg-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
-                        type="email" 
+                        type="email"
+                        name="email"  
                         placeholder="Email" 
                         {...register("email")} 
                     />
@@ -98,7 +101,8 @@ const RegisterPage = () => {
                     <input 
                         className="shadow border rounded w-full py-2 px-3 bg-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
                         type="password" 
-                        placeholder="********" 
+                        placeholder="********"
+                        name="password"   
                         {...register("password")} 
                     />
                     {errors.password && <span className="text-red-500 text-sm">{errors.password.message}</span>}

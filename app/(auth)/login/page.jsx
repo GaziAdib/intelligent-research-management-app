@@ -28,8 +28,8 @@ const LoginPage = () => {
         setPending(true);
         try {
             const res = await signIn("credentials", {
-                email: data.email,
-                password: data.password,
+                email: data?.email,
+                password: data?.password,
                 redirect: false,
             });
             
@@ -58,6 +58,7 @@ const LoginPage = () => {
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             id="email"
                             type="email"
+                            name="email"
                             placeholder="Enter your email"
                             {...register("email")}
                         />
@@ -69,6 +70,7 @@ const LoginPage = () => {
                             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             id="password"
                             type="password"
+                            name="password"
                             placeholder="Enter your password"
                             {...register("password")}
                         />
