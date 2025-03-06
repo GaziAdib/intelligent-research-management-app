@@ -5,6 +5,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useSession } from "next-auth/react";
+import { useEffect } from "react";
 // import { Toaster, toast } from "sonner";
 
 const registerSchema = z.object({
@@ -15,12 +16,11 @@ const registerSchema = z.object({
 });
 
 const RegisterPage = () => {
+
+    const { data: session, status } = useSession();
     const router = useRouter();
 
-    const session = useSession();
-
-
-
+    
     const {
         register,
         handleSubmit,
@@ -29,6 +29,17 @@ const RegisterPage = () => {
     } = useForm({
         resolver: zodResolver(registerSchema),
     });
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push("/");
+        }
+    }, [status, router]);
+
+    if (status === "loading") {
+        return <p className="text-center text-gray-700">Checking authentication...</p>;
+    }
+
 
     const onSubmit = async (data) => {
         try {
@@ -92,7 +103,7 @@ const RegisterPage = () => {
                 <div className="mb-4">
                     <label className="block text-gray-900 text-sm font-bold mb-2">Email</label>
                     <input 
-                        className="shadow border rounded w-full py-2 px-3 bg-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                        className="shadow border rounded w-full py-2 px-3 bg-gray-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
                         type="email"
                         name="email"  
                         placeholder="Email" 
@@ -104,7 +115,7 @@ const RegisterPage = () => {
                 <div className="mb-6">
                     <label className="block text-gray-900 text-sm font-bold mb-2">Password</label>
                     <input 
-                        className="shadow border rounded w-full py-2 px-3 bg-gray-200 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
+                        className="shadow border rounded w-full py-2 px-3 bg-gray-200 text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500" 
                         type="password" 
                         placeholder="********"
                         name="password"   

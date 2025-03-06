@@ -1,3 +1,48 @@
+import { getToken } from 'next-auth/jwt';
+import { NextResponse } from 'next/server';
+
+
+export async function middleware(req) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    const { pathname } = req.nextUrl;
+
+    // Define public and protected routes
+    const publicRoutes = ['/login', '/register'];
+    const protectedRoutes = ['/', '/admin', '/profile', '/settings']; // Add more protected routes
+
+    if (publicRoutes.includes(pathname)) {
+        // If the user is logged in and tries to access public routes, redirect them to the dashboard
+        if (token) {
+            return NextResponse.redirect(new URL('/', req.url));
+        }
+        return NextResponse.next();
+    }
+
+    if (protectedRoutes.includes(pathname)) {
+        // If the user is NOT logged in and tries to access protected routes, redirect to login
+        if (!token) {
+            return NextResponse.redirect(new URL('/login', req.url));
+        }
+    }
+
+    return NextResponse.next();
+}
+
+// Apply middleware only for matching routes
+export const config = {
+    matcher: ['/', '/admin', '/settings', '/login', '/register'],
+};
+
+
+
+
+
+
+
+
+
+
+
 // import { auth } from "@/auth"; // Import the auth function from your auth setup
 // import { NextResponse } from "next/server";
 

@@ -2,7 +2,7 @@
 import { signIn, useSession } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useRef, useState } from "react";
+import { useEffect,  useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -13,19 +13,34 @@ const loginSchema = z.object({
 });
 
 const LoginPage = () => {
-    const session = useSession()
+    const { data: session, status } = useSession();
     const router = useRouter();
-  
-  
+
+    const [isLoading, setIsLoading] = useState(true);
+    const [pending, setPending] = useState(false);
+    const [error, setError] = useState("");
     
+
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm({ resolver: zodResolver(loginSchema) });
     
-    const [pending, setPending] = useState(false);
-    const [error, setError] = useState("");
+   
+
+
+    useEffect(() => {
+        if (status === "authenticated") {
+            router.push("/");
+        } else if(status === "unauthenticated") {
+            setIsLoading(false);
+        }
+    }, [status, router]);
+
+    if (isLoading || status === "loading") {
+        return <p className="text-center text-gray-700">Checking authentication...</p>;
+    }
 
     const onSubmit = async (data) => {
         setError("");
@@ -59,7 +74,7 @@ const LoginPage = () => {
                     <div className="mb-4">
                         <label className="block text-gray-700 font-medium mb-1" htmlFor="email">Email</label>
                         <input
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 border text-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             id="email"
                             type="email"
                             name="email"
@@ -71,7 +86,7 @@ const LoginPage = () => {
                     <div className="mb-6">
                         <label className="block text-gray-700 font-medium mb-1" htmlFor="password">Password</label>
                         <input
-                            className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-4 py-2 border text-slate-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                             id="password"
                             type="password"
                             name="password"
