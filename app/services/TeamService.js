@@ -70,6 +70,20 @@ class TeamService {
         })
     }
 
+    // Assign a normal User to a make him a team Member
+    async assignUserToTeam(userId,teamId) {
+        return await prisma.team.update({
+            where: {
+                id: teamId
+            },
+            data: {
+                teamMembers: {
+                    push: userId
+                }
+            }
+        })
+    }
+
 
 
     async createTeam(leaderId, teamName, teamShortDescription, teamBgColor, teamTextColor, teamLogoUrl) {

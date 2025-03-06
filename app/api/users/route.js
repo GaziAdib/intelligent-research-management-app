@@ -19,7 +19,7 @@ export async function GET(req) {
     // }
 
     //const teams = await TeamService.fetchTeams(userId, userRole);
-    const users = await UserService.fetchAllUsers(0)
+    const users = await UserService.fetchAllUsers()
 
     console.log('Users', users)
     
