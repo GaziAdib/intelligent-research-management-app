@@ -62,8 +62,7 @@ class TeamService {
                 teamBgColor:  teamBgColor ? teamBgColor : '',
                 teamTextColor: teamTextColor ? teamTextColor : '',
                 teamLogoUrl: teamLogoUrl ? teamLogoUrl : '',
-                leader: {connect: { id: leaderId }},
-                leaderId: leaderId
+                leader: {connect: { id: leaderId }}
             }
         })
 

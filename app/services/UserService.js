@@ -33,8 +33,20 @@ class UserService {
                 password: hashedPassword
             }
         })
-
     }
+
+    async updateUserRole(userId, role) {
+        return await prisma.user.update({
+            where: {
+                id: userId
+            },
+            data: {
+                role: role
+            }
+        })
+    }
+
+
 }
 
 export default new UserService();

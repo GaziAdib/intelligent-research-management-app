@@ -1,9 +1,17 @@
+import ModalButton from "./_components/buttons/ModalButton";
+
+
 const Teams = () => {
   return (
-    <div>
-        <h1 className="text-center text-4xl my-12 py-10">Teams Page</h1>
-    </div>
-  )
-}
+    <div className="min-h-screen bg-gray-900 text-white p-6">
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">Teams</h1>
+        <ModalButton />
+      </div>
 
-export default Teams
+      <div className="text-gray-400 text-center mt-10">No teams created yet.</div>
+    </div>
+  );
+};
+
+export default Teams;

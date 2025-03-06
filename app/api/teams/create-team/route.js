@@ -1,5 +1,6 @@
 import { auth } from "@/app/auth";
 import TeamService from "@/app/services/TeamService";
+import UserService from "@/app/services/UserService";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -26,7 +27,13 @@ export async function POST(req) {
       teamLogoUrl
     );
 
-    revalidatePath("/add-team");
+    // update User Role to Leader as he created this team
+
+     //let leaderId =  newTeam?.leaderId
+
+     await UserService.updateUserRole(userId, 'LEADER');
+
+     revalidatePath("/teams");
 
     return NextResponse.json(
       { message: "New team created successfully!", team: newTeam },
