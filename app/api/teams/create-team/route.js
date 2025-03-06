@@ -33,6 +33,11 @@ export async function POST(req) {
 
      await UserService.updateUserRole(userId, 'LEADER');
 
+     // add this leader to be a part of the team member as first person
+     let newTeamId = newTeam?.id;
+     await TeamService.assignLeaderAsTeamMember(userId, newTeamId)
+
+
      revalidatePath("/teams");
 
     return NextResponse.json(

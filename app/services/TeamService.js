@@ -53,6 +53,24 @@ class TeamService {
         })
     }
 
+    async fetchAllTeams() {
+        return await prisma.team.findMany({ include: {leader: true}})
+    }
+
+    async assignLeaderAsTeamMember(leaderId,teamId) {
+        return await prisma.team.update({
+            where: {
+                id: teamId
+            },
+            data: {
+                teamMembers: {
+                    push: leaderId
+                }
+            }
+        })
+    }
+
+
 
     async createTeam(leaderId, teamName, teamShortDescription, teamBgColor, teamTextColor, teamLogoUrl) {
         return await prisma.team.create({
@@ -65,7 +83,6 @@ class TeamService {
                 leader: {connect: { id: leaderId }}
             }
         })
-
     }
 }
 

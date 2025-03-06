@@ -10,7 +10,7 @@ const ModalButton = () => {
     <>
       <button
         onClick={() => setIsModalOpen(true)}
-        className="bg-blue-600 hover:bg-blue-500 text-white font-medium px-4 py-2 rounded-lg"
+        className="bg-gray-50 text-slate-900 font-medium px-4 py-2 rounded-lg"
       >
         + Create Team
       </button>
