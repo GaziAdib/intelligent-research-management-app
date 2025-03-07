@@ -46,7 +46,7 @@ class TeamService {
 
     // find each team info
     async fetchSingleTeam(teamId) {
-        return await prisma.user.findFirst({
+        return await prisma.team.findFirst({
             where: {
                 id: teamId
             }
@@ -85,8 +85,42 @@ class TeamService {
     }
 
 
+    // Kick Current Team Member from the team memberLists
+    async kickMemberFromTeam(memberId, teamId) {
 
+        const team = await prisma.team.findUnique({
+            where: {
+                id: teamId
+            },
+            select: {
+                teamMembers: true
+            }
+        })
+
+        if (!team) {
+            throw new Error('Team Not Found')
+        }
+
+        const updatedTeamMembers = team?.teamMembers?.filter(member => member !== memberId)
+
+        return await prisma.team.update({
+            where: {
+                id: teamId
+            },
+            data: {
+                teamMembers: {
+                    set: updatedTeamMembers
+                }
+            }
+        })
+    }
+
+
+
+    // Create a Beautiful Team for your projects
     async createTeam(leaderId, teamName, teamShortDescription, teamBgColor, teamTextColor, teamLogoUrl) {
+
+         
         return await prisma.team.create({
             data: {
                 teamName: teamName,
@@ -95,6 +129,16 @@ class TeamService {
                 teamTextColor: teamTextColor ? teamTextColor : '',
                 teamLogoUrl: teamLogoUrl ? teamLogoUrl : '',
                 leader: {connect: { id: leaderId }}
+            }
+        })
+    }
+
+    // Delete a team only by leader
+    async deleteTeam(leaderId, teamId) {
+        return await prisma.team.delete({
+            where: {
+                id: teamId,
+                leaderId: leaderId,
             }
         })
     }

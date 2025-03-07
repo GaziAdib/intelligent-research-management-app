@@ -1,5 +1,5 @@
 import ModalButton from "./_components/buttons/ModalButton";
-import TeamCard from "./_components/TeamCard";
+import TeamLists from "./_components/TeamLists";
 
 
 // fetch teams from backend 
@@ -39,11 +39,8 @@ const Teams = async () => {
         <h2>No teams created yet.</h2>
       </div>}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-10">
-          {teams?.map((team) => (
-              <TeamCard key={team?.id} team={team} />
-          ))}
-        </div>
+        <TeamLists teams={teams} />
+      
     </div>
   );
 };
