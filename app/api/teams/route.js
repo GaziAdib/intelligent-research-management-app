@@ -1,38 +1,30 @@
+// import TeamService from "@/app/services/TeamService";
+// import { NextResponse } from "next/server";
 
-import { auth } from "@/app/auth";
-import TeamService from "@/app/services/TeamService";
-import { NextResponse } from "next/server";
+// export async function GET(req) {
 
-export async function GET(req) {
-
-
-  try {
-
-    const session = await auth()
-    const userId = session?.user?.id;
-    const userRole = session?.user?.role;
-  
-    console.log("User ID:", userId); // Debugging: Check the user ID
-    console.log("User Role:", userRole); // Debugging: Check the user role
+//   try {
    
-    // if (!userId) {
-    //   return NextResponse.json(
-    //     { message: "Unauthorized access." },
-    //     { status: 401 }
-    //   );
-    // }
+//     // Fetch teams based on the user's role and ID
+//     let teams;
+//     if (userRole === "ADMIN") {
+//       // Admins can see all teams
+//       teams = await TeamService.fetchAllTeams();
+//     } else {
+//       // Regular users can only see teams they are members of
+//       teams = await TeamService.fetchTeamsByUserId(userId);
+//     }
 
-    //const teams = await TeamService.fetchTeams(userId, userRole);
-    const teams = await TeamService.fetchAllTeams()
+//     // Debugging: Check the fetched teams
+//     console.log("Teams:", teams);
 
-    console.log('Teams', teams)
-    
-    return NextResponse.json({data:teams}, { status: 200 });
-  } catch (error) {
-    console.error("Error fetching teams data:", error);
-    return NextResponse.json(
-      { message: "An error occurred while fetching teams data." },
-      { status: 500 }
-    );
-  }
-}
+//     // Return the filtered teams
+//     return NextResponse.json({ data: teams }, { status: 200 });
+//   } catch (error) {
+//     console.error("Error fetching teams data:", error);
+//     return NextResponse.json(
+//       { message: "An error occurred while fetching teams data." },
+//       { status: 500 }
+//     );
+//   }
+// }

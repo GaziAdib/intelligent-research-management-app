@@ -46,13 +46,14 @@ export const {
                         return null;
                     }
     
-                    return {
-                        id: user.id,
-                        email: user?.email,
-                        username: user?.username,
-                        role: user?.role
-                    }
-    
+                   // Return user object
+                        return {
+                            id: user.id,
+                            email: user.email,
+                            username: user.username,
+                            role: user.role
+                        };
+            
                 }
             }),
         ],
@@ -67,6 +68,8 @@ export const {
                     session.user.role = token.role;
                     session.user.permissions = permissions[token.role] || [];
                 }
+    
+            
                 return session;
             },
     
@@ -77,6 +80,10 @@ export const {
                     token.username = user.username;
                     token.role = user.role;
                 }
+    
+                // Debugging: Log final token
+                console.log("Final token:", token);
+    
                 return token;
             }
         },

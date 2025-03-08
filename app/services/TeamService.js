@@ -1,5 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 
+
 const prisma = new PrismaClient();
 
 class TeamService {
@@ -69,6 +70,33 @@ class TeamService {
             }
         });
     }
+
+    async fetchTeamsByUserId(userId) {
+        return await prisma.team.findMany({
+            where: {
+                teamMembers: {
+                    has: userId
+                }
+            },
+            select: {
+                id: true,         
+                teamName: true,
+                teamShortDescription: true,
+                createdAt: true,
+                teamMembers: true,
+                leader: {
+                    select: {
+                        id: true,  
+                        username: true, 
+                        email: true,
+                        profileImageUrl: true
+                    }
+                }
+            }
+        });
+    }
+
+    
 
     async assignLeaderAsTeamMember(leaderId,teamId) {
         return await prisma.team.update({
