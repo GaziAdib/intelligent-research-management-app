@@ -1,10 +1,6 @@
-console.log('Task Service')
-
 import { PrismaClient } from "@prisma/client";
 
-
 const prisma = new PrismaClient();
-
 
 class TaskService {
 

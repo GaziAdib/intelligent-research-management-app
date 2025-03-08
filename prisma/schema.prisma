@@ -31,6 +31,7 @@ model User {
   teams Team[]
   tasks Task[]
   taskLeaderMergedContents TaskLeaderMergedContent[]
+  taskReferences TaskReference[]
 }
 
 model Team {
@@ -57,11 +58,9 @@ model Task {
   taskTitle                   String
   taskShortDescription        String
   taskMemberDraftContent      String?
-  taskRelatedPdfUrls          String[]
-  taskRelatedImageUrls        String[]
   remarkByLeader              String?
   aiGeneratedText             String?
-  aigeneratedCode             String?
+  aiGeneratedCode             String?
   taskMemberFinalContent      String?
   taskRelatedReferences       TaskReference[] // Array of references (PDFs, images, etc.)
   priority                    TaskPriority @default(MEDIUM)
@@ -91,8 +90,9 @@ model TaskReference {
   taskId        String   @db.ObjectId   // Reference to the Task
   task          Task     @relation(fields: [taskId], references: [id])
   mediaType     ReferenceType // Type of the reference (PDF, Image, etc.)
-  mediaUrl      String   // URL of the reference file  
-  uploadedBy    String   @db.ObjectId // ID of the user who uploaded it (if needed)
+  mediaUrl      String   // URL of the reference file 
+  userId        String  @db.ObjectId 
+  uploadedBy    User?    @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now()) 
 }
 

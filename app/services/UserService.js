@@ -2,8 +2,6 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-console.log('Auth Service Login, Registration, reset password etc')
-
 class UserService {
 
     // just find user with given email
@@ -15,10 +13,12 @@ class UserService {
         })
     }
 
+    // fetch all users feature
     async fetchAllUsers() {
         return await prisma.user.findMany({})
     }
 
+    // find Unqiue user by email feature
     async findUniqueUserByEmail(email) {
         return await prisma.user.findUnique({
             where: {
@@ -28,6 +28,7 @@ class UserService {
     }
 
 
+    // Register User Feature
     async createUser(username, email, hashedPassword, profileImageUrl) {
         return await prisma.user.create({
             data: {
@@ -39,6 +40,7 @@ class UserService {
         })
     }
 
+    // update User Role Feature
     async updateUserRole(userId, role) {
         return await prisma.user.update({
             where: {
