@@ -142,6 +142,23 @@ class TeamService {
             }
         })
     }
+
+
+    // check current userId in teamMembers list then he can see all tasks for that team
+
+    async checkUserInTeam(userId,teamId) {
+         const teamInfo =  await prisma.team.findFirst({
+            where: {
+                id: teamId
+            },
+            select: {
+                teamMembers: true
+            }
+        })
+
+        return teamInfo?.teamMembers?.includes(userId) ?? false;
+
+    }
 }
 
 export default new TeamService();
