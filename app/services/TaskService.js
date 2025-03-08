@@ -11,8 +11,10 @@ class TaskService {
                     teamId: teamId,
                 },
                 include: {
-                    team: true
+                    team: true,
+                    taskAssignedBy: true
                 },
+                
             })
     }
 

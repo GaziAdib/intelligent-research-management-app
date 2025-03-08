@@ -7,7 +7,6 @@ export async function GET(req, { params }) {
   const { uId } = await params;
 
   
-
   try {
     let teams;
 

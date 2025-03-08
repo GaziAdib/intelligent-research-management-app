@@ -1,25 +1,25 @@
 // fetch teams from backend 
 
-import TeamLists from "../_components/TeamLists";
+import { auth } from "@/app/auth";
 import ModalTaskButton from "./_components/buttons/ModalTaskButton";
+import TaskLists from "./_components/TaskLists";
+// import TaskLists from "./_components/TaskLists";
 
 
-async function fetchTeams() {
-  // const token = localStorage.getItem("token"); // Assuming you store your token in localStorage or sessionStorage
+// async function fetchTeamsByUserId(userid) {
+//   const res = await fetch(`http://localhost:3000/api/teams/fetch-teams/${userid}`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
 
-  const res = await fetch("http://localhost:3000/api/teams", {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+//   if (!res.ok) {
+//     throw new Error("Failed to fetch teams");
+//   }
 
-  if (!res.ok) {
-    throw new Error("Failed to fetch teams");
-  }
-
-  return res.json();
-}
+//   return res.json();
+// }
 
 async function fetchSingleTeamInfo(teamid) {
     // const token = localStorage.getItem("token"); // Assuming you store your token in localStorage or sessionStorage
@@ -38,9 +38,46 @@ async function fetchSingleTeamInfo(teamid) {
     return res.json();
   }
 
+// async function fetchTeamsByUserId(userid) {
+//   const res = await fetch(`http://localhost:3000/api/teams/fetch-teams/${userid}`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+
+//   if (!res.ok) {
+//     throw new Error("Failed to fetch teams");
+//   }
+
+//   return res.json();
+// }  
+
+
+async function fetchTasks(teamId) {
+  const res = await fetch(`http://localhost:3000/api/tasks/${teamId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch teams");
+  }
+
+  return res.json();
+} 
+
 const TeamDetail = async ({params}) => {
 
-  const teamId = await params?.teamId || "";
+  const {teamId} = await params
+
+  const { user } = await auth();
+
+  const currentUserId = user?.id;
+
+  console.log('Current User Id', currentUserId);
 
 
   let teamInfo = await fetchSingleTeamInfo(teamId)
@@ -48,9 +85,11 @@ const TeamDetail = async ({params}) => {
 
   console.log('Team Detail Info', teamInfo)
 
-  let data = await fetchTeams()
-  let teams = data?.data
 
+    let data = await fetchTasks(teamId)
+    let tasks = data?.data
+
+    console.log('Tasks-----coming', tasks)
 
   return (
     <div className="min-h-screen bg-black text-white  p-6">
@@ -59,11 +98,12 @@ const TeamDetail = async ({params}) => {
         <ModalTaskButton buttonLabel={'+ Add task'}  teamInfo={teamInfo} />
       </div>
 
-      {teams?.length === 0 && <div className="text-gray-400 text-center mt-10">
-        <h2>No teams created yet.</h2>
-      </div>}
+      {/* {tasks?.length === 0 && <div className="text-gray-400 text-center mt-10">
+        <h2>No tasks created yet.</h2>
+      </div>} */}
 
-        <TeamLists teams={teams} />
+        {/* <TaskLists tasks={tasks} /> */}
+        <TaskLists tasks={tasks} />
       
     </div>
   );
