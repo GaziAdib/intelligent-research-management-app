@@ -32,7 +32,7 @@ const Teams = async () => {
     <div className="min-h-screen bg-black text-white  p-6">
       <div className="flex mt-8 justify-between  items-center mb-8">
         <h1 className="text-4xl font-bold">Teams</h1>
-        <ModalButton />
+        <ModalButton buttonLabel={'+ Create team'} />
       </div>
 
       {teams?.length === 0 && <div className="text-gray-400 text-center mt-10">

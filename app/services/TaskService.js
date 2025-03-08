@@ -29,16 +29,12 @@ class TaskService {
     }
 
 
-    async addTaskToTeam(leaderId, teamId, taskTitle, taskShortDescription, priority, status, taskBgColor,  taskTextColor) {
+    async addTaskToTeam(leaderId, teamId, taskTitle, taskShortDescription, priority, taskBgColor,  taskTextColor) {
         return await prisma.task.create({
-            where: {
-                teamId
-            },
             data: {
                 taskTitle: taskTitle,
                 taskShortDescription: taskShortDescription,
                 priority: priority,
-                status: status,
                 team: {connect: {id: teamId}},
                 taskAssignedBy: {connect: {id: leaderId}},
                 taskBgColor: taskBgColor ? taskBgColor : '',

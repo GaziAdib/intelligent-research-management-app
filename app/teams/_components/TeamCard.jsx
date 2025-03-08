@@ -146,6 +146,7 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import MemberLists from "./MemberLists";
+import Link from "next/link";
 
 async function fetchUserDetails(userIds) {
   const res = await fetch("/api/users/membersInfo", {
@@ -288,10 +289,14 @@ const TeamCard = ({ team }) => {
       {/* Add Members Button */}
       <button
         onClick={handleAddMembersClick}
-        className="w-full mt-3 bg-gradient-to-r from-green-500 to-blue-500 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200"
+        className="w-full mt-3 mb-4 bg-gradient-to-r from-green-500 to-blue-500 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200"
       >
         Add Members
       </button>
+
+      <Link href={`/teams/${teamId}`} className="w-full text-center block mt-5 bg-gradient-to-r from-gray-500 to-gray-950 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200">
+          Details
+      </Link>
 
       {/* Modal for Adding Members */}
       {isModalOpen && (

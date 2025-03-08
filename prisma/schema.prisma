@@ -44,7 +44,7 @@ model Team {
   teamTextColor        String?
   teamLogoUrl          String?
   teamMembers          String[] @db.ObjectId
-  tasks Task[]
+  tasks               Task[]
   notifications       Notification[]
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
@@ -64,7 +64,7 @@ model Task {
   taskMemberFinalContent      String?
   taskRelatedReferences       TaskReference[] // Array of references (PDFs, images, etc.)
   priority                    TaskPriority @default(MEDIUM)
-  status                      TaskStatus   @default(DRAFT)
+  status                      TaskStatus   @default(Draft)
   taskAssignedBy              User?        @relation(fields: [leaderId], references: [id])
   taskBgColor                 String?
   taskTextColor               String?
@@ -133,7 +133,7 @@ enum TaskStatus {
   Pending
   Approved
   Rejected
-  DRAFT
+  Draft
 }
 
 

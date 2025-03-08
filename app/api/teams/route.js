@@ -9,7 +9,6 @@ export async function GET(req) {
   try {
 
     const session = await auth()
-    console.log("Session:", session); // Debugging: Check the session
     const userId = session?.user?.id;
     const userRole = session?.user?.role;
   

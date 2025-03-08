@@ -45,7 +45,8 @@ class TeamService {
         return await prisma.team.findFirst({
             where: {
                 id: teamId
-            }
+            },
+            include: {leader:true}
         })
     }
 

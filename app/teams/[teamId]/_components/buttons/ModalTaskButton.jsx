@@ -1,11 +1,10 @@
 "use client";
 import { useState } from "react";
-import AddTeamModal from "../modals/AddTeamModal";
-import AddTeamForm from "../forms/AddTeamForm";
+import AddTaskModal from "../modals/AddTaskModal";
+import AddTaskForm from "../forms/AddTaskForm";
 
-const ModalButton = ({buttonLabel}) => {
+const ModalTaskButton = ({buttonLabel, teamInfo}) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <>
       <button
@@ -17,12 +16,12 @@ const ModalButton = ({buttonLabel}) => {
 
       {/* Show Modal only when opened */}
       {isModalOpen && (
-        <AddTeamModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-           <AddTeamForm />
-        </AddTeamModal>
+        <AddTaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+           <AddTaskForm teamInfo={teamInfo}  />
+        </AddTaskModal>
       )}
     </>
   );
 };
 
-export default ModalButton;
+export default ModalTaskButton;

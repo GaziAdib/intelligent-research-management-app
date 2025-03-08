@@ -7,10 +7,12 @@ export async function POST(req, {params}) {
     const leaderId = await params?.leaderId || "";
     const teamId = await params?.teamId || "";
 
+    console.log(teamId, leaderId)
+
   try {
 
 
-    const { taskTitle, taskShortDescription, priority, status, taskBgColor, taskTextColor } = await req.json();
+    const { taskTitle, taskShortDescription, priority, taskBgColor, taskTextColor } = await req.json();
     
     const newTask = await TaskService.addTaskToTeam(
         leaderId,
@@ -18,7 +20,6 @@ export async function POST(req, {params}) {
         taskTitle,
         taskShortDescription,
         priority,
-        status,
         taskBgColor,
         taskTextColor
     )
