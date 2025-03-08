@@ -54,7 +54,23 @@ class TeamService {
     }
 
     async fetchAllTeams() {
-        return await prisma.team.findMany({ include: {leader: true}})
+        return await prisma.team.findMany({
+            select: {
+                id: true,         
+                teamName: true,
+                teamShortDescription: true,
+                createdAt: true,
+                teamMembers: true,
+                leader: {
+                    select: {
+                        id: true,  
+                        username: true, 
+                        email: true,
+                        profileImageUrl: true
+                    }
+                }
+            }
+        });
     }
 
     async assignLeaderAsTeamMember(leaderId,teamId) {

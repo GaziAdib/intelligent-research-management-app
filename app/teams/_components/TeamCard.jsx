@@ -145,6 +145,7 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import MemberLists from "./MemberLists";
 
 async function fetchUserDetails(userIds) {
   const res = await fetch("/api/users/membersInfo", {
@@ -178,9 +179,6 @@ async function fetchAllUsers() {
 }
 
 
-
-
-
 const TeamCard = ({ team }) => {
   const [members, setMembers] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
@@ -190,10 +188,8 @@ const TeamCard = ({ team }) => {
 
   const router = useRouter()
 
-
   const { id:teamId, teamName, teamShortDescription, leader, createdAt, teamMembers } = team || {};
 
-  console.log("Members Info", members);
 
   // Fetch team members
   useEffect(() => {
@@ -252,7 +248,6 @@ const TeamCard = ({ team }) => {
         // toast.error("Something went wrong");
     }
 
-    // assign user to a team for membership
    
     setIsModalOpen(false); // Close the modal after assigning
   };
@@ -282,46 +277,8 @@ const TeamCard = ({ team }) => {
       <p className="text-gray-300 text-sm mb-4">{teamShortDescription}</p>
 
       {/* Team Members Grid */}
-      <div className="mb-2">
-        <h5 className="text-md text-start font-medium text-white mb-4 mt-1">
-          See Current Members 🧑🏻‍🤝‍🧑🏼
-        </h5>
-        <div className="grid grid-cols-1  gap-2">
-  {members && members.length > 0 ? (
-    members.map((user) => (
-      <div
-        key={user.id}
-        className="flex items-center p-4 bg-gray-800 dark:bg-gray-900 shadow-lg rounded-xl transition-all duration-300 hover:scale-[1.03] hover:bg-gray-700 dark:hover:bg-gray-800"
-      >
-        {/* Profile Image */}
-        <div className="w-16 h-16 flex-shrink-0">
-          <img
-            src={user.profileImageUrl || "/default-profile.jpg"}
-            alt={user.username}
-            className="w-14 h-14 rounded-full object-cover border-2 border-gray-500 hover:border-gray-300 transition-all duration-300"
-          />
-        </div>
-
-        {/* Vertical Line */}
-        <div className="w-px h-12 bg-gray-600 dark:bg-gray-500 mx-4"></div>
-
-        {/* User Details */}
-        <div className="flex flex-col">
-          <p className="text-sm text-gray-200 font-semibold hover:text-white transition-all duration-300">
-            {user.username}
-          </p>
-          <p className="text-xs text-gray-400 hover:text-gray-300 transition-all duration-300">
-            {user.email}
-          </p>
-        </div>
-      </div>
-    ))
-  ) : (
-    <p className="text-gray-400 text-center col-span-full">No members found.</p>
-  )}
-</div>
-
-      </div>
+      
+      <MemberLists members={members} />
 
       {/* Created At */}
       <p className="text-gray-400 text-xs mb-2 mt-1">
@@ -338,58 +295,58 @@ const TeamCard = ({ team }) => {
 
       {/* Modal for Adding Members */}
       {isModalOpen && (
-  <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[1000]">
-    <div className="bg-gray-900  max-w-2xl p-4 rounded-lg shadow-lg">
-      <h3 className="text-white text-xl mb-4 font-semibold">Add New Members</h3>
-      {loading ? (
-        <p className="text-gray-400">Loading users...</p>
-      ) : (
-        <div className="max-h-80 overflow-y-auto">
-          {usersNotInTeam.map((user) => (
-            <button
-              key={user.id}
-              className="block w-full text-white text-left p-3 rounded hover:bg-gray-800 transition"
-              onClick={() => handleAssignUserToTeam(user.id, teamId)}
-            >
-              <div
-                key={user.id}
-                className="flex items-center p-1 rounded-lg transition-all duration-300"
-              >
-                {/* Profile Image */}
-                <div className="w-16 h-16 flex-shrink-0">
-                  <img
-                    src={user.profileImageUrl || "/default-profile.jpg"}
-                    alt={user.username}
-                    className="w-12 h-12 rounded-full object-cover border-2 border-gray-600 transition-all duration-300"
-                  />
-                </div>
+        <div className="fixed inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm z-[1000]">
+          <div className="bg-gray-900  max-w-2xl p-4 rounded-lg shadow-lg">
+            <h3 className="text-white text-xl mb-4 font-semibold">Add New Members</h3>
+            {loading ? (
+              <p className="text-gray-400">Loading users...</p>
+            ) : (
+              <div className="max-h-80 overflow-y-auto">
+                {usersNotInTeam.map((user) => (
+                  <button
+                    key={user.id}
+                    className="block w-full text-white text-left p-3 rounded hover:bg-gray-800 transition"
+                    onClick={() => handleAssignUserToTeam(user.id, teamId)}
+                  >
+                    <div
+                      key={user.id}
+                      className="flex items-center p-1 rounded-lg transition-all duration-300"
+                    >
+                      {/* Profile Image */}
+                      <div className="w-16 h-16 flex-shrink-0">
+                        <img
+                          src={user.profileImageUrl || "/default-profile.jpg"}
+                          alt={user.username}
+                          className="w-12 h-12 rounded-full object-cover border-2 border-gray-600 transition-all duration-300"
+                        />
+                      </div>
 
-                {/* Vertical Line */}
-                <div className="w-px h-12 bg-gray-600 dark:bg-gray-600 mx-2"></div>
+                      {/* Vertical Line */}
+                      <div className="w-px h-12 bg-gray-600 dark:bg-gray-600 mx-2"></div>
 
-                {/* Username and Email */}
-                <div className="flex flex-col justify-center mb-5">
-                  <p className="text-sm text-gray-300 py-0.5 font-medium hover:text-gray-200 transition-all duration-300">
-                    {user.username}
-                  </p>
-                  <p className="text-xs text-gray-400 hover:text-gray-300 transition-all duration-300">
-                    {user.email}
-                  </p>
-                </div>
+                      {/* Username and Email */}
+                      <div className="flex flex-col justify-center mb-5">
+                        <p className="text-sm text-gray-300 py-0.5 font-medium hover:text-gray-200 transition-all duration-300">
+                          {user.username}
+                        </p>
+                        <p className="text-xs text-gray-400 hover:text-gray-300 transition-all duration-300">
+                          {user.email}
+                        </p>
+                      </div>
+                    </div>
+                  </button>
+                ))}
               </div>
+            )}
+            <button
+              onClick={() => setIsModalOpen(false)}
+              className="mt-4 text-sm bg-white text-slate-950  px-2 py-0.5 rounded hover:bg-red-600 transition"
+            >
+              Close
             </button>
-          ))}
+          </div>
         </div>
       )}
-      <button
-        onClick={() => setIsModalOpen(false)}
-        className="mt-4 text-sm bg-white text-slate-950  px-2 py-0.5 rounded hover:bg-red-600 transition"
-      >
-        Close
-      </button>
-    </div>
-  </div>
-)}
 
 
     </div>
