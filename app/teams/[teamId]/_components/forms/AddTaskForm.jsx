@@ -16,8 +16,8 @@ const AddTaskForm = ({teamInfo}) => {
 
 console.log('TeamInfo Client form', teamInfo)
 
-const teamId = teamInfo?.data.id
-const leaderId = teamInfo?.data?.leaderId
+const teamId = teamInfo?.id
+const leaderId = teamInfo?.leaderId
 
 
   const router = useRouter();

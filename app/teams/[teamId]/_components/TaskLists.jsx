@@ -389,7 +389,7 @@ const TaskLists = ({ tasks }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 text-white p-6">
+    <div className="min-h-screen  text-white p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
         {tasks.map((task) => (
           <div

@@ -47,7 +47,15 @@ class TeamService {
             where: {
                 id: teamId
             },
-            include: {leader:true}
+            include: {
+                leader:true,
+                teamMembers:{
+                    include: {
+                        user: true,
+                        team:true
+                    }
+                }
+            }
         })
     }
 
