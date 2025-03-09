@@ -20,8 +20,6 @@ export async function GET(req) {
 
     //const teams = await TeamService.fetchTeams(userId, userRole);
     const users = await UserService.fetchAllUsers()
-
-    console.log('Users', users)
     
     return NextResponse.json({data:users}, { status: 200 });
   } catch (error) {

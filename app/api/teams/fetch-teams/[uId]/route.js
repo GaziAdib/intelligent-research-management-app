@@ -13,6 +13,7 @@ export async function GET(req, { params }) {
     if (uId) {
       // If a specific user ID is provided, fetch teams for that user
       teams = await TeamService.fetchTeamsByUserId(uId);
+       //teams = await TeamService.fetchAllTeams();
     } else {
       // If no user ID is provided, return all teams (for admin)
       teams = await TeamService.fetchAllTeams();

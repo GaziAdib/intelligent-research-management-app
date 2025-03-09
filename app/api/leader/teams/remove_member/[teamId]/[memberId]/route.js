@@ -1,10 +1,8 @@
-import { auth } from "@/app/auth";
 import TeamService from "@/app/services/TeamService";
-import UserService from "@/app/services/UserService";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
-export async function PUT(req, {params}) {
+export async function DELETE(req, {params}) {
 
     const teamId = await params?.teamId || '';
 
@@ -12,28 +10,19 @@ export async function PUT(req, {params}) {
 
   try {
     
-
- if (!userId) {
-   return NextResponse.json(
-    { message: "You must be an authenticated user to create a team." },
-     { status: 403 }
-   );
-}
-
-      if (!teamId) {
-          return NextResponse.json(
-            { message: "You must be have a team Id" },
+        if (!userId) {
+        return NextResponse.json(
+            { message: "You must be an authenticated user to create a team." },
             { status: 403 }
-          );
+        );
         }
-     const newTeamMember =  await TeamService.assignUserToTeam(userId, teamId)
-
-     await UserService.updateUserRole(userId, 'MEMBER');
+     
+     const kickedMemberFromTeam =  await TeamService.kickMemberFromTeam(userId, teamId)
 
      revalidatePath("/teams");
 
      return NextResponse.json(
-       { message: "New User Assigned To The Team!", data: newTeamMember },
+       { message: "Member Kicked out from the Team!", },
        { status: 201 }
      );
    } catch (error) {
