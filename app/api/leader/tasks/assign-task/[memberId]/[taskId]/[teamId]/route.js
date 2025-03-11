@@ -1,7 +1,6 @@
 import { auth } from "@/app/auth";
 import TaskService from "@/app/services/TaskService";
 import TeamService from "@/app/services/TeamService";
-import UserService from "@/app/services/UserService";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -14,8 +13,6 @@ export async function PUT(req, {params}) {
     const {memberId, taskId, teamId} = await params
     
   try {
-
-    const user = await UserService.findUserById(currentUserId)
 
     // get the task teamLeader
 

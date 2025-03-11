@@ -26,7 +26,9 @@ class TaskService {
                 teamId: teamId,
             },
             include: {
-                team: true,
+                team: {
+                    include: {teamMembers: {include:{user: true}}}
+                },
                 taskAssignedBy: true
             }
         })

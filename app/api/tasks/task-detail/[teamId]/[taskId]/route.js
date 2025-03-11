@@ -2,6 +2,8 @@ import TaskService from "@/app/services/TaskService";
 
 import { NextResponse } from "next/server";
 
+// http://localhost:3000/api/tasks/task-detail/67ce0efc629cdce32d08eb57/67ce17fc613c9daebd9c4720
+
 export async function GET(req, {params}) {
 
   const { teamId, taskId } = await params

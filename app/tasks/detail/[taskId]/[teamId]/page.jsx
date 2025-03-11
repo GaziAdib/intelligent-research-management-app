@@ -1,0 +1,51 @@
+import { auth } from "@/app/auth";
+import TaskContainer from "@/app/tasks/_components/TaskContainer";
+
+// Fetch task detail from backend
+async function fetchSingleTaskInfo(teamId, taskId) {
+    const res = await fetch(`http://localhost:3000/api/tasks/task-detail/${teamId}/${taskId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!res.ok) throw new Error("Failed to fetch Task Info");
+  
+    return res.json();
+  }
+
+const TaskDetail = async ({params}) => {
+
+  const session = await auth()
+  const {taskId, teamId} = await params;
+
+  let taskInfo = await fetchSingleTaskInfo(teamId, taskId);
+
+  taskInfo = taskInfo?.data
+
+  let teamMembers = taskInfo?.team?.teamMembers
+
+  console.log('Task Info', taskInfo)
+
+  return (
+    <div className="min-h-screen bg-black text-white p-6">
+      <div className="mt-8 justify-between items-center mb-8">
+        <h1 className="text-4xl font-bold">Task Detail</h1>
+        <h2 className="text-2xl font-bold my-4 py-4">{taskInfo?.taskTitle}</h2>
+      </div>
+
+      {/* Show a message if no teams are available */}
+      {/* {teams?.length === 0 && (
+        <div className="text-gray-400 text-center mt-10">
+          <h2>You are not a member of any team.</h2>
+        </div>
+      )} */}
+
+      {/* Render the list of teams */}
+      <TaskContainer task={taskInfo} teamMembers={teamMembers} />
+    </div>
+  );
+};
+
+export default TaskDetail;
