@@ -3,6 +3,7 @@ import TeamMembers from './TeamMembers';
 
 const TaskContainer = ({ task, teamMembers }) => {
   const {
+    id,
     taskTitle,
     taskShortDescription,
     priority,
@@ -64,20 +65,20 @@ const TaskContainer = ({ task, teamMembers }) => {
 
       {/* Assigned Members */}
       <div>
-        <h3 className="font-semibold text-lg">Assigned Members</h3>
-        {taskAssignedTo?.length > 0 ? (
+        {/* <h3 className="font-semibold text-lg">Assigned Members {taskAssignedTo?.length}</h3> */}
+        {/* {taskAssignedTo?.length > 0 ? (
           <ul className="list-disc list-inside mt-2 space-y-1">
-            {taskAssignedTo.map((member, index) => (
-              <li key={index}>{member?.user?.name || 'Unnamed Member'}</li>
+            {taskAssignedTo.map((memberId, index) => (
+              <li key={index}>{memberId || 'Unnamed Member'}</li>
             ))}
           </ul>
         ) : (
           <p className="italic text-sm mt-2">No members assigned yet.</p>
-        )}
+        )} */}
       </div>
 
       <div className='team-members my-4'>
-        <TeamMembers members={teamMembers} />
+        <TeamMembers members={teamMembers} teamId={team?.id} taskId={id} assignedMembers={taskAssignedTo} />
       </div>
     </div>
   );

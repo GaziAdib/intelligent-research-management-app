@@ -27,7 +27,8 @@ export async function PUT(req, {params}) {
 
     const taskAssigned = await TaskService.assignTaskToTeamMember(memberId, taskId, teamId)
 
-    revalidatePath(`/teams/${teamId}`);
+
+    revalidatePath(`/tasks/detail/${taskId}/${teamId}`);
 
     return NextResponse.json(
       { message: "Task Assigned successfully!", data: taskAssigned },
