@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 class TaskService {
 
-    // fetch all teams
+    // fetch all tasks by teamId
     async fetchTasks(teamId) {
             return await prisma.task.findMany({
                 where: {
@@ -18,17 +18,21 @@ class TaskService {
             })
     }
 
-    // find each team info
-    async fetchSingleTask(taskId) {
+    // find each task info bt taskId and teamId
+    async fetchSingleTask(teamId,taskId) {
         return await prisma.task.findFirst({
             where: {
-                id: taskId
+                id: taskId,
+                teamId: teamId,
             },
             include: {
-                team: true
+                team: true,
+                taskAssignedBy: true
             }
         })
     }
+
+    
 
 
     async addTaskToTeam(leaderId, teamId, taskTitle, taskShortDescription, priority, taskBgColor,  taskTextColor) {
@@ -56,10 +60,11 @@ class TaskService {
     }
 
     // Assign a normal User to a make him a team Member
-    async assignTaskToTeamMember(memberId, taskId) {
+    async assignTaskToTeamMember(memberId, taskId, teamId) {
         return await prisma.task.update({
             where: {
-                id: taskId
+                id: taskId,
+                teamId: teamId
             },
             data: {
                 taskAssignedTo: {

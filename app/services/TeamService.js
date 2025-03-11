@@ -135,6 +135,8 @@ class TeamService {
         })
     }
 
+    
+
 
     // Kick Current Team Member from the team memberLists
     async kickMemberFromTeam(memberId, teamId) {
@@ -146,6 +148,7 @@ class TeamService {
         })
     }
 
+  
 
 
     // Create a Beautiful Team for your projects

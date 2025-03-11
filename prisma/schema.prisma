@@ -44,24 +44,22 @@ model Team {
   teamBgColor          String?
   teamTextColor        String?
   teamLogoUrl          String?
-  tasks               Task[]
-  notifications       Notification[]
-  createdAt           DateTime  @default(now())
-  updatedAt           DateTime  @updatedAt
-  teamMembers         TeamMember[]
+  tasks                Task[]
+  notifications        Notification[]
+  teamMembers          TeamMember[]
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
 }
 
 model TeamMember {
-  id         String   @id @default(auto()) @map("_id") @db.ObjectId
-  teamId     String   @db.ObjectId
-  team       Team?    @relation(fields: [teamId], references: [id])
-  userId     String   @db.ObjectId
-  user       User?    @relation(fields: [userId], references: [id])
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id           String   @id @default(auto()) @map("_id") @db.ObjectId
+  teamId       String   @db.ObjectId
+  team         Team?    @relation(fields: [teamId], references: [id])
+  userId       String   @db.ObjectId
+  user         User?    @relation(fields: [userId], references: [id])
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
-
-
 
 
 
@@ -83,7 +81,7 @@ model Task {
   taskAssignedBy              User?        @relation(fields: [leaderId], references: [id])
   taskBgColor                 String?
   taskTextColor               String?
-  taskAssignedTo              String[] @db.ObjectId 
+  taskAssignedTo              String[] @db.ObjectId
   notifications               Notification[]
   createdAt          DateTime @default(now())
   updatedAt          DateTime @updatedAt

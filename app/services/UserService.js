@@ -13,6 +13,16 @@ class UserService {
         })
     }
 
+    // find user by Id
+
+    async findUserById(userId) {
+        return await prisma.user.findFirst({
+            where: {
+                id: userId
+            }
+        })
+    }
+
     // fetch all users feature
     async fetchAllUsers() {
         return await prisma.user.findMany({})
