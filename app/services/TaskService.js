@@ -51,6 +51,27 @@ class TaskService {
         })
     }
 
+    // Edit Task By Member
+    
+
+    async updateTask(taskId, taskTitle, taskShortDescription, priority, status, taskMemberDraftContent, taskMemberFinalContent, aiGeneratedText, aiGeneratedCode) {
+        return await prisma.task.update({
+            where: {
+                id: taskId
+            },
+            data: {
+                taskTitle: taskTitle,
+                taskShortDescription: taskShortDescription,
+                taskMemberDraftContent: taskMemberDraftContent ? taskMemberDraftContent : '',
+                taskMemberFinalContent: taskMemberFinalContent ? taskMemberFinalContent : '',
+                aiGeneratedCode: aiGeneratedCode,
+                aiGeneratedText: aiGeneratedText,
+                priority: priority,
+                status: status
+            }
+        })
+    }
+
     // Delete a team only by leader
     async DeleteTask(taskId, leaderId) {
         return await prisma.task.delete({

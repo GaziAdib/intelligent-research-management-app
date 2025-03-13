@@ -1,8 +1,7 @@
 import { AiOutlineClockCircle, AiOutlineFlag, AiOutlineCheckCircle } from 'react-icons/ai';
-import TeamMembers from './TeamMembers';
-import Link from 'next/link';
+import TaskEditForm from './forms/TaskEditForm';
 
-const TaskContainer = ({ task, teamMembers }) => {
+const TaskWorkContainer = ({ task }) => {
   const {
     id,
     taskTitle,
@@ -19,7 +18,7 @@ const TaskContainer = ({ task, teamMembers }) => {
 
   return (
     <div
-      className={`w-full max-w-4xl mx-auto border-1 border-gray-700 rounded-2xl shadow-xl overflow-hidden p-6 space-y-6`}
+      className={`w-full mx-auto border-1 border-gray-300 rounded-2xl shadow-xl overflow-hidden p-6 space-y-6`}
     //   style={{ backgroundColor: taskBgColor || '#f3f4f6', color: taskTextColor || '#000000' }}
     >
       {/* Task Title and Team Badge */}
@@ -57,37 +56,14 @@ const TaskContainer = ({ task, teamMembers }) => {
         </div>
       </div>
 
-      {/* Team Description */}
-      {/* {task?.taskShortDescription && (
-        <div>
-          <h3 className="font-semibold text-lg">Task Description</h3>
-          <p className="leading-relaxed mt-1">{task?.taskShortDescription}</p>
-        </div>
-      )} */}
+      <div className='my-2 py-2'>
+         <TaskEditForm initialData={task} />
+      </div>  
+      
 
-      {/* Assigned Members */}
-      <div>
-        {/* <h3 className="font-semibold text-lg">Assigned Members {taskAssignedTo?.length}</h3> */}
-        {/* {taskAssignedTo?.length > 0 ? (
-          <ul className="list-disc list-inside mt-2 space-y-1">
-            {taskAssignedTo.map((memberId, index) => (
-              <li key={index}>{memberId || 'Unnamed Member'}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="italic text-sm mt-2">No members assigned yet.</p>
-        )} */}
-      </div>
-
-      <div className='team-members my-4'>
-        <TeamMembers members={teamMembers} teamId={team?.id} leaderId={leaderId} taskId={id} assignedMembers={taskAssignedTo} />
-      </div>
-
-      <Link href={`/tasks/edit-panel/${id}/${team?.id}`} className="w-full text-center block mt-5 bg-gradient-to-r from-blue-500 to-purple-950 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200">
-          Work On Task
-      </Link>
+     
     </div>
   );
 };
 
-export default TaskContainer;
+export default TaskWorkContainer;
