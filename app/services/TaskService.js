@@ -34,6 +34,22 @@ class TaskService {
         })
     }
 
+    // find task by id only 
+    async fetchTaskById(taskId) {
+        return await prisma.task.findFirst({
+            where: {
+                id: taskId,
+            },
+            include: {
+                team: {
+                    include: {teamMembers: {include:{user: true}}}
+                },
+                taskAssignedBy: true
+            }
+        })
+    }
+
+
     
 
 
@@ -127,6 +143,19 @@ class TaskService {
         })
     }
 
+
+    // member apply for task approval 
+
+    async requestForTaskApproval(taskId) {
+        return await prisma.task.update({
+            where: {
+                id: taskId
+            },
+            data: {
+                status: 'Pending'
+            }
+        })
+    }
 
     async addRemarkToTask(leaderId, taskId, remark) {
         return await prisma.task.update({

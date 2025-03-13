@@ -42,12 +42,12 @@ const TaskWorkContainer = ({ task }) => {
         <div className="flex items-center gap-2">
           <AiOutlineFlag className="w-6 h-6" />
           <span className="font-medium">Priority:</span>
-          <span>{priority}</span>
+          <span className='text-lg lg:text-xl md:text-xl'>{priority}</span>
         </div>
         <div className="flex items-center gap-2">
           <AiOutlineClockCircle className="w-6 h-6" />
           <span className="font-medium">Status:</span>
-          <span>{status}</span>
+          <span className='text-lg lg:text-xl md:text-xl'>{status}</span>
         </div>
         <div className="flex items-center gap-2">
           <AiOutlineCheckCircle className="w-6 h-6" />

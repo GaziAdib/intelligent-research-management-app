@@ -6,18 +6,25 @@ import { NextResponse } from "next/server";
 export async function PUT(req, {params}) {
   try {
     const session = await auth();
-    const userId = session?.user?.id;
+    const currentUserId = session?.user?.id;
 
     const { taskId } = await params;
 
-    if (!userId) {
+    const task = await TaskService.fetchTaskById(taskId)
+
+    if (!task.taskAssignedTo.includes(currentUserId)) {
       return NextResponse.json(
-        { message: "You must be an authenticated user to create a team." },
-        { status: 403 }
-      );
-    }
+          { message: "You Are No Suitable to Update Task" },
+          { status: 403 }
+        );
+  }
 
-
+  if (task?.leaderId === currentUserId) {
+      return NextResponse.json(
+          { message: "Leader is No Suitable to Update members Task" },
+          { status: 403 }
+        );
+  }
     const { taskTitle, taskShortDescription, taskMemberDraftContent, taskMemberFinalContent, aiGeneratedText, aiGeneratedCode } = await req.json();
     
     const newEditedTask = await TaskService.updateTask(
@@ -32,7 +39,7 @@ export async function PUT(req, {params}) {
 
     const teamId = newEditedTask?.teamId;
 
-     revalidatePath(`/tasks/edit-panel/${taskId}/${teamId}`);
+    revalidatePath(`/tasks/edit-panel/${taskId}/${teamId}`);
 
     return NextResponse.json(
       { message: "Task Update successfully!", data: newEditedTask },

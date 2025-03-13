@@ -22,3 +22,48 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+/* Quill Toolbar Dark Mode */
+.dark .ql-toolbar {
+  background-color: #1f2937; /* Tailwind's gray-800 or adjust */
+  color: white;
+  border: 1px solid #374151; /* Optional: Tailwind's gray-700 */
+}
+
+/* Make toolbar icons white */
+.dark .ql-toolbar .ql-stroke {
+  stroke: white !important;
+}
+
+.dark .ql-toolbar .ql-fill {
+  fill: white !important;
+}
+
+.dark .ql-toolbar .ql-picker {
+  color: white !important;
+}
+
+/* Picker dropdown arrow */
+.dark .ql-toolbar .ql-picker::before {
+  color: white !important;
+}
+
+/* Picker options dropdown */
+.dark .ql-toolbar .ql-picker-options {
+  background-color: #374151 !important; /* Darker dropdown */
+  color: white;
+  border: 1px solid #4b5563; /* Tailwind's gray-600 */
+}
+
+/* Dropdown options color */
+.dark .ql-toolbar .ql-picker-item {
+  color: white !important;
+}
+
+/* Optional: Active toolbar button color */
+.dark .ql-toolbar button.ql-active .ql-fill,
+.dark .ql-toolbar button.ql-active .ql-stroke {
+  stroke: #60a5fa !important; /* Tailwind's blue-400 */
+  fill: #60a5fa !important;
+}
+
