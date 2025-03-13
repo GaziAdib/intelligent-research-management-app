@@ -76,6 +76,38 @@ class TaskService {
         })
     }
 
+     // Remove a member from assigned lists of tasks
+     async removeMemberFromAssignedTask(memberId, taskId, teamId) {
+
+        const task = await prisma.task.findFirst({
+            where: {
+                id: taskId,
+                teamId: teamId
+            },
+            select: {
+                taskAssignedTo:true
+            }
+        })
+
+        if (!task) {
+            throw new Error("Task not found");
+        }
+
+        const updatedAssignedMembers = task?.taskAssignedTo?.filter(id => id !== memberId)
+
+        return await prisma.task.update({
+            where: {
+                id: taskId,
+                teamId: teamId
+            },
+            data: {
+                taskAssignedTo: {
+                    set: updatedAssignedMembers
+                }
+            }
+        })
+    }
+
 
     async addRemarkToTask(leaderId, taskId, remark) {
         return await prisma.task.update({

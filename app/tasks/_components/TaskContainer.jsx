@@ -12,6 +12,7 @@ const TaskContainer = ({ task, teamMembers }) => {
     taskTextColor,
     createdAt,
     team,
+    leaderId,
     taskAssignedTo,
   } = task || {};
 
@@ -78,7 +79,7 @@ const TaskContainer = ({ task, teamMembers }) => {
       </div>
 
       <div className='team-members my-4'>
-        <TeamMembers members={teamMembers} teamId={team?.id} taskId={id} assignedMembers={taskAssignedTo} />
+        <TeamMembers members={teamMembers} teamId={team?.id} leaderId={leaderId} taskId={id} assignedMembers={taskAssignedTo} />
       </div>
     </div>
   );

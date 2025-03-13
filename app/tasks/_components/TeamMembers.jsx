@@ -1,6 +1,18 @@
 "use client";
 
-const TeamMembers = ({ members, assignedMembers }) => {
+import { useSession } from "next-auth/react";
+import { useRouter } from "next/navigation";
+
+const TeamMembers = ({ members, taskId, teamId, leaderId, assignedMembers }) => {
+
+  // find session 
+
+  const session = useSession();
+
+  const router = useRouter()
+
+  const currentUserId = session?.data?.user?.id;
+
   // Assigned members with full details
   const assignedMembersDetails = members?.filter((member) =>
     assignedMembers?.includes(member?.user?.id)
@@ -10,6 +22,54 @@ const TeamMembers = ({ members, assignedMembers }) => {
   const availableMembers = members?.filter(
     (member) => !assignedMembers?.includes(member?.user?.id)
   );
+
+  const handleRemoveAssignedMember = async (assignedMemberId) => {
+
+
+    if(currentUserId !== leaderId) {
+      alert('You are not allowed to do this')
+    }
+      try {
+        const res = await fetch(`/api/leader/tasks/remove-assigned-member/${assignedMemberId}/${taskId}/${teamId}`, {
+          method: "PUT",
+          headers: {"Content-Type": "application/json"}
+        });
+        if (res.ok) {
+          router.refresh();
+          alert("Member Removed From Assigned Tasks Successfully");
+        } else {
+          alert("Error removing user from assigned tasks panel!!!");
+        }
+      } catch (error) {
+        alert("Something went wrong!");
+      }
+
+      
+     
+  }
+
+  const handleAssignMemberToTask = async (memberId) => {
+
+    if(currentUserId !== leaderId) {
+      alert('You are not allowed to do this')
+    }
+      try {
+        const res = await fetch(`/api/leader/tasks/assign-task/${memberId}/${taskId}/${teamId}`, {
+          method: "PUT",
+          headers: {"Content-Type": "application/json"}
+        });
+        if (res.ok) {
+          router.refresh();
+          alert("Member  Assigned To Task Successfully done!");
+        } else {
+          alert("Error Adding Member to Task !!!");
+        }
+      } catch (error) {
+        alert("Something went wrong!");
+      }
+  }
+
+ 
 
   return (
     <div className="mb-4">
@@ -39,9 +99,9 @@ const TeamMembers = ({ members, assignedMembers }) => {
                 </div>
               </div>
               {/* Already assigned label */}
-              <span className="px-3 py-1 text-xs bg-green-700 text-white rounded-full">
-                Assigned
-              </span>
+              <button disabled={currentUserId !== leaderId} onClick={() => handleRemoveAssignedMember(member?.user?.id)} className={`px-3 py-1 text-xs cursor-pointer ${currentUserId === leaderId ? 'bg-red-700': 'bg-green-700'} text-white rounded-full`}>
+                {currentUserId === leaderId ? 'Remove': 'Assigned'} 
+              </button>
             </div>
           ))
         ) : (
@@ -75,7 +135,7 @@ const TeamMembers = ({ members, assignedMembers }) => {
                 </div>
               </div>
               {/* Assign button */}
-              <button className="px-4 py-2 bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full text-xs">
+              <button disabled={currentUserId !== leaderId} onClick={() => handleAssignMemberToTask(member?.user?.id)} className="px-4 py-2 cursor-pointer bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full text-xs">
                 Assign to Task
               </button>
             </div>
