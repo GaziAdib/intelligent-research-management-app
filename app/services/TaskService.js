@@ -54,7 +54,7 @@ class TaskService {
     // Edit Task By Member
     
 
-    async updateTask(taskId, taskTitle, taskShortDescription, priority, status, taskMemberDraftContent, taskMemberFinalContent, aiGeneratedText, aiGeneratedCode) {
+    async updateTask(taskId, taskTitle, taskShortDescription, taskMemberDraftContent, taskMemberFinalContent, aiGeneratedText, aiGeneratedCode) {
         return await prisma.task.update({
             where: {
                 id: taskId
@@ -62,12 +62,10 @@ class TaskService {
             data: {
                 taskTitle: taskTitle,
                 taskShortDescription: taskShortDescription,
-                taskMemberDraftContent: taskMemberDraftContent ? taskMemberDraftContent : '',
-                taskMemberFinalContent: taskMemberFinalContent ? taskMemberFinalContent : '',
+                taskMemberDraftContent: taskMemberDraftContent,
+                taskMemberFinalContent: taskMemberFinalContent,
                 aiGeneratedCode: aiGeneratedCode,
-                aiGeneratedText: aiGeneratedText,
-                priority: priority,
-                status: status
+                aiGeneratedText: aiGeneratedText
             }
         })
     }

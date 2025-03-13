@@ -18,7 +18,7 @@ export async function PUT(req, {params}) {
     }
 
 
-    const { taskTitle, taskShortDescription, taskMemberDraftContent, taskMemberFinalContent, status, priority, aiGeneratedText, aiGeneratedCode } = await req.json();
+    const { taskTitle, taskShortDescription, taskMemberDraftContent, taskMemberFinalContent, aiGeneratedText, aiGeneratedCode } = await req.json();
     
     const newEditedTask = await TaskService.updateTask(
       taskId,
@@ -26,8 +26,6 @@ export async function PUT(req, {params}) {
       taskShortDescription,
       taskMemberDraftContent,
       taskMemberFinalContent,
-      priority,
-      status,
       aiGeneratedCode,
       aiGeneratedText
     );
