@@ -103,8 +103,9 @@ model TaskReference {
   taskId        String   @db.ObjectId   // Reference to the Task
   task          Task     @relation(fields: [taskId], references: [id])
   mediaType     ReferenceType // Type of the reference (PDF, Image, etc.)
-  mediaUrl      String   // URL of the reference file 
-  userId        String  @db.ObjectId 
+  mediaUrls     String[]  // Array of media URLs
+  userId        String   @db.ObjectId
+  publicIds     String[] 
   uploadedBy    User?    @relation(fields: [userId], references: [id])
   createdAt     DateTime @default(now()) 
 }

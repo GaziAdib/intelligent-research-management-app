@@ -29,7 +29,8 @@ class TaskService {
                 team: {
                     include: {teamMembers: {include:{user: true}}}
                 },
-                taskAssignedBy: true
+                taskAssignedBy: true,
+                taskRelatedReferences: true
             }
         })
     }
@@ -44,7 +45,8 @@ class TaskService {
                 team: {
                     include: {teamMembers: {include:{user: true}}}
                 },
-                taskAssignedBy: true
+                taskAssignedBy: true,
+                taskRelatedReferences: true
             }
         })
     }
@@ -165,6 +167,21 @@ class TaskService {
             },
             data: {
                 remarkByLeader: remark
+            }
+        })
+    }
+
+
+    // Add task Reference to Task by task id, userid
+
+    async attachTaskReference(userId, taskId, mediaType, mediaUrls, public_ids) {
+        return await prisma.taskReference.create({
+            data: {
+               uploadedBy: {connect: {id: userId}},
+               task: {connect: {id: taskId}},
+               mediaType: mediaType,
+               mediaUrls: mediaUrls,
+               publicIds: public_ids
             }
         })
     }

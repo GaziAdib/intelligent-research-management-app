@@ -1,5 +1,8 @@
 import { AiOutlineClockCircle, AiOutlineFlag, AiOutlineCheckCircle } from 'react-icons/ai';
 import TaskEditForm from './forms/TaskEditForm';
+import MediaUploadForm from './forms/MediaUploadForm';
+import RenderMedia from './grid/RenderMedia';
+
 
 const TaskWorkContainer = ({ task }) => {
   const {
@@ -15,6 +18,8 @@ const TaskWorkContainer = ({ task }) => {
     leaderId,
     taskAssignedTo,
   } = task || {};
+
+  const totalPdfsImages = task?.taskRelatedReferences?.flatMap((ref) => ref.mediaUrls);
 
   return (
     <div
@@ -54,6 +59,16 @@ const TaskWorkContainer = ({ task }) => {
           <span className="font-medium">Created:</span>
           <span>{new Date(createdAt).toLocaleDateString()}</span>
         </div>
+      </div>
+
+
+      <div className='mt-5 py-2 attch-media'>
+          <h3>Upload Files ({totalPdfsImages?.length})</h3>
+          <MediaUploadForm taskId={id} />
+      </div>
+
+      <div className='my-2 py-4 render pdfs link and image links with view capablity in cards'>
+        <RenderMedia mediaUrls={totalPdfsImages} />
       </div>
 
       <div className='my-2 py-2'>
