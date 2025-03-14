@@ -1,5 +1,6 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 
 const MediaUploadForm = ({ taskId, onClose }) => {
@@ -8,6 +9,8 @@ const MediaUploadForm = ({ taskId, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  const router = useRouter();
 
   // Handle file selection
   const handleFileChange = (e) => {
@@ -44,6 +47,7 @@ const MediaUploadForm = ({ taskId, onClose }) => {
 
       if (response.ok) {
         setSuccessMessage('Media attached to task successfully!');
+        router.refresh()
         setFiles([]); // Clear selected files after successful upload
         setTimeout(() => {
           onClose(); // Close the modal after successful upload
