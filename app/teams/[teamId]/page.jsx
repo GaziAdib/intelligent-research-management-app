@@ -3,6 +3,7 @@ import ModalTaskButton from "./_components/buttons/ModalTaskButton";
 import TaskLists from "./_components/TaskLists";
 import MemberLists from "../_components/MemberLists";
 import ModalConversationButton from "./_components/modals/ConversationModalButton";
+import ChatPopup from "@/app/components/ChatPopup";
 
 async function fetchSingleTeamInfo(teamid) {
   const res = await fetch(`http://localhost:3000/api/teams/${teamid}`, {
@@ -30,6 +31,20 @@ async function fetchTasks(teamId) {
   return res.json();
 }
 
+
+async function fetchConversationMessages(conversationId) {
+  const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch messages");
+
+  return res.json();
+}
+
 const TeamDetail = async ({ params }) => {
   const { teamId } = params;
   const { user } = await auth();
@@ -38,10 +53,14 @@ const TeamDetail = async ({ params }) => {
   let teamInfo = await fetchSingleTeamInfo(teamId);
   teamInfo = teamInfo.data;
 
-  console.log('Team Info', teamInfo)
-
   let data = await fetchTasks(teamId);
   let tasks = data?.data;
+
+
+  let conversationsId = teamInfo?.conversation?.id;
+  let messages = await fetchConversationMessages(conversationsId);
+
+  console.log('Messages', messages.data)
 
   return (
     <div className="min-h-screen  text-white p-6">
@@ -52,7 +71,7 @@ const TeamDetail = async ({ params }) => {
       </div>
 
       <div className="my-2 py-2 mx-10 px-2">
-      <ModalTaskButton buttonLabel={'+ Add task'} teamInfo={teamInfo} />
+        <ModalTaskButton buttonLabel={'+ Add task'} teamInfo={teamInfo} />
       </div>
 
 
@@ -69,6 +88,13 @@ const TeamDetail = async ({ params }) => {
           ) : (
             <TaskLists tasks={tasks} />
           )}
+        </div>
+        
+
+        <div>
+      
+          <ChatPopup conversationId={teamInfo?.conversation?.id} teamId={teamId} messages={messages.data} /> 
+           
         </div>
 
         {/* Members List */}

@@ -1,4 +1,5 @@
 import { auth } from "@/app/auth";
+import ChatPopup from "@/app/components/ChatPopup";
 import TaskWorkContainer from "@/app/tasks/_components/TaskWorkPanel";
 
 // Fetch task detail from backend
@@ -15,6 +16,21 @@ async function fetchSingleTaskInfo(teamId, taskId) {
   return res.json();
 }
 
+// fetch messages 
+
+async function fetchConversationMessages(conversationId) {
+  const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch messages");
+
+  return res.json();
+}
+
 const TaskEditPanel = async ({ params }) => {
   const session = await auth();
   const { taskId, teamId } = await params;
@@ -23,6 +39,9 @@ const TaskEditPanel = async ({ params }) => {
   taskInfo = taskInfo?.data;
 
   console.log("Task Info", taskInfo);
+
+  let conversationId = taskInfo?.team?.conversation?.id;
+  const messages = await fetchConversationMessages(conversationId)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-700 to-indigo-900 text-white p-6">
@@ -40,6 +59,10 @@ const TaskEditPanel = async ({ params }) => {
         {/* Task Work Container */}
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-2xl border border-white/10">
           <TaskWorkContainer task={taskInfo} />
+        </div>
+
+        <div className="chat panel">
+            <ChatPopup conversationId={conversationId} teamId={teamId} messages={messages?.data} />
         </div>
       </div>
     </div>

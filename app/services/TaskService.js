@@ -27,8 +27,18 @@ class TaskService {
             },
             include: {
                 team: {
-                    include: {teamMembers: {include:{user: true}}}
+                    include: {
+                        conversation: true,
+                        teamMembers: {
+                            include: {
+                                user: true
+                            }
+                        }
+                    }
                 },
+                // team: {
+                //     include: {teamMembers: {include:{user: true}}}
+                // },
                 taskAssignedBy: true,
                 taskRelatedReferences: true
             }

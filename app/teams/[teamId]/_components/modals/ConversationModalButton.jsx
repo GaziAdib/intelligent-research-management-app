@@ -8,13 +8,11 @@ export default function ModalConversationButton({ teamInfo, currentUserId }) {
   const [isOpen, setIsOpen] = useState(false);
   const [title, setTitle] = useState("");
 
-
   const router = useRouter();
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    
     try {
         const res = await fetch(`/api/leader/conversation/create-conversation/${teamInfo?.id}`, {
             method: "POST",

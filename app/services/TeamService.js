@@ -49,7 +49,13 @@ class TeamService {
             },
             include: {
                 leader:true,
-                conversation:true,
+                conversation:{
+                    include: {
+                        messages: {
+                            include: {sender:true}
+                        }
+                    }
+                },
                 teamMembers:{
                     include: {
                         user: true,

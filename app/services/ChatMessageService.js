@@ -81,8 +81,10 @@ class ChatMessageService {
            },
            include: {
             conversation: {
-                include: {team: {include: {teamMembers: true}}}
+                //include: {team: {include: {teamMembers: true}}},
+                include: {creator: true, messages: true, team:{ include: {teamMembers: true}}}
             },
+            
             sender: {
                 select: {
                     email: true,
@@ -90,8 +92,14 @@ class ChatMessageService {
                     username:true,
                     profileImageUrl:true
                 }
-            }
+            },
+            
+           },
+           take: 50,
+           orderBy: {
+            createdAt: 'asc'
            }
+           
          })
             
         } catch (error) {

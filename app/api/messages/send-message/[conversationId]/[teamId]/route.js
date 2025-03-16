@@ -4,7 +4,7 @@ import TeamService from "@/app/services/TeamService";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
-export async function PUT(req, {params}) {
+export async function POST(req, {params}) {
 
     const session = await auth()
 
