@@ -49,6 +49,7 @@ class TeamService {
             },
             include: {
                 leader:true,
+                conversation:true,
                 teamMembers:{
                     include: {
                         user: true,

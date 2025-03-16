@@ -28,7 +28,7 @@ export async function PUT(req, {params}) {
           currentUserId, teamMembersIds, content
         )
 
-        revalidatePath(`/tasks/${teamId}`);
+        revalidatePath(`/teams/${teamId}`);
 
         return NextResponse.json(
           { message: "Message Sent!", data: newMessage},

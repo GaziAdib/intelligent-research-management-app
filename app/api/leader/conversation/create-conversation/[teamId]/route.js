@@ -26,14 +26,14 @@ const currentUserId =  session?.user?.id
           );
     }
 
-    const creatorId = team.leaderId;
+    const creatorId = team?.leaderId;
     
     const newConversation = await ChatMessageService.createConversation(
         teamId, creatorId, title
     )
 
 
-    revalidatePath(`/tasks/${teamId}`);
+    revalidatePath(`/teams/${teamId}`);
 
     return NextResponse.json(
       { message: "New Conversation Created successfully!", data: newConversation },

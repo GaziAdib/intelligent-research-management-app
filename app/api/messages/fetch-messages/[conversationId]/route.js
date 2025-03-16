@@ -4,15 +4,16 @@ import { NextResponse } from "next/server";
 
 export async function GET(req, {params}) {
 
-    const conversationId = await params?.conversationId || "";
+const conversationId = await params?.conversationId || "";
 
   try {
 
     const messages = await ChatMessageService.fetchChatMessages(conversationId);
     
+    
     const messageReceivers = messages[0]?.receivers?.map(r => r); // Extract receiver IDs
-    const teamMemberIds = messages[0]?.conversation?.team?.teamMembers?.map(m => m?.userId); // Extract user IDs from team members
 
+    const teamMemberIds = messages[0]?.conversation?.team?.teamMembers?.map(m => m?.userId); // Extract user IDs from team members
 
     const areAllReceiversTeamMembers = messageReceivers?.every(receiverId => teamMemberIds.includes(receiverId))
 
@@ -25,7 +26,7 @@ export async function GET(req, {params}) {
 
     const teamId = messages[0]?.conversation?.teamId;
    
-    revalidatePath(`/tasks/${teamId}`);
+    revalidatePath(`/teams/${teamId}`);
 
     return NextResponse.json(
       { message: "Messages", data: messages },

@@ -69,7 +69,7 @@ model Conversation {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
   teamId    String   @db.ObjectId @unique
   team      Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
-  title     String?  // Optional: You can give conversation a title
+  title     String  // Optional: You can give conversation a title
   creatorId String?   @db.ObjectId
   creator   User?     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
   messages  Message[]
