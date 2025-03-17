@@ -26,20 +26,17 @@ const taskSchema = z.object({
 });
 
 export default function TaskEditForm({ initialData }) {
+
   const router = useRouter();
 
   const session = useSession();
 
   const currentUserId = session?.data?.user?.id;
 
-  console.log('initial Data', initialData);
-
-
- 
-
   const {
     register,
     handleSubmit,
+    watch,
     control,
     formState: { errors, isSubmitting },
   } = useForm({
@@ -49,6 +46,7 @@ export default function TaskEditForm({ initialData }) {
 
   const [loading, setLoading] = useState(false);
 
+  // update task by member
   const onSubmit = async (data) => {
     try {
       setLoading(true);
@@ -74,6 +72,7 @@ export default function TaskEditForm({ initialData }) {
     }
   };
 
+  // member apply for task to be approved 
   const handleRequestForApproval = async (taskId) => {
 
     console.log('TaskId', taskId)
@@ -101,12 +100,12 @@ export default function TaskEditForm({ initialData }) {
     }
   }
 
-  // approve task 
+  // approve task by leader only
 
   const handleApproveTask = async (taskId) => {
 
     try {
-      // setLoading(true);
+      setLoading(true);
       const res = await fetch(`/api/leader/tasks/approve-task/${taskId}`, {
         method: 'PUT',
         headers: {
@@ -114,18 +113,50 @@ export default function TaskEditForm({ initialData }) {
         }
       });
       if (res.ok) {
+        setLoading(false);
         router.refresh();
-        alert('Task Approved Successfully');
         router.push(`/teams/${initialData?.teamId}`)
-        // setLoading(false);
       } else {
         const errorData = await res.json();
         alert(errorData.message);
-        // setLoading(false);
+        setLoading(false);
       }
     } catch (error) {
       alert('Something went wrong!');
-      // setLoading(false);
+      setLoading(false);
+    }
+
+    
+  }
+
+  // add remark by leader only 
+
+  const handleAddRemark = async (taskId) => {
+
+    const remarkValue = watch("remarkByLeader"); // Get value
+    console.log("Remark:", remarkValue);
+
+    try {
+      setLoading(true);
+      const res = await fetch(`/api/leader/tasks/add-remark/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({remarkByLeader: remarkValue})
+      });
+      if (res.ok) {
+        setLoading(false);
+        router.refresh();
+        router.push(`/teams/${initialData?.teamId}`)
+      } else {
+        const errorData = await res.json();
+        alert(errorData.message);
+        setLoading(false);
+      }
+    } catch (error) {
+      alert('Something went wrong!');
+      setLoading(false);
     }
 
     
@@ -210,8 +241,18 @@ export default function TaskEditForm({ initialData }) {
           </label>
         </div>
 
+        
+          {/* Button to Submit */}
+          <button
+            type="button"
+            onClick={() => handleAddRemark(initialData?.id)}
+            className="mt-1 mx-2 mb-7 px-4 py-2 bg-gray-800 border-2 text-white rounded-lg hover:bg-blue-600"
+          >
+            {loading ? 'Adding Remark' : 'Add Remark'}
+          </button>
+
         {/* AI Generated Text */}
-        <div className="relative">
+        <div className="relative my-6">
           <textarea
             disabled={initialData?.leaderId === currentUserId}
             {...register('aiGeneratedText')}
@@ -225,7 +266,7 @@ export default function TaskEditForm({ initialData }) {
         </div>
 
         {/* AI Generated Code */}
-        <div className="relative">
+        <div className="relative my-6">
           <textarea
             disabled={initialData?.leaderId === currentUserId}
             {...register('aiGeneratedCode')}
@@ -293,7 +334,7 @@ export default function TaskEditForm({ initialData }) {
           initialData?.leaderId !== currentUserId &&
           <div className="pt-6">
             <button
-            type='button'
+             type='button'
               onClick={() => handleRequestForApproval(initialData?.id)}
               className="w-full bg-white cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
             >
@@ -303,15 +344,16 @@ export default function TaskEditForm({ initialData }) {
         }
 
         
-          {
+        {
             initialData?.leaderId === currentUserId &&
               <div className="pt-6">
                   <button
-                  type='button'
+                    type='button'
+                    disabled={initialData?.status === 'Approved' }
                     onClick={() => handleApproveTask(initialData?.id)}
                     className="w-full bg-green-300 cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                   >
-                    Approve Task
+                    {initialData.status === 'Pending' || initialData.status === 'Rejected' ? 'Approve Task' : 'Task Approved✅' }
                   </button>
              </div>
         }
