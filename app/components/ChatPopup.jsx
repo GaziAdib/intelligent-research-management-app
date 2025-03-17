@@ -26,6 +26,10 @@ export default function ChatPopup({ conversationId, teamId, messages }) {
             console.log('new messages', messages)
 
   // Scroll to the bottom of messages when new messages arrive
+  // useEffect(() => {
+  //   scrollToBottom();
+  // }, [optimisticMessages, isChatOpen]);
+
   useEffect(() => {
     scrollToBottom();
   }, [optimisticMessages, isChatOpen]);
@@ -209,9 +213,11 @@ export default function ChatPopup({ conversationId, teamId, messages }) {
         setMessagess((prev) => prev.filter((msg) => msg.id !== tempId)); // Rollback
       } else {
         const data = await res.json(); // Assume { message: {...} }
+        // router.refresh()
         setMessagess((prev) =>
           prev.map((msg) => (msg.id === tempId ? { ...data.data, optimistic: false } : msg))
         );
+        
       }
     } catch (error) {
       console.error("Send failed:", error);

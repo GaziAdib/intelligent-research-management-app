@@ -93,7 +93,6 @@ class TeamService {
                     some: {
                         userId: userId
                     }
-                   
                 }
             },
             select: {
@@ -102,7 +101,7 @@ class TeamService {
                 teamShortDescription: true,
                 createdAt: true,
                 teamMembers: {
-                    include: {user: true, team:true}
+                    include: {user: true}
                 },
                 leader: {
                     select: {
