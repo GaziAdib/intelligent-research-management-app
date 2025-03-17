@@ -169,6 +169,26 @@ class TaskService {
         })
     }
 
+
+
+    // approve Task by leader
+
+
+
+    async approveTask(taskId) {
+        return await prisma.task.update({
+            where: {
+                id: taskId
+            },
+            data: {
+                status: 'Approved'
+            },
+            include: {
+                taskAssignedBy: true
+            }
+        })
+    }
+
     async addRemarkToTask(leaderId, taskId, remark) {
         return await prisma.task.update({
             where: {

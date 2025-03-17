@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import dynamic from 'next/dynamic'; // Import dynamic from Next.js
+import { useSession } from 'next-auth/react';
 
 // Dynamically import RichTextEditor with SSR disabled
 const RichTextEditor = dynamic(() => import('../textEditor/RichTextEditor'), {
@@ -21,11 +22,20 @@ const taskSchema = z.object({
   aiGeneratedText: z.string().optional(),
   aiGeneratedCode: z.string().optional(),
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH']),
-  status: z.enum(['Draft', 'Pending', 'Completed']),
+  status: z.enum(['Draft', 'Pending', 'Approved', 'Rejected']),
 });
 
 export default function TaskEditForm({ initialData }) {
   const router = useRouter();
+
+  const session = useSession();
+
+  const currentUserId = session?.data?.user?.id;
+
+  console.log('initial Data', initialData);
+
+
+ 
 
   const {
     register,
@@ -91,6 +101,36 @@ export default function TaskEditForm({ initialData }) {
     }
   }
 
+  // approve task 
+
+  const handleApproveTask = async (taskId) => {
+
+    try {
+      // setLoading(true);
+      const res = await fetch(`/api/leader/tasks/approve-task/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+      if (res.ok) {
+        router.refresh();
+        alert('Task Approved Successfully');
+        router.push(`/teams/${initialData?.teamId}`)
+        // setLoading(false);
+      } else {
+        const errorData = await res.json();
+        alert(errorData.message);
+        // setLoading(false);
+      }
+    } catch (error) {
+      alert('Something went wrong!');
+      // setLoading(false);
+    }
+
+    
+  }
+
   return (
     <div className="mx-auto w-full p-6 dark:bg-gray-900 shadow-xl rounded-xl border border-gray-200 dark:border-gray-800 transition-all duration-300">
       <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white text-center">Work On Task</h2>
@@ -125,7 +165,7 @@ export default function TaskEditForm({ initialData }) {
 
         {/* Draft Content */}
         <div className="relative">
-          <label className="font-medium mb-1 text-gray-700 dark:text-gray-200">Draft Content</label>
+          <label className="font-medium  mb-1 text-gray-700 dark:text-gray-200 px-2 py-2">---Draft Content---</label>
           <Controller
             name="taskMemberDraftContent"
             control={control}
@@ -133,6 +173,7 @@ export default function TaskEditForm({ initialData }) {
               <RichTextEditor
                 value={field.value}
                 onChange={field.onChange}
+                readOnly={initialData?.leaderId === currentUserId}
                 placeholder="Enter draft content..."
               />
             )}
@@ -141,13 +182,14 @@ export default function TaskEditForm({ initialData }) {
 
         {/* Final Content */}
         <div className="relative">
-          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-200">Final Content</label>
+          <label className="block font-medium mb-1 text-gray-700 dark:text-gray-200 px-2 py-2">---Final Content---</label>
           <Controller
             name="taskMemberFinalContent"
             control={control}
             render={({ field }) => (
               <RichTextEditor
                 value={field.value}
+                readOnly={initialData?.leaderId === currentUserId}
                 onChange={field.onChange}
                 placeholder="Enter final content..."
               />
@@ -171,6 +213,7 @@ export default function TaskEditForm({ initialData }) {
         {/* AI Generated Text */}
         <div className="relative">
           <textarea
+            disabled={initialData?.leaderId === currentUserId}
             {...register('aiGeneratedText')}
             placeholder=" "
             rows={3}
@@ -184,6 +227,7 @@ export default function TaskEditForm({ initialData }) {
         {/* AI Generated Code */}
         <div className="relative">
           <textarea
+            disabled={initialData?.leaderId === currentUserId}
             {...register('aiGeneratedCode')}
             placeholder=" "
             rows={3}
@@ -220,7 +264,8 @@ export default function TaskEditForm({ initialData }) {
           >
             <option value="Draft">Draft</option>
             <option value="Pending">Pending</option>
-            <option value="Completed">Completed</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
           </select>
           <label className="absolute left-4 top-3 px-1 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 transition-all duration-200 transform -translate-y-6 scale-75 peer-focus:-translate-y-6 peer-focus:scale-75">
             Status
@@ -229,7 +274,10 @@ export default function TaskEditForm({ initialData }) {
         </div>
 
         {/* Submit Button */}
-        <div className="pt-6">
+
+        {
+          initialData?.leaderId !== currentUserId &&
+          <div className="pt-6">
           <button
             type="submit"
             disabled={isSubmitting || loading}
@@ -238,16 +286,40 @@ export default function TaskEditForm({ initialData }) {
             {loading ? 'Updating...' : 'Update Task'}
           </button>
         </div>
+        }
+        
 
-        <div className="pt-6">
-          <button
-          type='button'
-            onClick={() => handleRequestForApproval(initialData?.id)}
-            className="w-full bg-white cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
-          >
-            Apply For Approval
-          </button>
-        </div>
+        {
+          initialData?.leaderId !== currentUserId &&
+          <div className="pt-6">
+            <button
+            type='button'
+              onClick={() => handleRequestForApproval(initialData?.id)}
+              className="w-full bg-white cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+            >
+              Apply For Approval
+            </button>
+         </div>
+        }
+
+        
+          {
+            initialData?.leaderId === currentUserId &&
+              <div className="pt-6">
+                  <button
+                  type='button'
+                    onClick={() => handleApproveTask(initialData?.id)}
+                    className="w-full bg-green-300 cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                  >
+                    Approve Task
+                  </button>
+             </div>
+        }
+
+        
+
+
+
       </form>
     </div>
   );

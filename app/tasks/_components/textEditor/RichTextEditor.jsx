@@ -8,7 +8,7 @@ import 'react-quill/dist/quill.snow.css'; // Quill styles
 //import 'highlight.js/styles/atom-one-dark.css'; // Highlight.js theme (choose your favorite)
 // import hljs from 'highlight.js'; // Import highlight.js
 
-const RichTextEditor = ({ value, onChange, placeholder }) => {
+const RichTextEditor = ({ value, onChange, placeholder, readOnly }) => {
   const [isClient, setIsClient] = useState(false);
 
   //Client-side rendering check
@@ -92,6 +92,7 @@ const RichTextEditor = ({ value, onChange, placeholder }) => {
         onChange={onChange}
         modules={modules}
         formats={formats}
+        readOnly={readOnly}
         placeholder={placeholder}
         className="bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg"
       />
