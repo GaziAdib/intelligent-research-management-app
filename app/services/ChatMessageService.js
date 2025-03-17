@@ -95,7 +95,7 @@ class ChatMessageService {
             },
             
            },
-           take: 50,
+           take: 200,
            orderBy: {
             createdAt: 'asc'
            }

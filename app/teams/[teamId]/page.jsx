@@ -46,8 +46,10 @@ async function fetchConversationMessages(conversationId) {
 }
 
 const TeamDetail = async ({ params }) => {
-  const { teamId } = params;
+
+  const { teamId } = await params;
   const { user } = await auth();
+  
   const currentUserId = user?.id;
 
   let teamInfo = await fetchSingleTeamInfo(teamId);
