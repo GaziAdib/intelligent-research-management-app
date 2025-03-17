@@ -367,13 +367,51 @@
 
 
 
-import TaskCard from "./TaskCard";
+"use client";
 
-const TaskLists = ({ tasks }) => {
+import { useEffect, useState } from "react";
+import TaskCard from "./TaskCard";
+import Pusher from "pusher-js";
+
+const TaskLists = ({ tasks: initialTasks, teamId }) => {
+
+  const [tasks, setTasks] = useState(initialTasks); // State to handle task list
+
+  useEffect(() => {
+    const pusher = new Pusher("fbd04a7c8844115f0fd9", {
+      cluster: "us3",
+      forceTLS: true,
+      enabledTransports: ["ws", "wss"], // Ensure WebSockets are used
+    });
+
+    const channel = pusher.subscribe(`team-${teamId}`);
+
+   console.log("Subscribed to channel:", `team-${teamId}`);
+
+  channel.bind("task-approved", (data) => {
+    console.log("Received event data:", JSON.stringify(data));
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === data.taskId ? { ...task, status: data.status } : task
+      )
+    );
+  });
+
+    
+
+  return () => {
+    channel.unbind_all();
+    channel.unsubscribe();
+    pusher.disconnect(); // Ensure proper cleanup
+  };
+
+
+  },[teamId])
+
   return (
     <div className="min-h-screen  text-white p-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {tasks.map((task) => (
+        {tasks?.map((task) => (
           <TaskCard key={task.id} task={task} />
         ))}
       </div>

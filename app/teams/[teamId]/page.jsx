@@ -88,7 +88,7 @@ const TeamDetail = async ({ params }) => {
               <h2 className="text-xl">No tasks created yet.</h2>
             </div>
           ) : (
-            <TaskLists tasks={tasks} />
+            <TaskLists tasks={tasks} teamId={teamId} />
           )}
         </div>
         

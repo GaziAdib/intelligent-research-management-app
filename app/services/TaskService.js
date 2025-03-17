@@ -183,9 +183,12 @@ class TaskService {
             data: {
                 status: 'Approved'
             },
-            include: {
-                taskAssignedBy: true
+            select: {
+                teamId: true,
+                status: true,
+                id: true
             }
+            
         })
     }
 

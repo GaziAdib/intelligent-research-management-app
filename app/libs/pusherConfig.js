@@ -10,3 +10,4 @@ const pusher = new Pusher({
   });
 
 export default pusher;
+

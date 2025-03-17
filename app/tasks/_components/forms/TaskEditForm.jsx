@@ -353,7 +353,7 @@ export default function TaskEditForm({ initialData }) {
                     onClick={() => handleApproveTask(initialData?.id)}
                     className="w-full bg-green-300 cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                   >
-                    {initialData.status === 'Pending' || initialData.status === 'Rejected' ? 'Approve Task' : 'Task Approved✅' }
+                    {initialData.status === 'Pending' || initialData.status === 'Rejected'  || initialData.status === 'Draft' ? 'Approve Task' : 'Task Approved✅' }
                   </button>
              </div>
         }
