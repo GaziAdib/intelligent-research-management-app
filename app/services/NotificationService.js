@@ -11,29 +11,39 @@ class NotificationService {
             where: {
                 teamId: teamId
             }
+           
         })
     }
 
-    // find Unqiue user by email feature
-    async findUniqueUserByEmail(email) {
-        return await prisma.user.findUnique({
+    async fetchUserNotifications(userId) {
+        return await prisma.notification.findMany({
             where: {
-                email: email
+                recipientIds: {
+                    has: userId
+                }
+            },
+            orderBy: {
+                createdAt: "desc"
             }
+           
         })
     }
 
+
+    //TASK_APPROVED type
+    //TASK_ASSIGNED type
+    //TASK_REJECTED type
 
     // Create Notification based on some events
-    async sendNotification(teamId, taskId, message, type, receiversEmails) {
+    async sendNotification(teamId, taskId, message, type, receiverids, receiversEmails) {
         return await prisma.notification.create({
             data: {
                team: {connect: {id: teamId}},
+               task: {connect: {id: taskId}},
                message: message,
                type: type,
-               isRead: false,
-               recipientEmails: receiversEmails,
-               task: {connect: {id: taskId}}
+               recipientIds: receiverids,
+               recipientEmails: receiversEmails
             }
         })
     }

@@ -129,6 +129,34 @@ export default function TaskEditForm({ initialData }) {
     
   }
 
+    // reject task by leader only
+    const handleRejectTask = async (taskId) => {
+
+      try {
+        setLoading(true);
+        const res = await fetch(`/api/leader/tasks/reject-task/${taskId}`, {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+          }
+        });
+        if (res.ok) {
+          setLoading(false);
+          router.refresh();
+          router.push(`/teams/${initialData?.teamId}`)
+        } else {
+          const errorData = await res.json();
+          alert(errorData.message);
+          setLoading(false);
+        }
+      } catch (error) {
+        alert('Something went wrong!');
+        setLoading(false);
+      }
+  
+      
+    }
+
   // add remark by leader only 
 
   const handleAddRemark = async (taskId) => {
@@ -331,17 +359,20 @@ export default function TaskEditForm({ initialData }) {
         
 
         {
-          initialData?.leaderId !== currentUserId &&
+      // Check if the current user is not the leader AND the status is not "Approved"
+        initialData?.leaderId !== currentUserId && initialData.status !== 'Approved' && (
           <div className="pt-6">
             <button
-             type='button'
-              onClick={() => handleRequestForApproval(initialData?.id)}
+              type="button"
+              onClick={() => handleRequestForApproval(initialData?.id)} // Trigger approval request
               className="w-full bg-white cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
             >
-              Apply For Approval
+              {/* Display "Apply For Approval" if status is not "Approved" */}
+              {initialData.status !== 'Approved' && 'Apply For Approval'}
             </button>
-         </div>
-        }
+          </div>
+        )
+      }
 
         
         {
@@ -354,6 +385,19 @@ export default function TaskEditForm({ initialData }) {
                     className="w-full bg-green-300 cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
                   >
                     {initialData.status === 'Pending' || initialData.status === 'Rejected'  || initialData.status === 'Draft' ? 'Approve Task' : 'Task Approved✅' }
+                  </button>
+             </div>
+        }
+
+        {
+            initialData?.leaderId === currentUserId && initialData.status !== 'Rejected' &&
+              <div className="pt-6">
+                  <button
+                    type='button'
+                    onClick={() => handleRejectTask(initialData?.id)}
+                    className="w-full bg-red-400 cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
+                  >
+                    {initialData.status === 'Pending' || initialData.status === 'Approved' &&  'Reject Task' }
                   </button>
              </div>
         }

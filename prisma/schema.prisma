@@ -154,16 +154,13 @@ model Notification {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   recipientIds  String[] @db.ObjectId  // List of users who will receive this notification
   recipientEmails String[] 
-
   taskId        String?  @db.ObjectId
   task          Task?    @relation(fields: [taskId], references: [id])
-
   teamId        String?  @db.ObjectId
   team          Team?    @relation(fields: [teamId], references: [id])  // Reference to the team related to the task
-
   message       String 
   type          NotificationType // Enum (TASK_APPROVED, TASK_REJECTED, TASK_ASSIGNED)
-  isRead        Boolean[] @default([]) // Track read status for each recipient
+  seenUsers     String[] @db.ObjectId @default([])
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 }

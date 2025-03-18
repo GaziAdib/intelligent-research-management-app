@@ -1,5 +1,6 @@
 import { auth } from "@/app/auth";
 import pusher from "@/app/libs/pusherConfig";
+import NotificationService from "@/app/services/NotificationService";
 import TaskService from "@/app/services/TaskService";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
@@ -26,16 +27,55 @@ const currentUserId = session?.user?.id;
 
     const newUpdatedTask = await TaskService.approveTask(taskId);
 
-    // http://localhost:3000/tasks/edit-panel/67ce1dfa613c9daebd9c472c/67ce0efc629cdce32d08eb57
-
-    //revalidatePath(`/teams/${task?.teamId}`);
-
 
     await pusher.trigger(`team-${newUpdatedTask.teamId}`, "task-approved", {
         taskId: newUpdatedTask.id,
         status: newUpdatedTask.status,
         teamId: newUpdatedTask.teamId
      
+      });
+
+
+      // send notification
+
+       const receiversIds = task?.taskAssignedTo?.map(memberId => memberId) || []
+       
+       const receiversEmails = task.team.teamMembers
+       .filter(member => receiversIds?.includes(member?.user?.id))
+       .map(member => member?.user?.email);
+     
+
+       console.log('email', receiversEmails)
+
+       //let teamName = task?.team?.teamName;
+    
+       //let message = `Your task ${task?.taskTitle} in team ${teamName} has been approved ❤️ by leader: ${task?.taskAssignedBy?.username}`;
+       
+       //let message = 'Your Task Approved!'
+
+       let message = `Congratulations Your Task is Approved by Leader: ${task?.taskAssignedBy?.username} on topic: ${task?.taskTitle}.`
+
+      const newNotification = await NotificationService.sendNotification(
+        newUpdatedTask?.teamId,
+        newUpdatedTask?.id,
+        message,
+        "TASK_APPROVED",
+        receiversIds,
+        receiversEmails
+      
+      )
+
+      // console.log('Notification', newNotification)
+
+      await pusher.trigger(`user`, "send-notification", {
+        notification: {
+          id: newNotification?.id,
+          message: newNotification?.message,
+          type: newNotification?.type,
+          taskId: newNotification?.taskId,
+          teamId: newNotification?.teamId,
+          createdAt: newNotification?.createdAt,
+        },
       });
 
      revalidatePath(`/teams/${newUpdatedTask?.teamId}`);
@@ -47,7 +87,7 @@ const currentUserId = session?.user?.id;
   } catch (error) {
     console.error("Error approving task:", error);
     return NextResponse.json(
-      { message: "An error occurred while updating the task.", error: error.message },
+      { message: "An error occurred while approving the task.", error: error.message },
       { status: 500 }
     );
   }

@@ -365,8 +365,6 @@
 
 // export default TaskLists;
 
-
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -397,12 +395,23 @@ const TaskLists = ({ tasks: initialTasks, teamId }) => {
     );
   });
 
+  channel.bind("task-rejected", (data) => {
+    console.log("Received event data:", JSON.stringify(data));
+    setTasks((prevTasks) =>
+      prevTasks.map((task) =>
+        task.id === data.taskId ? { ...task, status: data.status } : task
+      )
+    );
+  });
+
+
+
     
 
   return () => {
     channel.unbind_all();
     channel.unsubscribe();
-    pusher.disconnect(); // Ensure proper cleanup
+    pusher.disconnect(); 
   };
 
 

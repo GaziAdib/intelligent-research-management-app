@@ -192,6 +192,23 @@ class TaskService {
         })
     }
 
+    async rejectTask(taskId) {
+        return await prisma.task.update({
+            where: {
+                id: taskId
+            },
+            data: {
+                status: 'Rejected'
+            },
+            select: {
+                teamId: true,
+                status: true,
+                id: true
+            }
+            
+        })
+    }
+
     async addRemarkToTask(leaderId, taskId, remark) {
         return await prisma.task.update({
             where: {
