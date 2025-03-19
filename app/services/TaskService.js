@@ -170,7 +170,20 @@ class TaskService {
                 taskAssignedTo: {
                     set: updatedAssignedMembers
                 }
+            },
+            include: {
+                taskAssignedBy: true,
+                team: {
+                    include: {
+                        teamMembers: {
+                            include: {
+                                user:true
+                            }
+                        }
+                    }
+                }
             }
+        
         })
     }
 

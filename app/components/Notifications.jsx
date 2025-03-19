@@ -102,7 +102,13 @@ const Notifications = () => {
                     <span className="bg-red-500 text-white p-2 rounded-full">
                       ❌
                     </span>
-                  ) : (
+                  ) : notification.type === 'TASK_ASSIGNED_REMOVED' ? 
+                  (
+                    <span className="bg-red-500 text-white p-2 rounded-full">
+                      📃 
+                  </span>
+                  ): 
+                  (
                     <span className="bg-blue-500 text-white p-2 rounded-full">
                       ℹ️
                   </span>

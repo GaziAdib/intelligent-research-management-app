@@ -1,4 +1,6 @@
 import { auth } from "@/app/auth";
+import pusher from "@/app/libs/pusherConfig";
+import NotificationService from "@/app/services/NotificationService";
 import TaskService from "@/app/services/TaskService";
 import TeamService from "@/app/services/TeamService";
 import { revalidatePath } from "next/cache";
@@ -29,7 +31,42 @@ export async function PUT(req, {params}) {
 
     const assignedTaskRemovedFromMembers = await TaskService.removeMemberFromAssignedTask(memberId, taskId, teamId)
 
-    revalidatePath(`/tasks/detail/${taskId}/${teamId}`);
+
+    // add notification
+
+    const receiversIds = assignedTaskRemovedFromMembers?.taskAssignedTo?.map(memberId => memberId) || []
+           
+        const receiversEmails = assignedTaskRemovedFromMembers?.team?.teamMembers
+        .filter(member => receiversIds?.includes(member?.user?.userId))
+        .map(member => member?.user?.email);
+      
+    
+    
+        let message = `Task Removed by Leader: ${assignedTaskRemovedFromMembers?.taskAssignedBy?.username} on topic: ${assignedTaskRemovedFromMembers?.taskTitle}. Please check it out asap!!!`
+        
+        const newNotification = await NotificationService.sendNotification(
+          assignedTaskRemovedFromMembers?.teamId,
+          assignedTaskRemovedFromMembers?.id,
+          message,
+          "TASK_ASSIGNED_REMOVED",
+          receiversIds,
+          receiversEmails
+        )
+
+
+        await pusher.trigger(`user`, "send-notification", {
+          notification: {
+            id: newNotification?.id,
+            message: newNotification?.message,
+            type: newNotification?.type,
+            taskId: newNotification?.taskId,
+            teamId: newNotification?.teamId,
+            createdAt: newNotification?.createdAt,
+          },
+        });
+    
+    
+        revalidatePath(`/tasks/detail/${taskId}/${teamId}`);
     
     return NextResponse.json(
       { message: "Removed Member From Assigned Tasks Panel!", data: assignedTaskRemovedFromMembers },
