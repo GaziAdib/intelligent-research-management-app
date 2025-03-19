@@ -1,4 +1,6 @@
 import { auth } from "@/app/auth";
+import pusher from "@/app/libs/pusherConfig";
+import NotificationService from "@/app/services/NotificationService";
 import TaskService from "@/app/services/TaskService";
 import TeamService from "@/app/services/TeamService";
 import { revalidatePath } from "next/cache";
@@ -26,6 +28,39 @@ export async function PUT(req, {params}) {
     }
 
     const taskAssigned = await TaskService.assignTaskToTeamMember(memberId, taskId, teamId)
+
+    // push notification that user is assigned with task 
+
+    const receiversIds = taskAssigned?.taskAssignedTo?.map(memberId => memberId) || []
+       
+    const receiversEmails = taskAssigned?.team?.teamMembers
+    .filter(member => receiversIds?.includes(member?.user?.userId))
+    .map(member => member?.user?.email);
+  
+
+
+    let message = `New Task assigned by Leader: ${taskAssigned?.taskAssignedBy?.username} on topic: ${taskAssigned?.taskTitle}. Please check it out asap!!!`
+    
+    const newNotification = await NotificationService.sendNotification(
+      taskAssigned?.teamId,
+      taskAssigned?.id,
+      message,
+      "TASK_ASSIGNED",
+      receiversIds,
+      receiversEmails
+    )
+
+
+    await pusher.trigger(`user`, "send-notification", {
+      notification: {
+        id: newNotification?.id,
+        message: newNotification?.message,
+        type: newNotification?.type,
+        taskId: newNotification?.taskId,
+        teamId: newNotification?.teamId,
+        createdAt: newNotification?.createdAt,
+      },
+    });
 
 
     revalidatePath(`/tasks/detail/${taskId}/${teamId}`);

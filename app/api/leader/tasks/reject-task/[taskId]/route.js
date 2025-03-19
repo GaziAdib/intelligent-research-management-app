@@ -25,13 +25,13 @@ const currentUserId = session?.user?.id;
           );
     }
 
-    const newUpdatedTask = await TaskService.rejectTask(taskId);
+      const newUpdatedTask = await TaskService.rejectTask(taskId);
 
-    await pusher.trigger(`team-${newUpdatedTask.teamId}`, "task-rejected", {
-        taskId: newUpdatedTask.id,
-        status: newUpdatedTask.status,
-        teamId: newUpdatedTask.teamId
-      });
+      await pusher.trigger(`team-${newUpdatedTask.teamId}`, "task-rejected", {
+          taskId: newUpdatedTask.id,
+          status: newUpdatedTask.status,
+          teamId: newUpdatedTask.teamId
+        });
 
            // send notification
 

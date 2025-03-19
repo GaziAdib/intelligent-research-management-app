@@ -119,6 +119,25 @@ class TaskService {
                 taskAssignedTo: {
                     push: memberId
                 }
+            },
+            include: {
+                team: {
+                    include: {
+                        teamMembers:{
+                            include: {
+                                user: true
+                            }
+                        }
+                    }
+                },
+                taskAssignedBy:{
+                    select: {
+                        username: true,
+                        id: true,
+                        email: true
+                    }
+                },
+                
             }
         })
     }
