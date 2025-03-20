@@ -19,12 +19,17 @@ async function fetchSingleTeamInfo(teamid) {
   return res.json();
 }
 
-async function fetchTasks(teamId, pageNum) {
-  const res = await fetch(`http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNum}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
+async function fetchTasks(teamId, pageNumber) {
+  // Use a ternary operator to conditionally construct the URL
+  const url = pageNumber
+    ? `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}`
+    : `http://localhost:3000/api/tasks/${teamId}`;
+
+    const res = await fetch(url, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
   });
 
   if (!res.ok) throw new Error("Failed to fetch tasks");
@@ -32,9 +37,8 @@ async function fetchTasks(teamId, pageNum) {
   return res.json();
 }
 
-
-async function fetchConversationMessages(conversationId) {
-  const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}`, {
+async function fetchConversationMessages(conversationId, teamId) {
+  const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -53,24 +57,35 @@ const TeamDetail = async ({ params, searchParams }) => {
   
   const currentUserId = user?.id;
 
-  const { pageNumber } = await searchParams;
+
+
+  let { pageNumber } = await searchParams;
+
+  console.log('page number', pageNumber)
   
+
+
   let teamInfo = await fetchSingleTeamInfo(teamId);
   teamInfo = teamInfo.data;
 
-  const currentPage = 1
+  // let currentPage = 1
+
+  pageNumber = pageNumber ? pageNumber : 1
 
 
 
-  let data = await fetchTasks(teamId, pageNumber);
+  let data = await fetchTasks(teamId, Number(pageNumber));
   let tasks = data?.data;
+  let totalPages = data?.totalPages
 
-  const totalPages = Math.ceil(tasks?.length / 2); // Assuming 2 tasks per page
+
+  console.log('tasks length', tasks?.length)
+  console.log('Total Pages', totalPages)
+
 
   
-
   let conversationsId = teamInfo?.conversation?.id;
-  let messages = await fetchConversationMessages(conversationsId);
+  let messages = await fetchConversationMessages(conversationsId, teamId);
 
 
   return (
@@ -100,7 +115,7 @@ const TeamDetail = async ({ params, searchParams }) => {
             <>
               <TaskLists tasks={tasks} teamId={teamId} />
               <div className="my-10 py-10">
-              {tasks?.length > 0 && <Pagination currentPage={currentPage} totalPages={totalPages} />} 
+              {tasks?.length > 0 && <Pagination totalPages={totalPages} />} 
               </div>
             </>
           )}

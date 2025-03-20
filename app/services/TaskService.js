@@ -5,21 +5,39 @@ const prisma = new PrismaClient();
 class TaskService {
 
     // fetch all tasks by teamId
-    async fetchTasks(teamId, limit = 5, pageNumber = 1) {
-        // Ensure pageNumber is a valid number
-        const safePageNumber = Number(pageNumber) || 1;
+    async fetchTasks(teamId, limit, pageNumber) {
     
-        return await prisma.task.findMany({
+        const safePageNumber = Number(pageNumber) || 1;
+
+        // Fetch the total count of tasks for the team
+        // Fetch the total count of tasks for the team
+        const totalTasksCount = await prisma.task.count({
+            where: {
+                teamId: teamId,
+            },
+        });
+
+        console.log('Total Tasks Count---', totalTasksCount)
+        // Fetch the paginated tasks
+        const tasks = await prisma.task.findMany({
             where: {
                 teamId: teamId,
             },
             include: {
                 team: true,
-                taskAssignedBy: true
+                taskAssignedBy: true,
             },
             take: Number(limit),
-            skip: (safePageNumber - 1) * Number(limit) // Prevent NaN issues
+            skip: (safePageNumber - 1) * Number(limit) // Skip based on page number
         });
+
+        // Calculate the total number of pages
+        const totalPages = Math.ceil(totalTasksCount / Number(limit));
+
+        return {
+            tasks, // The paginated tasks
+            totalPages // Total number of pages
+        };
     }
 
 

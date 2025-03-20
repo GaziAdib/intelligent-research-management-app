@@ -46,7 +46,7 @@ class NotificationService {
     }
 
 
-    // is seen feature
+    // is seen feature is savailable here
 
     async isSeenNotification(notificationId, isSeen) {
         return await prisma.notification.update({

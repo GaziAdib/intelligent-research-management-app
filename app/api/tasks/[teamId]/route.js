@@ -13,17 +13,11 @@ export async function GET(req, {params}) {
 
   // use pagination 
 
-
   let pageNumber = req.nextUrl?.searchParams?.get("pageNumber");
 
   pageNumber = Number(pageNumber);
 
-  let limit = 5
-
-
-
-
-
+  let limit = 2
 
   try {
 
@@ -40,8 +34,10 @@ export async function GET(req, {params}) {
 
 
     const tasks = await TaskService.fetchTasks(teamId, limit, pageNumber)
+
+    console.log('tasks', tasks)
     
-    return NextResponse.json({ data: tasks }, { status: 200 });
+    return NextResponse.json({ data: tasks?.tasks, totalPages:tasks?.totalPages  }, { status: 200 });
 
     
   } catch (error) {

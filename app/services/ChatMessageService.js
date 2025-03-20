@@ -8,13 +8,28 @@ class ChatMessageService {
     async createConversation(teamId, creatorId, title) {
         try {
 
-        return await prisma.conversation.create({
+          const conversation = await prisma.team.findFirst({
+            where: {
+                id: teamId
+            },
+            select: {
+                teamMembers: true
+            }
+          }) 
+          
+          if (conversation?.teamMembers?.length===0) {
+            throw new Error("Failed to Create Conversations as there are no team members ");
+          } 
+
+          return await prisma.conversation.create({
             data: {
                 team: {connect: {id: teamId}},
                 title: title,
                 creator: {connect: {id: creatorId}} 
             }
          })
+
+       
             
         } catch (error) {
             console.error("Error Creating Conversation:", error);
@@ -49,6 +64,25 @@ class ChatMessageService {
         }
     }
 
+    async checkTeamMembersavailable(teamId) {
+        try {
+
+        return await prisma.team.findFirst({
+            where: {
+                id: teamId
+            },
+            include: {
+                teamMembers:true,
+                conversation: true
+            }
+         })
+            
+        } catch (error) {
+            console.error("Error Creating Conversation:", error);
+            throw new Error("Failed to Create Conversations");
+        }
+    }
+
 
     // receivers Id array
     async sendMessage(conversationId, senderId, receivers, content) {
@@ -72,42 +106,105 @@ class ChatMessageService {
 
     // fetch messages 
 
+    // async fetchChatMessages(conversationId) {
+    //     try {
+
+    //     return await prisma.message.findMany({
+    //        where: {
+    //         conversationId: conversationId
+    //        },
+    //        include: {
+    //         conversation: {
+    //             //include: {team: {include: {teamMembers: true}}},
+    //             include: {creator: true, messages: true, team:{ include: {teamMembers: true}}}
+    //         },
+            
+    //         sender: {
+    //             select: {
+    //                 email: true,
+    //                 id: true,
+    //                 username:true,
+    //                 profileImageUrl:true
+    //             }
+    //         },
+            
+    //        },
+    //        take: 200,
+    //        orderBy: {
+    //         createdAt: 'asc'
+    //        }
+           
+    //      })
+            
+    //     } catch (error) {
+    //         console.error("Error Creating Conversation:", error);
+    //         throw new Error("Failed to Create Conversations");
+    //     }
+    // }
+
     async fetchChatMessages(conversationId) {
         try {
-
-        return await prisma.message.findMany({
-           where: {
-            conversationId: conversationId,
-           },
-           include: {
-            conversation: {
-                //include: {team: {include: {teamMembers: true}}},
-                include: {creator: true, messages: true, team:{ include: {teamMembers: true}}}
+          // Fetch the conversation along with its team and team members
+          const conversation = await prisma.conversation.findUnique({
+            where: {
+              id: conversationId,
             },
-            
-            sender: {
+            include: {
+              team: {
+                include: {
+                  teamMembers: true,
+                },
+              },
+            },
+          });
+      
+          // Check if the conversation exists and has a team
+          if (!conversation || !conversation.team) {
+            throw new Error("Conversation not found or not associated with a team.");
+          }
+      
+          // Check if the team has members
+          if (!conversation.team.teamMembers || conversation.team.teamMembers.length === 0) {
+            throw new Error("This team has no members. Cannot fetch messages.");
+          }
+      
+          // Fetch messages for the conversation
+          const messages = await prisma.message.findMany({
+            where: {
+              conversationId: conversationId,
+            },
+            include: {
+              conversation: {
+                include: {
+                  creator: true,
+                  team: {
+                    include: {
+                      teamMembers: true,
+                    },
+                  },
+                },
+              },
+              sender: {
                 select: {
-                    email: true,
-                    id: true,
-                    username:true,
-                    profileImageUrl:true
-                }
+                  email: true,
+                  id: true,
+                  username: true,
+                  profileImageUrl: true,
+                },
+              },
             },
-            
-           },
-           take: 200,
-           orderBy: {
-            createdAt: 'asc'
-           }
-           
-         })
-            
+            take: 200,
+            orderBy: {
+              createdAt: "asc",
+            },
+          });
+      
+          return messages;
         } catch (error) {
-            console.error("Error Creating Conversation:", error);
-            throw new Error("Failed to Create Conversations");
+          console.error("Error fetching chat messages:", error);
+          throw new Error("Failed to fetch chat messages: " + error.message);
         }
-    }
-
+      }
     
 }
 
