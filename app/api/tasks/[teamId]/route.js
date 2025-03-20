@@ -13,11 +13,11 @@ export async function GET(req, {params}) {
 
   // use pagination 
 
-  let pageNumber = req.nextUrl?.searchParams?.get("pageNumber");
+  let pageNumber = req?.nextUrl?.searchParams?.get("pageNumber");
 
-  pageNumber = Number(pageNumber);
+  const page = Number(pageNumber);
 
-  let limit = 2
+  let limit = 3
 
   try {
 
@@ -33,7 +33,7 @@ export async function GET(req, {params}) {
     // }
 
 
-    const tasks = await TaskService.fetchTasks(teamId, limit, pageNumber)
+    const tasks = await TaskService.fetchTasks(teamId, limit, page)
 
     console.log('tasks', tasks)
     

@@ -6,6 +6,8 @@ import ModalConversationButton from "./_components/modals/ConversationModalButto
 import ChatPopup from "@/app/components/ChatPopup";
 import Pagination from "./_components/pagination/Pagination";
 
+
+
 async function fetchSingleTeamInfo(teamid) {
   const res = await fetch(`http://localhost:3000/api/teams/${teamid}`, {
     method: "GET",
@@ -19,17 +21,19 @@ async function fetchSingleTeamInfo(teamid) {
   return res.json();
 }
 
+
 async function fetchTasks(teamId, pageNumber) {
   // Use a ternary operator to conditionally construct the URL
-  const url = pageNumber
-    ? `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}`
-    : `http://localhost:3000/api/tasks/${teamId}`;
+  // const url = pageNumber
+  //   ? `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}`
+  //   : `http://localhost:3000/api/tasks/${teamId}`;
 
-    const res = await fetch(url, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const url = `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}`
+  const res = await fetch(url, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    }
   });
 
   if (!res.ok) throw new Error("Failed to fetch tasks");
@@ -37,59 +41,45 @@ async function fetchTasks(teamId, pageNumber) {
   return res.json();
 }
 
-async function fetchConversationMessages(conversationId, teamId) {
-  const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+ async function fetchConversationMessages(conversationId, teamId) {
+    const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!res.ok) throw new Error("Failed to fetch messages");
+  
+    return res.json();
+  }
 
-  if (!res.ok) throw new Error("Failed to fetch messages");
-
-  return res.json();
-}
 
 const TeamDetail = async ({ params, searchParams }) => {
-
   const { teamId } = await params;
   const { user } = await auth();
-  
   const currentUserId = user?.id;
 
-
-
   let { pageNumber } = await searchParams;
+  let pageNumber1 = pageNumber ? Number(pageNumber) : 1; // Ensure pageNumber is a number
 
-  console.log('page number', pageNumber)
-  
-
+  console.log("Page Number:", pageNumber1);
 
   let teamInfo = await fetchSingleTeamInfo(teamId);
   teamInfo = teamInfo.data;
 
-  // let currentPage = 1
+  let data = await fetchTasks(teamId, pageNumber1);
+  let tasks =  data?.data;
+  let totalPages =  data?.totalPages;
 
-  pageNumber = pageNumber ? pageNumber : 1
+  console.log("Tasks Length:", tasks?.length);
+  console.log("Total Pages:", totalPages);
 
-
-
-  let data = await fetchTasks(teamId, Number(pageNumber));
-  let tasks = data?.data;
-  let totalPages = data?.totalPages
-
-
-  console.log('tasks length', tasks?.length)
-  console.log('Total Pages', totalPages)
-
-
-  
   let conversationsId = teamInfo?.conversation?.id;
   let messages = await fetchConversationMessages(conversationsId, teamId);
 
-
   return (
-    <div className="min-h-screen  text-white p-6">
+    <div className="min-h-screen text-white p-6">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
         <h1 className="text-3xl sm:text-4xl font-extrabold mt-8">📋 Team Tasks</h1>
@@ -97,16 +87,13 @@ const TeamDetail = async ({ params, searchParams }) => {
       </div>
 
       <div className="my-2 py-2 mx-10 px-2">
-        <ModalTaskButton buttonLabel={'+ Add task'} teamInfo={teamInfo} />
+        <ModalTaskButton buttonLabel={"+ Add task"} teamInfo={teamInfo} />
       </div>
-
-
-      
 
       {/* Main Content */}
       <div className="flex flex-col lg:flex-row gap-6">
         {/* Task List */}
-        <div className="w-full lg:w-3/4  rounded-2xl p-6 shadow-xl  max-h-[80vh]">
+        <div className="w-full lg:w-3/4 rounded-2xl p-6 shadow-xl max-h-[80vh]">
           {tasks?.length === 0 ? (
             <div className="text-gray-400 text-center mt-10">
               <h2 className="text-xl">No tasks created yet.</h2>
@@ -115,22 +102,19 @@ const TeamDetail = async ({ params, searchParams }) => {
             <>
               <TaskLists tasks={tasks} teamId={teamId} />
               <div className="my-10 py-10">
-              {tasks?.length > 0 && <Pagination totalPages={totalPages} />} 
+                {tasks?.length > 0 && <Pagination totalPages={totalPages} />}
               </div>
             </>
           )}
         </div>
-        
 
         <div>
-      
-          <ChatPopup conversationId={teamInfo?.conversation?.id} teamId={teamId} messages={messages.data} /> 
-           
+          <ChatPopup conversationId={teamInfo?.conversation?.id} teamId={teamId} messages={messages.data} />
         </div>
 
         {/* Members List */}
         <div className="w-full lg:w-1/4 bg-[#1a1a1a] rounded-2xl p-6 shadow-xl max-h-[80vh] overflow-y-auto">
-          <h2 className="text-lg  lg:text-2xl font-bold mb-4 text-center">👥 Members</h2>
+          <h2 className="text-lg lg:text-2xl font-bold mb-4 text-center">👥 Members</h2>
           <MemberLists members={teamInfo?.teamMembers} />
         </div>
       </div>
@@ -139,6 +123,160 @@ const TeamDetail = async ({ params, searchParams }) => {
 };
 
 export default TeamDetail;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { auth } from "@/app/auth";
+// import ModalTaskButton from "./_components/buttons/ModalTaskButton";
+// import TaskLists from "./_components/TaskLists";
+// import MemberLists from "../_components/MemberLists";
+// import ModalConversationButton from "./_components/modals/ConversationModalButton";
+// import ChatPopup from "@/app/components/ChatPopup";
+// import Pagination from "./_components/pagination/Pagination";
+
+// async function fetchSingleTeamInfo(teamid) {
+//   const res = await fetch(`http://localhost:3000/api/teams/${teamid}`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+
+//   if (!res.ok) throw new Error("Failed to fetch teams");
+
+//   return res.json();
+// }
+
+// async function fetchTasks(teamId, pageNumber) {
+//   // Use a ternary operator to conditionally construct the URL
+//   const url = pageNumber
+//     ? `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}`
+//     : `http://localhost:3000/api/tasks/${teamId}`;
+
+//     const res = await fetch(url, {
+//       method: "GET",
+//       headers: {
+//         "Content-Type": "application/json",
+//       },
+//   });
+
+//   if (!res.ok) throw new Error("Failed to fetch tasks");
+
+//   return res.json();
+// }
+
+// async function fetchConversationMessages(conversationId, teamId) {
+//   const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}/$`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
+
+//   if (!res.ok) throw new Error("Failed to fetch messages");
+
+//   return res.json();
+// }
+
+// const TeamDetail = async ({ params, searchParams }) => {
+
+//   const { teamId } = await params;
+//   const { user } = await auth();
+  
+//   const currentUserId = user?.id;
+
+
+
+//   let { pageNumber } = await searchParams;
+
+//   console.log('page number', pageNumber)
+  
+
+
+//   let teamInfo = await fetchSingleTeamInfo(teamId);
+//   teamInfo = teamInfo.data;
+
+//   // let currentPage = 1
+
+//   pageNumber = pageNumber ? pageNumber : 1
+
+
+
+//   let data = await fetchTasks(teamId, Number(pageNumber));
+//   let tasks = data?.data;
+//   let totalPages = data?.totalPages
+
+
+//   console.log('tasks length', tasks?.length)
+//   console.log('Total Pages', totalPages)
+
+
+  
+//   let conversationsId = teamInfo?.conversation?.id;
+//   let messages = await fetchConversationMessages(conversationsId, teamId);
+
+
+//   return (
+//     <div className="min-h-screen  text-white p-6">
+//       {/* Header Section */}
+//       <div className="flex flex-col sm:flex-row justify-between items-center mb-8 gap-4">
+//         <h1 className="text-3xl sm:text-4xl font-extrabold mt-8">📋 Team Tasks</h1>
+//         <ModalConversationButton teamInfo={teamInfo} currentUserId={currentUserId} />
+//       </div>
+
+//       <div className="my-2 py-2 mx-10 px-2">
+//         <ModalTaskButton buttonLabel={'+ Add task'} teamInfo={teamInfo} />
+//       </div>
+
+
+      
+
+//       {/* Main Content */}
+//       <div className="flex flex-col lg:flex-row gap-6">
+//         {/* Task List */}
+//         <div className="w-full lg:w-3/4  rounded-2xl p-6 shadow-xl  max-h-[80vh]">
+//           {tasks?.length === 0 ? (
+//             <div className="text-gray-400 text-center mt-10">
+//               <h2 className="text-xl">No tasks created yet.</h2>
+//             </div>
+//           ) : (
+//             <>
+//               <TaskLists tasks={tasks} teamId={teamId} />
+//               <div className="my-10 py-10">
+//               {tasks?.length > 0 && <Pagination totalPages={totalPages} />} 
+//               </div>
+//             </>
+//           )}
+//         </div>
+        
+
+//         <div>
+      
+//           <ChatPopup conversationId={teamInfo?.conversation?.id} teamId={teamId} messages={messages.data} /> 
+           
+//         </div>
+
+//         {/* Members List */}
+//         <div className="w-full lg:w-1/4 bg-[#1a1a1a] rounded-2xl p-6 shadow-xl max-h-[80vh] overflow-y-auto">
+//           <h2 className="text-lg  lg:text-2xl font-bold mb-4 text-center">👥 Members</h2>
+//           <MemberLists members={teamInfo?.teamMembers} />
+//         </div>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default TeamDetail;
 
 
 

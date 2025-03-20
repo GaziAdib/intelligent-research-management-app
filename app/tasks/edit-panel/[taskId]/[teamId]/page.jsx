@@ -18,18 +18,18 @@ async function fetchSingleTaskInfo(teamId, taskId) {
 
 // fetch messages 
 
-async function fetchConversationMessages(conversationId) {
-  const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  });
+// async function fetchConversationMessages(conversationId) {
+//   const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}`, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//     },
+//   });
 
-  if (!res.ok) throw new Error("Failed to fetch messages");
+//   if (!res.ok) throw new Error("Failed to fetch messages");
 
-  return res.json();
-}
+//   return res.json();
+// }
 
 const TaskEditPanel = async ({ params }) => {
   const session = await auth();
@@ -40,8 +40,8 @@ const TaskEditPanel = async ({ params }) => {
 
   console.log("Task Info", taskInfo);
 
-  let conversationId = taskInfo?.team?.conversation?.id;
-  const messages = await fetchConversationMessages(conversationId)
+  // let conversationId = taskInfo?.team?.conversation?.id;
+  // const messages = await fetchConversationMessages(conversationId)
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-700 to-indigo-900 text-white p-6">
@@ -62,7 +62,7 @@ const TaskEditPanel = async ({ params }) => {
         </div>
 
         <div className="chat panel">
-            <ChatPopup conversationId={conversationId} teamId={teamId} messages={messages?.data} />
+            {/* <ChatPopup conversationId={conversationId} teamId={teamId} messages={messages?.data} /> */}
         </div>
       </div>
     </div>

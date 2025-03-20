@@ -4,20 +4,25 @@ import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 
 const Pagination = ({ totalPages }) => {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const pathname = usePathname();
 
+  const { replace, refresh } = useRouter()
+
   // Ensure pageNumber defaults to 1 if not present
-  const pageNumber = Number(searchParams.get("pageNumber")) || 0;
+  const pageNumber = Number(searchParams.get("pageNumber")) || 1;
 
   const handlePageChange = (newPage) => {
     if (newPage < 1 || newPage > totalPages) return;
 
     const params = new URLSearchParams(searchParams);
-    params.set("pageNumber", newPage.toString()); // Set the page number as a string
 
-    router.replace(`${pathname}?${params.toString()}`);
+    if(newPage) {
+        params.set("pageNumber", newPage.toString()); // Set the page number as a string
+        replace(`${pathname}?${params.toString()}`);
+    } else {
+        params.delete("pageNumber");
+    }
   };
 
   return (

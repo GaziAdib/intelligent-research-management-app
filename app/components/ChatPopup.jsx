@@ -11,7 +11,7 @@ export default function ChatPopup({ conversationId, teamId, messages }) {
   const [messagess, setMessagess] = useState([...messages]);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const session = useSession();
+  const session = useSession()
   const currentUserId = session?.data?.user?.id;
 
   const messagesEndRef = useRef(null);
