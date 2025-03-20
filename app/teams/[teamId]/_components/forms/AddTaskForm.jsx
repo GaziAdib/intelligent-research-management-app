@@ -32,12 +32,6 @@ const leaderId = teamInfo?.leaderId
   });
 
   const onSubmit = async (data) => {
-
-    console.log('data', data)
-
-    console.log('teamId', teamId)
-    console.log('leaderId', leaderId)
-
     try {
       const res = await fetch(`/api/leader/tasks/add-task/${teamId}/${leaderId}`, {
         method: "POST",

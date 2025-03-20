@@ -5,18 +5,23 @@ const prisma = new PrismaClient();
 class TaskService {
 
     // fetch all tasks by teamId
-    async fetchTasks(teamId) {
-            return await prisma.task.findMany({
-                where: {
-                    teamId: teamId,
-                },
-                include: {
-                    team: true,
-                    taskAssignedBy: true
-                },
-                
-            })
+    async fetchTasks(teamId, limit = 5, pageNumber = 1) {
+        // Ensure pageNumber is a valid number
+        const safePageNumber = Number(pageNumber) || 1;
+    
+        return await prisma.task.findMany({
+            where: {
+                teamId: teamId,
+            },
+            include: {
+                team: true,
+                taskAssignedBy: true
+            },
+            take: Number(limit),
+            skip: (safePageNumber - 1) * Number(limit) // Prevent NaN issues
+        });
     }
+
 
     // find each task info bt taskId and teamId
     async fetchSingleTask(teamId,taskId) {

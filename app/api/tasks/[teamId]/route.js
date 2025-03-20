@@ -11,6 +11,18 @@ export async function GET(req, {params}) {
 
   // let userId = user?.id
 
+  // use pagination 
+
+
+  let pageNumber = req.nextUrl?.searchParams?.get("pageNumber");
+
+  pageNumber = Number(pageNumber);
+
+  let limit = 5
+
+
+
+
 
 
   try {
@@ -26,9 +38,10 @@ export async function GET(req, {params}) {
     //     return NextResponse.json({message: 'You Are not in this team so you cannot see tasks'}, { status: 404 });
     // }
 
-    const tasks = await TaskService.fetchTasks(teamId)
+
+    const tasks = await TaskService.fetchTasks(teamId, limit, pageNumber)
     
-    return NextResponse.json({data:tasks}, { status: 200 });
+    return NextResponse.json({ data: tasks }, { status: 200 });
 
     
   } catch (error) {
