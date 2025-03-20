@@ -2,6 +2,8 @@
 
 import { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
+import { dark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 
 export default function AIChatComponent() {
   const [query, setQuery] = useState('');
@@ -124,6 +126,15 @@ export default function AIChatComponent() {
               {displayedText}
             </ReactMarkdown>
           </div>
+
+          <h2 className="text-lg font-semibold text-indigo-300 mt-4">AI Response:</h2>
+          <div className="mt-2 text-gray-300">
+          <SyntaxHighlighter language="javascript" style={dark}>
+            {displayedText}
+          </SyntaxHighlighter>
+          </div>
+
+
         </div>
       )}
     </div>

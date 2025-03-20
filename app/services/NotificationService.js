@@ -30,9 +30,6 @@ class NotificationService {
     }
 
 
-    //TASK_APPROVED type
-    //TASK_ASSIGNED type
-    //TASK_REJECTED type
 
     // Create Notification based on some events
     async sendNotification(teamId, taskId, message, type, receiverids, receiversEmails) {
