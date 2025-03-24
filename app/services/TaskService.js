@@ -5,12 +5,11 @@ const prisma = new PrismaClient();
 class TaskService {
 
     // fetch all tasks by teamId
-    async fetchTasks(teamId, limit, pageNumber) {
+    async fetchTasks(teamId, limit, pageNumber, status) {
     
         const safePageNumber = Number(pageNumber) || 1;
 
-        // Fetch the total count of tasks for the team
-        // Fetch the total count of tasks for the team
+       
         const totalTasksCount = await prisma.task.count({
             where: {
                 teamId: teamId,
@@ -22,6 +21,7 @@ class TaskService {
         const tasks = await prisma.task.findMany({
             where: {
                 teamId: teamId,
+                ...(status ? { status } : {}),
             },
             include: {
                 team: true,

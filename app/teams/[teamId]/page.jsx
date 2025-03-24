@@ -5,6 +5,8 @@ import MemberLists from "../_components/MemberLists";
 import ModalConversationButton from "./_components/modals/ConversationModalButton";
 import ChatPopup from "@/app/components/ChatPopup";
 import Pagination from "./_components/pagination/Pagination";
+import SearchTasks from "./_components/search/SearchTasks";
+import FilterTasks from "./_components/filter/FilterTasks";
 
 
 
@@ -22,13 +24,13 @@ async function fetchSingleTeamInfo(teamid) {
 }
 
 
-async function fetchTasks(teamId, pageNumber) {
+async function fetchTasks(teamId, pageNumber, currentStatus) {
   // Use a ternary operator to conditionally construct the URL
   // const url = pageNumber
   //   ? `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}`
   //   : `http://localhost:3000/api/tasks/${teamId}`;
 
-  const url = `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}`
+  const url = `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}&status=${currentStatus ? currentStatus: ''}`
   const res = await fetch(url, {
     method: "GET",
     headers: {
@@ -60,6 +62,8 @@ const TeamDetail = async ({ params, searchParams }) => {
   const { user } = await auth();
   const currentUserId = user?.id;
 
+  const { status } = await searchParams;
+
   let { pageNumber } = await searchParams;
   let pageNumber1 = pageNumber ? Number(pageNumber) : 1; // Ensure pageNumber is a number
 
@@ -68,7 +72,7 @@ const TeamDetail = async ({ params, searchParams }) => {
   let teamInfo = await fetchSingleTeamInfo(teamId);
   teamInfo = teamInfo.data;
 
-  let data = await fetchTasks(teamId, pageNumber1);
+  let data = await fetchTasks(teamId, pageNumber1, status);
   let tasks =  data?.data;
   let totalPages =  data?.totalPages;
 
@@ -92,8 +96,13 @@ const TeamDetail = async ({ params, searchParams }) => {
 
       {/* Main Content */}
       <div className="flex flex-col lg:flex-row gap-6">
+        
         {/* Task List */}
         <div className="w-full lg:w-3/4 rounded-2xl p-6 shadow-xl max-h-[80vh]">
+        <div className="flex flex-col md:flex-row gap-4 items-center mb-6">
+          <SearchTasks  />
+          <FilterTasks  />
+        </div>
           {tasks?.length === 0 ? (
             <div className="text-gray-400 text-center mt-10">
               <h2 className="text-xl">No tasks created yet.</h2>
