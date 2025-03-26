@@ -24,24 +24,69 @@ async function fetchSingleTeamInfo(teamid) {
 }
 
 
-async function fetchTasks(teamId, pageNumber, currentStatus) {
-  // Use a ternary operator to conditionally construct the URL
-  // const url = pageNumber
-  //   ? `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}`
-  //   : `http://localhost:3000/api/tasks/${teamId}`;
+// async function fetchTasks(teamId, pageNumber, currentStatus) {
+//   // Use a ternary operator to conditionally construct the URL
+//   // const url = pageNumber
+//   //   ? `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}`
+//   //   : `http://localhost:3000/api/tasks/${teamId}`;
 
-  const url = `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}&status=${currentStatus ? currentStatus: ''}`
-  const res = await fetch(url, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
+//   const url = `http://localhost:3000/api/tasks/${teamId}?pageNumber=${pageNumber.toString()}&status=${currentStatus ? currentStatus: ''}`
+//   const res = await fetch(url, {
+//     method: "GET",
+//     headers: {
+//       "Content-Type": "application/json",
+//     }
+//   });
+
+//   if (!res.ok) throw new Error("Failed to fetch tasks");
+
+//   return res.json();
+// }
+
+
+const fetchTasks = async (teamId, pageNumber, currentStatus, query = '') => {
+  try {
+
+    // Construct the URL with query parameters
+    const baseUrl = `http://localhost:3000/api/tasks/${teamId}`;
+    const url = new URL(baseUrl);
+
+    // if query is available
+    if (query) {
+      url.searchParams.append('query', query); // Add query filter
     }
-  });
 
-  if (!res.ok) throw new Error("Failed to fetch tasks");
+    if (pageNumber) {
+      url.searchParams.append('pageNumber', pageNumber); // Add query filter
+    }
 
-  return res.json();
-}
+    if (currentStatus) {
+      url.searchParams.append('status', currentStatus); // Add query filter
+    }
+
+    // Fetch data
+    const res = await fetch(url, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+
+    if (res.ok) {
+      const tasks = await res.json();
+      return tasks; // Return products data
+    } else {
+      console.log('Failed to fetch roadmaps');
+    }
+  } catch (error) {
+    console.log('Error fetching roadmaps:', error);
+  }
+
+  return [];
+};
+
+
+
 
  async function fetchConversationMessages(conversationId, teamId) {
     const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`, {
@@ -58,27 +103,32 @@ async function fetchTasks(teamId, pageNumber, currentStatus) {
 
 
 const TeamDetail = async ({ params, searchParams }) => {
+
   const { teamId } = await params;
+
   const { user } = await auth();
+  
   const currentUserId = user?.id;
 
   const { status } = await searchParams;
 
+  const { query } = await searchParams;
+
   let { pageNumber } = await searchParams;
+
   let pageNumber1 = pageNumber ? Number(pageNumber) : 1; // Ensure pageNumber is a number
 
-  console.log("Page Number:", pageNumber1);
-
+  // fetch single team info
   let teamInfo = await fetchSingleTeamInfo(teamId);
   teamInfo = teamInfo.data;
 
-  let data = await fetchTasks(teamId, pageNumber1, status);
+  // fetch all tasks 
+  let data = await fetchTasks(teamId, pageNumber1, status, query);
   let tasks =  data?.data;
   let totalPages =  data?.totalPages;
 
-  console.log("Tasks Length:", tasks?.length);
-  console.log("Total Pages:", totalPages);
 
+  // fetch conversations for the team
   let conversationsId = teamInfo?.conversation?.id;
   let messages = await fetchConversationMessages(conversationsId, teamId);
 

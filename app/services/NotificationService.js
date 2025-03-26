@@ -24,8 +24,8 @@ class NotificationService {
             },
             orderBy: {
                 createdAt: "desc"
-            }
-           
+            },
+            take: 5
         })
     }
 

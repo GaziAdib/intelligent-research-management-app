@@ -17,9 +17,12 @@ export async function GET(req, {params}) {
 
   let currentStatus = req?.nextUrl?.searchParams?.get("status");
 
+
+  let query = req?.nextUrl?.searchParams?.get("query")
+
   const page = Number(pageNumber);
 
-  let limit = 3
+  let limit = 6
 
   try {
 
@@ -35,7 +38,7 @@ export async function GET(req, {params}) {
     // }
 
 
-    const tasks = await TaskService.fetchTasks(teamId, limit, page, currentStatus)
+    const tasks = await TaskService.fetchTasks(teamId, limit, page, currentStatus, query)
 
     
     return NextResponse.json({ data: tasks?.tasks, totalPages:tasks?.totalPages  }, { status: 200 });

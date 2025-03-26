@@ -5,7 +5,7 @@ const prisma = new PrismaClient();
 class TaskService {
 
     // fetch all tasks by teamId
-    async fetchTasks(teamId, limit, pageNumber, status) {
+    async fetchTasks(teamId, limit, pageNumber, status, query) {
     
         const safePageNumber = Number(pageNumber) || 1;
 
@@ -17,15 +17,45 @@ class TaskService {
         });
 
         console.log('Total Tasks Count---', totalTasksCount)
-        // Fetch the paginated tasks
+
+        //  search filter if query exists
+        const searchFilter = query
+        ? {
+            OR: [
+                { taskTitle: { contains: query, mode: 'insensitive' } },
+                { taskShortDescription: { contains: query, mode: 'insensitive' } },
+                { taskMemberDraftContent: { contains: query, mode: 'insensitive' } },
+                { taskMemberFinalContent: { contains: query, mode: 'insensitive' } }
+            ],
+        }
+        : {};
+
+        // Fetching paginated tasks 
         const tasks = await prisma.task.findMany({
             where: {
                 teamId: teamId,
+                ...searchFilter,
                 ...(status ? { status } : {}),
             },
             include: {
-                team: true,
-                taskAssignedBy: true,
+                team: {
+                    include: {
+                        tasks: {
+                            include:{
+                                taskAssignedBy: true
+                            }
+                        }
+                    }
+                },
+                taskAssignedBy: {
+                    select: {
+                        id: true,
+                        email: true,
+                        username: true,
+                        profileImageUrl: true,
+                        role: true
+                    }
+                },
             },
             take: Number(limit),
             skip: (safePageNumber - 1) * Number(limit) // Skip based on page number
@@ -35,11 +65,10 @@ class TaskService {
         const totalPages = Math.ceil(totalTasksCount / Number(limit));
 
         return {
-            tasks, // The paginated tasks
-            totalPages // Total number of pages
+            tasks,
+            totalPages
         };
     }
-
 
     // find each task info bt taskId and teamId
     async fetchSingleTask(teamId,taskId) {
