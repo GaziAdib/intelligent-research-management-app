@@ -10,9 +10,8 @@ export async function GET(req, {params}) {
 
     const team = await TeamService.fetchSingleTeam(teamId)
 
-    console.log('Team', team)
-    
     return NextResponse.json({data:team}, { status: 200 });
+    
   } catch (error) {
     console.error("Error fetching teams data:", error);
     return NextResponse.json(

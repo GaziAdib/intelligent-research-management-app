@@ -9,7 +9,6 @@ class TaskService {
     
         const safePageNumber = Number(pageNumber) || 1;
 
-       
         const totalTasksCount = await prisma.task.count({
             where: {
                 teamId: teamId,
@@ -23,9 +22,7 @@ class TaskService {
         ? {
             OR: [
                 { taskTitle: { contains: query, mode: 'insensitive' } },
-                { taskShortDescription: { contains: query, mode: 'insensitive' } },
-                { taskMemberDraftContent: { contains: query, mode: 'insensitive' } },
-                { taskMemberFinalContent: { contains: query, mode: 'insensitive' } }
+                { taskShortDescription: { contains: query, mode: 'insensitive' } }
             ],
         }
         : {};
@@ -34,19 +31,10 @@ class TaskService {
         const tasks = await prisma.task.findMany({
             where: {
                 teamId: teamId,
-                ...searchFilter,
-                ...(status ? { status } : {}),
+                ...(status ? { status: status.toString() } : {}),
+                ...searchFilter
             },
             include: {
-                team: {
-                    include: {
-                        tasks: {
-                            include:{
-                                taskAssignedBy: true
-                            }
-                        }
-                    }
-                },
                 taskAssignedBy: {
                     select: {
                         id: true,

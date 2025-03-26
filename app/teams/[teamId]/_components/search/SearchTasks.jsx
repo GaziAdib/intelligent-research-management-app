@@ -40,7 +40,7 @@ const SearchTasks = () => {
       placeholder="🔍 Search tasks..."
       value={searchQuery}
       onChange={(e) => setSearchQuery(e.target.value)}
-      className="w-full md:w-64 p-2 text-white bg-gray-800 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+      className="w-full p-2 text-white bg-gray-800 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
   );
 };
@@ -52,43 +52,3 @@ export default SearchTasks;
 
 
 
-// "use client";
-// import { usePathname, useRouter, useSearchParams } from "next/navigation";
-
-
-// const SearchTasks = () => {
-  
-//   const searchParams = useSearchParams();
-
-//   const pathName = usePathname()
-  
-//   const {replace} = useRouter()
-
-
-
-//   const handleSearch = (searchQuery) => {
-    
-//     const params = new URLSearchParams(searchParams);
-
-//         if (searchQuery) {
-//             params.set('query', searchQuery);
-//         } else {
-//             params.delete('query');
-//         }
-
-//         replace(`${pathName}?${params.toString()}`) //http://localhost:3000/blogs?query=science
-
-   
-//   };
-
-//   return (
-//     <input
-//       type="text"
-//       placeholder="🔍 Search tasks..."
-//       onChange={(e) => handleSearch(e.target.value) }
-//       className="w-full md:w-64 p-2 text-white bg-gray-800 rounded-lg border border-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
-//     />
-//   );
-// };
-
-// export default SearchTasks;

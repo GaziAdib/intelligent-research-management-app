@@ -6,7 +6,7 @@ const MemberLists = ({members}) => {
     <h5 className="text-md text-start font-medium text-white mb-4 mt-1">
       See Current Members 🧑🏻‍🤝‍🧑🏼
     </h5>
-    <div className="grid grid-cols-1  gap-2">
+    <div className="grid grid-cols-1 gap-2">
         {members && members?.length > 0 ? (
           members?.map((member) => (
           <div
