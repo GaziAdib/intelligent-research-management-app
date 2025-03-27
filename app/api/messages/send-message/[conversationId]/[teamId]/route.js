@@ -1,4 +1,5 @@
 import { auth } from "@/app/auth";
+import pusher from "@/app/libs/pusherConfig";
 import ChatMessageService from "@/app/services/ChatMessageService";
 import TeamService from "@/app/services/TeamService";
 import { revalidatePath } from "next/cache";
@@ -28,6 +29,21 @@ export async function POST(req, {params}) {
           currentUserId, teamMembersIds, content
         )
 
+        // add pusher for realtime chat service
+
+        await pusher.trigger(`user-chat`, "send-message", {
+          message: {
+            id: newMessage?.id,
+            senderId: newMessage.senderId,
+            conversationId: newMessage.conversationId,
+            content: newMessage.content,
+            receivers: newMessage.receivers,
+            createdAt: newMessage.createdAt,
+            updatedAt: newMessage.updatedAt
+          },
+        });
+
+  
         revalidatePath(`/teams/${teamId}`);
 
         return NextResponse.json(

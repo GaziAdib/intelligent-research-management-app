@@ -37,7 +37,8 @@ const TaskCard = ({ task }) => {
          alert('Task Deleted Successfully')
       } else {
         const errorData = await res.json()
-        console.log('Error Deleting Task', errorData.message)
+        alert(errorData.message)
+        console.log('Error Deleting task', errorData.message)
       }
      
 

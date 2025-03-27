@@ -73,8 +73,6 @@ const TeamCard = ({ team }) => {
     (user) => !teamMembers.some((member) => member?.userId === user?.id)
   );
 
-  console.log('User Not In Team', usersNotInTeam)
-
   // Handle assigning a user to the team
   const handleAssignUserToTeam = async (userId, teamId) => {
       try {
@@ -152,12 +150,15 @@ const TeamCard = ({ team }) => {
       </p>
 
       {/* Add Members Button */}
-      <button
-        onClick={handleAddMembersClick}
-        className="w-full mt-3 mb-4 bg-gradient-to-r from-green-500 to-blue-500 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200"
-      >
-        Add Members
+      {
+        leader?.id === currentUserId && 
+        <button
+          onClick={handleAddMembersClick}
+          className="w-full mt-3 mb-4 bg-gradient-to-r from-green-500 to-blue-500 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200"
+        >
+          Add Members
       </button>
+      }
 
       <Link href={`/teams/${teamId}`} className="w-full text-center block mt-5 bg-gradient-to-r from-gray-500 to-gray-950 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200">
           Details
