@@ -1,6 +1,5 @@
 "use client";
 import { useSession } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import Pusher from "pusher-js";
 import { useState, useEffect, useRef } from "react";
 import { FaComments } from "react-icons/fa";
@@ -10,17 +9,23 @@ export default function ChatPopup({ conversationId, teamId, messages }) {
   const [message, setMessage] = useState("");
   const [messagess, setMessagess] = useState([...messages]);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const session = useSession();
   const currentUserId = session?.data?.user?.id;
 
   const messagesEndRef = useRef(null);
 
   useEffect(() => {
-    const pusher = new Pusher("fbd04a7c8844115f0fd9", {
-      cluster: "us3",
-      forceTLS: true,
-    });
+
+    if (!isChatOpen) return
+
+    if(!window.pusherInstance) {
+      window.pusherInstance = new Pusher('fbd04a7c8844115f0fd9', {
+        cluster: "us3",
+        forceTLS: true,
+      })
+    }
+
+    const pusher = window.pusherInstance;
 
     const channel = pusher.subscribe('user-chat');
 
@@ -37,11 +42,14 @@ export default function ChatPopup({ conversationId, teamId, messages }) {
     });
 
     return () => {
-      channel.unbind_all();
-      channel.unsubscribe();
-      pusher.disconnect();
+      if(isChatOpen) {
+        channel.unbind_all();
+        channel.unsubscribe();
+      }
     };
-  }, [conversationId]);
+  }, [conversationId, isChatOpen]);
+
+
 
   useEffect(() => {
     scrollToBottom();
@@ -58,7 +66,7 @@ export default function ChatPopup({ conversationId, teamId, messages }) {
     
     if (!message.trim()) return;
 
-    const tempId = `temp-${Date.now()}`; // Prefix with 'temp-' to avoid conflicts
+    const tempId = `temp-${Date.now()}`;
 
     const optimisticMsg = {
       id: tempId,
@@ -73,7 +81,7 @@ export default function ChatPopup({ conversationId, teamId, messages }) {
         profileImageUrl: session?.data?.user?.image || "https://avatars.githubusercontent.com/u/41202696?v=4",
         username: session?.data?.user?.username,
       },
-      optimistic: true, // Mark as temporary
+      optimistic: true, // temporary
     };
 
     // Add optimistic message

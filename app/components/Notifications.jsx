@@ -53,14 +53,12 @@ const Notifications = () => {
       forceTLS: true,
     });
 
-    //const channel = pusher.subscribe(`team-${currentUserId}`); // Subscribe to a user-specific channel
-    //console.log("Subscribed to notifications channel:", `user-${currentUserId}`);
+   
 
     const channel = pusher.subscribe(`user`)
 
     // Listen for new notifications
     channel.bind("send-notification", (data) => {
-      console.log("New notification received:", data.notification);
       setNotifications((prev) => [data.notification, ...prev]); // Add new notification to the list
     });
 
