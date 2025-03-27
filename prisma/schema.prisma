@@ -34,7 +34,6 @@ model User {
   taskReferences TaskReference[]
   teamMembers    TeamMember[]
   messageSenders  Message[] @relation("Sender")
-  // messageReceipts MessageReceipt[]
   conversation Conversation[]
 }
 
@@ -58,9 +57,9 @@ model Team {
 model TeamMember {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
   teamId       String   @db.ObjectId
-  team         Team?    @relation(fields: [teamId], references: [id])
+  team         Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
   userId       String   @db.ObjectId
-  user         User?    @relation(fields: [userId], references: [id])
+  user         User?    @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -71,7 +70,7 @@ model Conversation {
   team      Team?     @relation(fields: [teamId], references: [id], onDelete: Cascade)
   title     String  // Optional: You can give conversation a title
   creatorId String?   @db.ObjectId
-  creator   User?     @relation(fields: [creatorId], references: [id], onDelete: Cascade)
+  creator   User?     @relation(fields: [creatorId], references: [id])
   messages  Message[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -87,18 +86,8 @@ model Message {
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
   receivers      String[]       @db.ObjectId
-  // receivers      MessageReceipt[] 
 }
 
-// model MessageReceipt {
-//   id         String    @id @default(auto()) @map("_id") @db.ObjectId
-//   messageId  String    @db.ObjectId
-//   message    Message   @relation(fields: [messageId], references: [id], onDelete: Cascade)
-//   receiverId String    @db.ObjectId
-//   receiver   User      @relation(fields: [receiverId], references: [id]) // Can be TeamMember if you want
-//   seen       Boolean   @default(false)
-//   seenAt     DateTime?
-// }
 
 
 
@@ -140,9 +129,9 @@ model TaskLeaderMergedContent {
 model TaskReference {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
   taskId        String   @db.ObjectId   // Reference to the Task
-  task          Task     @relation(fields: [taskId], references: [id])
-  mediaType     ReferenceType // Type of the reference (PDF, Image, etc.)
-  mediaUrls     String[]  // Array of media URLs
+  task          Task     @relation(fields: [taskId], references: [id], onDelete:Cascade)
+  mediaType     ReferenceType 
+  mediaUrls     String[]  
   userId        String   @db.ObjectId
   publicIds     String[] 
   uploadedBy    User?    @relation(fields: [userId], references: [id])
