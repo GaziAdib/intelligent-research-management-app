@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import MemberLists from "./MemberLists";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
 
 
 async function fetchAllUsers() {
@@ -22,13 +23,19 @@ async function fetchAllUsers() {
 }
 
 const TeamCard = ({ team }) => {
+
+  const router = useRouter()
+
+  const session = useSession();
+
   const [members, setMembers] = useState([]);
   const [allUsers, setAllUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const router = useRouter()
+  
+  const currentUserId = session?.data?.user?.id
 
   const { id:teamId, teamName, teamShortDescription, leader, createdAt, teamMembers } = team || {};
 
@@ -109,6 +116,7 @@ const TeamCard = ({ team }) => {
          alert('Team Deleted Successfully')
       } else {
         const errorData = await res.json()
+        alert(errorData.message)
         console.log('Error Deleting Team', errorData.message)
       }
      
@@ -155,12 +163,15 @@ const TeamCard = ({ team }) => {
           Details
       </Link>
 
-      <button
-        onClick={() => handleDeleteTeam(teamId)}
-        className="w-full mt-3 mb-4 bg-gradient-to-r from-red-500 to-blue-500 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200"
-      >
-        X Remove Team 
+     {
+        leader?.id === currentUserId && 
+        <button
+          onClick={() => handleDeleteTeam(teamId)}
+          className="w-full mt-3 mb-4 bg-gradient-to-r from-red-500 to-blue-500 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200"
+        >
+          X Remove Team 
       </button>
+     }
 
       {/* Modal for Adding Members */}
       {isModalOpen && (
