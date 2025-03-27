@@ -3,10 +3,9 @@ import { NextResponse } from "next/server";
 
 export async function GET(req, {params}) {
 
-    const teamId = await params?.teamId || ''
+  const { teamId } = await params
 
   try {
-
 
     const team = await TeamService.fetchSingleTeam(teamId)
 

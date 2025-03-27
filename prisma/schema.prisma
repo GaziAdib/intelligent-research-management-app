@@ -95,7 +95,7 @@ model Task {
   id                          String   @id @default(auto()) @map("_id") @db.ObjectId
   leaderId                    String   @db.ObjectId
   teamId                      String   @db.ObjectId
-  team                        Team?    @relation(fields: [teamId], references: [id])
+  team                        Team?    @relation(fields: [teamId], references: [id], onDelete:Cascade)
   taskTitle                   String
   taskShortDescription        String
   taskMemberDraftContent      String?

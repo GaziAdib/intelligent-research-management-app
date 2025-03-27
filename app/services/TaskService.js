@@ -139,11 +139,10 @@ class TaskService {
     }
 
     // Delete a team only by leader
-    async DeleteTask(taskId, leaderId) {
+    async DeleteTask(taskId) {
         return await prisma.task.delete({
             where: {
-                id: taskId,
-                leaderId: leaderId,
+                id: taskId
             }
         })
     }

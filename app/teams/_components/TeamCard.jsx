@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import MemberLists from "./MemberLists";
 import Link from "next/link";
 
@@ -20,7 +20,6 @@ async function fetchAllUsers() {
 
   return res.json();
 }
-
 
 const TeamCard = ({ team }) => {
   const [members, setMembers] = useState([]);
@@ -97,13 +96,27 @@ const TeamCard = ({ team }) => {
     setIsModalOpen(false); // Close the modal after assigning
   };
 
-  // if (loading) {
-  //   return <p>Loading members...</p>;
-  // }
 
-  // if (error) {
-  //   return <p className="text-red-400">{error}</p>;
-  // }
+  const handleDeleteTeam = async (teamId) => {
+    try {
+    
+      const res = await fetch(`/api/leader/teams/delete-team/${teamId}`, {
+          method: 'DELETE'
+      });
+
+      if(res.ok) {
+         router.refresh()
+         alert('Team Deleted Successfully')
+      } else {
+        const errorData = await res.json()
+        console.log('Error Deleting Team', errorData.message)
+      }
+     
+  } catch (error) {
+      console.error('Error deleting team:', error.message);
+  }
+
+  }
 
   return (
     <div className="relative bg-gray-800/30 p-6 rounded-lg shadow-2xl backdrop-blur-md border border-gray-700/30 hover:border-gray-600/50 transition-all duration-300 hover:shadow-[0_0_20px_rgba(59,130,246,0.3)]">
@@ -141,6 +154,13 @@ const TeamCard = ({ team }) => {
       <Link href={`/teams/${teamId}`} className="w-full text-center block mt-5 bg-gradient-to-r from-gray-500 to-gray-950 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200">
           Details
       </Link>
+
+      <button
+        onClick={() => handleDeleteTeam(teamId)}
+        className="w-full mt-3 mb-4 bg-gradient-to-r from-red-500 to-blue-500 hover:opacity-90 text-white font-semibold p-1 rounded-lg transition duration-200"
+      >
+        X Remove Team 
+      </button>
 
       {/* Modal for Adding Members */}
       {isModalOpen && (

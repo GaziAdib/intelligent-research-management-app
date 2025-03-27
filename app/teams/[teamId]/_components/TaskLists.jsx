@@ -481,11 +481,11 @@ const TaskLists = ({ tasks: initialTasks, teamId }) => {
 
     // Cleanup function
     return () => {
-      channel.unbind_all(); // Unbind all event listeners
-      channel.unsubscribe(); // Unsubscribe from the channel
-      pusher.disconnect(); // Disconnect Pusher
+      channel.unbind_all();
+      channel.unsubscribe(); 
+      pusher.disconnect();
     };
-  }, [teamId]); // Re-run effect if teamId changes
+  }, [teamId]); 
 
   return (
     <div className="min-h-screen text-white p-6">

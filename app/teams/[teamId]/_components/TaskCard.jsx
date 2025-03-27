@@ -1,9 +1,10 @@
 "use client";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { FaEllipsisV, FaTrash, FaEdit, FaUser } from "react-icons/fa";
 
-const TaskCard = ({task}) => {
+const TaskCard = ({ task }) => {
 
   const [openMenuId, setOpenMenuId] = useState(null);
 
@@ -20,6 +21,31 @@ const TaskCard = ({task}) => {
       day: "numeric",
     });
   };
+
+  const router = useRouter();
+
+  const handleDeleteTask = async (taskId) => {
+    console.log('Task id', taskId)
+    try {
+    
+      const res = await fetch(`/api/leader/tasks/delete-task/${taskId}`, {
+          method: 'DELETE'
+      });
+
+      if(res.ok) {
+         router.refresh()
+         alert('Task Deleted Successfully')
+      } else {
+        const errorData = await res.json()
+        console.log('Error Deleting Task', errorData.message)
+      }
+     
+
+  
+  } catch (error) {
+      console.error('Error deleting task:', error.message);
+  }
+  }
 
   return (
     <div
@@ -120,7 +146,7 @@ const TaskCard = ({task}) => {
                     <FaEdit className="mr-2" /> Edit
                   </button>
                   <button
-                    onClick={() => console.log("Delete:", task?.id)}
+                    onClick={() => handleDeleteTask(task.id)}
                     className="w-full flex items-center px-4 py-2 text-sm text-red-500 hover:bg-gray-700 transition-colors duration-300"
                   >
                     <FaTrash className="mr-2" /> Delete
