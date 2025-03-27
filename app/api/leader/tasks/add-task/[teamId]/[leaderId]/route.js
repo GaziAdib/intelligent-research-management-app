@@ -1,18 +1,27 @@
+import { auth } from "@/app/auth";
 import TaskService from "@/app/services/TaskService";
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
 export async function POST(req, {params}) {
 
-    const leaderId = await params?.leaderId || "";
-    const teamId = await params?.teamId || "";
+    const {leaderId} = await params;
+    const {teamId} = await params;
 
-    console.log(teamId, leaderId)
+    const session = await auth();
+    const currentUserId = session?.user?.id;
 
   try {
 
 
     const { taskTitle, taskShortDescription, priority, taskBgColor, taskTextColor } = await req.json();
+
+    if(leaderId !== currentUserId) {
+      return NextResponse.json(
+        { message: "You Are Not Authorized to add task" },
+        { status: 403 }
+      );
+    }
     
     const newTask = await TaskService.addTaskToTeam(
         leaderId,

@@ -14,8 +14,6 @@ const taskSchema = z.object({
 
 const AddTaskForm = ({teamInfo}) => {
 
-console.log('TeamInfo Client form', teamInfo)
-
 const teamId = teamInfo?.id
 const leaderId = teamInfo?.leaderId
 
@@ -43,7 +41,9 @@ const leaderId = teamInfo?.leaderId
         reset();
         alert("Task Created Successfully");
       } else {
-        alert("Error creating task");
+        const errData = await res.json()
+        alert(errData.message);
+        console.log('Not Authorized to create task!')
       }
     } catch (error) {
       alert("Something went wrong!");

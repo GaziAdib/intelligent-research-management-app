@@ -42,7 +42,7 @@ export async function PUT(req, {params}) {
       
     
     
-        let message = `Task Removed by Leader: ${assignedTaskRemovedFromMembers?.taskAssignedBy?.username} on topic: ${assignedTaskRemovedFromMembers?.taskTitle}. Please check it out asap!!!`
+        let message = `Leader ${assignedTaskRemovedFromMembers?.taskAssignedBy?.username} Removed You From Assigned Task! on topic: ${assignedTaskRemovedFromMembers?.taskTitle}. Please check it out asap!!!`
         
         const newNotification = await NotificationService.sendNotification(
           assignedTaskRemovedFromMembers?.teamId,
