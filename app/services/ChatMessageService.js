@@ -205,6 +205,17 @@ class ChatMessageService {
           throw new Error("Failed to fetch chat messages: " + error.message);
         }
       }
+
+
+
+      async deleteConversations(teamId,conversationId) {
+          return await prisma.conversation.delete({
+            where: {
+              id: conversationId,
+              teamId: teamId
+            }
+          })
+      }
     
 }
 
