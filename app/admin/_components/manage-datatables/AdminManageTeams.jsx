@@ -25,7 +25,7 @@ const router = useRouter()
       });
 
       if (res.ok) {
-        alert('User Deleted!')
+        alert('Team Deleted!')
         router.refresh()
       } else {
         const errData = await res.json()
