@@ -80,6 +80,14 @@ const Navbar = () => {
             >
               Teams
             </Link>
+            {session?.data?.user?.role === "ADMIN" && (
+              <Link
+                href="/admin/dashboard"
+                className="text-gray-800 dark:text-gray-200 hover:text-gray-600 px-3 rounded-md font-medium"
+              >
+                Admin
+              </Link>
+            )}
             <Link
               href="/blogs"
               className="text-gray-800 dark:text-gray-200 hover:text-gray-600 px-3 py-2 text-sm lg:text-lg font-medium"

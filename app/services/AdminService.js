@@ -9,8 +9,7 @@ class AdminService {
     async adminFetchAllTeams() {
         return await prisma.team.findMany({
             include: {
-                leader: true,
-                teamMembers: true
+                leader: true
             }
         })
     }
@@ -37,7 +36,11 @@ class AdminService {
     }
 
     async adminFetchAllTasks() {
-        return await prisma.task.findMany({})
+        return await prisma.task.findMany({
+            include: {
+                taskAssignedBy: true
+            }
+        })
     }
 
     
@@ -117,6 +120,19 @@ class AdminService {
     // delete all conversations
     async adminDeleteAllConversations() {
         return await prisma.conversation.deleteMany({})
+    }
+
+
+
+    // admin Delete User
+
+
+    async adminRemoveUser(userId) {
+        await prisma.user.delete({
+            where: {
+                id: userId
+            }
+        })
     }
 
 

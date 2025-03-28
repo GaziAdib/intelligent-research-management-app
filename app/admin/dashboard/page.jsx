@@ -1,0 +1,124 @@
+import AdminGridStates from "../_components/AdminGridStates";
+import AdminManageTasks from "../_components/manage-datatables/AdminManageTasks";
+import AdminManageTeams from "../_components/manage-datatables/AdminManageTeams";
+import AdminManageUsers from "../_components/manage-datatables/AdminManageUsers";
+
+async function fetchAllUsers() {
+    const res = await fetch(`http://localhost:3000/api/admin/users`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!res.ok) {
+      throw new Error("Failed to fetch users");
+    }
+  
+    return res.json();
+}
+
+async function fetchAllTeams() {
+    const res = await fetch(`http://localhost:3000/api/admin/teams`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!res.ok) {
+      throw new Error("Failed to fetch teams");
+    }
+  
+    return res.json();
+}
+
+async function fetchAllTasks() {
+    const res = await fetch(`http://localhost:3000/api/admin/tasks`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!res.ok) {
+      throw new Error("Failed to fetch tasks");
+    }
+    return res.json();
+}
+
+async function fetchAllNotifications() {
+    const res = await fetch(`http://localhost:3000/api/admin/notifications`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!res.ok) {
+      throw new Error("Failed to fetch notifications");
+    }
+    return res.json();
+}
+
+async function fetchAllConversations() {
+    const res = await fetch(`http://localhost:3000/api/admin/conversations`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  
+    if (!res.ok) {
+      throw new Error("Failed to fetch coversations");
+    }
+    return res.json();
+}
+
+
+
+
+
+
+
+
+const AdminDashboard = async () => {
+
+
+  const users = await fetchAllUsers();
+
+  const tasks = await fetchAllTasks();
+
+  const teams = await fetchAllTeams();
+
+  const conversations = await fetchAllConversations();
+  
+  const notifications = await fetchAllNotifications();
+
+
+  return (
+    <div>
+        <h1 className="mt-12 py-12 mx-auto text-3xl text-white">Admin Dashboard</h1>
+        <div className="container mx-auto my-5 py-6">
+            <AdminGridStates users={users.data} tasks={tasks.data} teams={teams.data} conversations={conversations.data} notifications={notifications.data} />
+        </div>
+
+        {/* User Management */}
+        <div className="container mx-auto my-5 py-6">
+            <AdminManageUsers users={users.data} />
+        </div>
+
+         {/* Teams Management */}
+         <div className="container mx-auto my-5 py-6">
+            <AdminManageTeams teams={teams.data} />
+        </div>
+
+          {/* Tasks Management */}
+          <div className="container mx-auto my-5 py-6">
+            <AdminManageTasks tasks={tasks.data} />
+        </div>
+    </div>
+  )
+}
+
+export default AdminDashboard
