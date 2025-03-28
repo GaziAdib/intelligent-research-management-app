@@ -8,10 +8,34 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 
 const AdminManageTasks = ({ tasks }) => {
   const [sorting, setSorting] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [taskData, setTaskData] = useState(tasks);
+
+  const router = useRouter()
+  
+    const deleteTask = async (taskId) => {
+      try {
+        const res= await fetch(`/api/admin/tasks/remove-task/${taskId}`, {
+          method: "DELETE",
+        });
+  
+        if (res.ok) {
+          alert('Task Deleted!')
+          router.refresh()
+        } else {
+          const errData = await res.json()
+          alert(errData.message)
+        }
+        // Remove the deleted user from the state
+        setTaskData((prevTasks) => prevTasks.filter((task) => task.id !== taskId));
+      } catch (error) {
+        console.error("Error deleting tasks:", error);
+      }
+    };
 
   const columns = useMemo(
     () => [
@@ -24,13 +48,25 @@ const AdminManageTasks = ({ tasks }) => {
         header: "Leader Name",
         cell: ({ row }) => row?.original?.taskAssignedBy?.username || "N/A",
       },
+      {
+        id: "delete",
+        header: "Actions",
+        cell: ({ row }) => (
+          <button
+            onClick={() => deleteTask(row.original.id)}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Delete
+          </button>
+        ),
+      },
     ],
     []
   );
 
 
   const table = useReactTable({
-    data: tasks,
+    data: taskData,
     columns,
     state: { sorting, globalFilter },
     getCoreRowModel: getCoreRowModel(),

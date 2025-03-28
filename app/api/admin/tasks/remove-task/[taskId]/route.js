@@ -1,5 +1,6 @@
 import { auth } from "@/app/auth";
 import TaskService from "@/app/services/TaskService";
+
 import { revalidatePath } from "next/cache";
 import { NextResponse } from "next/server";
 
@@ -9,6 +10,8 @@ export async function DELETE(req, {params}) {
 
     const currentUser = session?.user?.id
 
+    const role = session?.user?.role;
+
     const { taskId } = await params
 
 
@@ -16,12 +19,19 @@ export async function DELETE(req, {params}) {
 
     const task = await TaskService.fetchTaskById(taskId);
 
-    if(task.leaderId !== currentUser) {
+    // if(task.leaderId !== currentUser) {
+    //     return NextResponse.json(
+    //         { message: "Are Are not Authorized to delete this tasks!" },
+    //         { status: 403 }
+    //       );
+    // } 
+
+    if(role !== 'ADMIN') {
         return NextResponse.json(
-            { message: "Are Are not Authorized to delete this tasks!" },
-            { status: 403 }
-          );
-    } 
+                { message: "Are Are not Authorized to delete this tasks!" },
+                { status: 403 }
+                );
+            }
     
     // then delete this task by leader only
     await TaskService.DeleteTask(taskId)

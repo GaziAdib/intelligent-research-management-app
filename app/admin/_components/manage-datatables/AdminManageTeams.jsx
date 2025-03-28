@@ -8,10 +8,35 @@ import {
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import { useRouter } from "next/navigation";
 
 const AdminManageTeams = ({ teams }) => {
   const [sorting, setSorting] = useState([]);
   const [globalFilter, setGlobalFilter] = useState("");
+  const [teamData, setTeamData] = useState(teams);
+
+
+const router = useRouter()
+
+  const deleteTeam = async (teamId) => {
+    try {
+      const res= await fetch(`/api/admin/teams/remove-team/${teamId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        alert('User Deleted!')
+        router.refresh()
+      } else {
+        const errData = await res.json()
+        alert(errData.message)
+      }
+      // Remove the deleted user from the state
+      setTeamData((prevTeams) => prevTeams.filter((team) => team.id !== teamId));
+    } catch (error) {
+      console.error("Error deleting team", error);
+    }
+  };
 
   const columns = useMemo(
     () => [
@@ -22,12 +47,24 @@ const AdminManageTeams = ({ teams }) => {
         header: "Leader Name",
         cell: ({ row }) => row?.original?.leader?.username || "N/A",
       },
+      {
+        id: "delete",
+        header: "Actions",
+        cell: ({ row }) => (
+          <button
+            onClick={() => deleteTeam(row.original.id)}
+            className="bg-red-500 text-white px-4 py-2 rounded"
+          >
+            Delete
+          </button>
+        ),
+      },
     ],
     []
   );
 
   const table = useReactTable({
-    data: teams,
+    data: teamData,
     columns,
     state: { sorting, globalFilter },
     getCoreRowModel: getCoreRowModel(),
