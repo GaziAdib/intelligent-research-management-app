@@ -5,6 +5,7 @@ import {
   useReactTable,
   getCoreRowModel,
   getPaginationRowModel,
+  getFilteredRowModel,
   getSortedRowModel,
   flexRender,
 } from "@tanstack/react-table";
@@ -55,11 +56,6 @@ const AdminManageUsers = ({ users }) => {
       { accessorKey: "email", header: "Email" },
       { accessorKey: "role", header: "Role" },
       {
-        accessorKey: "leader.username",
-        header: "Leader Name",
-        cell: ({ row }) => row.original.leader?.username || "N/A",
-      },
-      {
         id: "delete",
         header: "Actions",
         cell: ({ row }) => (
@@ -82,7 +78,9 @@ const AdminManageUsers = ({ users }) => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
     onSortingChange: setSorting,
+    onGlobalFilterChange: setGlobalFilter
   });
 
   return (
