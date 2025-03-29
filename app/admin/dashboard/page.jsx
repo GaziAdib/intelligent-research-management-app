@@ -81,9 +81,6 @@ async function fetchAllConversations() {
 
 
 
-
-
-
 const AdminDashboard = async () => {
 
   const session = await auth();
@@ -109,8 +106,8 @@ const AdminDashboard = async () => {
 
 
   return (
-    <div>
-        <h1 className="mt-12 py-12 mx-auto text-3xl text-white">Admin Dashboard</h1>
+    <div className="bg-black">
+        <h1 className="mt-12 py-12 mx-auto text-3xl text-center text-white">Admin Dashboard</h1>
         <div className="container mx-auto my-5 py-6">
             <AdminGridStates users={users.data} tasks={tasks.data} teams={teams.data} conversations={conversations.data} notifications={notifications.data} />
         </div>
@@ -128,7 +125,7 @@ const AdminDashboard = async () => {
           {/* Tasks Management */}
           <div className="container mx-auto my-5 py-6">
             <AdminManageTasks tasks={tasks.data} />
-        </div>
+         </div>
 
          {/* Conversation Management */}
          <div className="container mx-auto my-5 py-6">

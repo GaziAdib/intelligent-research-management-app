@@ -79,7 +79,7 @@ const AdminManageTasks = ({ tasks }) => {
   });
 
   return (
-    <div className="min-h-screen p-10 bg-gray-900 text-white">
+    <div className="p-10 bg-gray-900 text-white">
       <h2 className="text-2xl font-bold mb-4">Manage Tasks</h2>
       <input
         type="text"
