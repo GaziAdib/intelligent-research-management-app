@@ -1,8 +1,11 @@
+import { auth } from "@/app/auth";
 import AdminGridStates from "../_components/AdminGridStates";
+import AdminManageConversations from "../_components/manage-datatables/AdminManageConversations";
 import AdminManageNotifications from "../_components/manage-datatables/AdminManageNotifications";
 import AdminManageTasks from "../_components/manage-datatables/AdminManageTasks";
 import AdminManageTeams from "../_components/manage-datatables/AdminManageTeams";
 import AdminManageUsers from "../_components/manage-datatables/AdminManageUsers";
+import { redirect } from "next/navigation";
 
 async function fetchAllUsers() {
     const res = await fetch(`http://localhost:3000/api/admin/users`, {
@@ -81,9 +84,17 @@ async function fetchAllConversations() {
 
 
 
-
-
 const AdminDashboard = async () => {
+
+  const session = await auth();
+
+  if(!session) {
+    return redirect('/login')
+  }
+
+  if(session.user?.role !== 'ADMIN') {
+    return redirect('/')
+  }
 
 
   const users = await fetchAllUsers();
@@ -117,6 +128,11 @@ const AdminDashboard = async () => {
           {/* Tasks Management */}
           <div className="container mx-auto my-5 py-6">
             <AdminManageTasks tasks={tasks.data} />
+        </div>
+
+         {/* Conversation Management */}
+         <div className="container mx-auto my-5 py-6">
+            <AdminManageConversations conversations={conversations.data} />
         </div>
 
         

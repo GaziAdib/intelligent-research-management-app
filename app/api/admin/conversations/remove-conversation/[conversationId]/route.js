@@ -9,7 +9,7 @@ export async function DELETE(req, {params}) {
 
     const role = session?.user?.role;
 
-    const { notificationId } = await params;
+    const { conversationId } = await params;
 
   try {
 
@@ -19,19 +19,19 @@ export async function DELETE(req, {params}) {
                 { status: 403 }
                 );
             }
-    // then delete this notification by leader only
-    await AdminService.adminDeleteNotification(notificationId)
+    // then delete this conversation by leader only
+    await AdminService.adminDeleteConversation(conversationId)
 
     revalidatePath(`/admin/dashboard`);
 
     return NextResponse.json(
-      { message: "Notification Deleted successfully!" },
+      { message: "Conversation Deleted successfully!" },
       { status: 200 }
     );
   } catch (error) {
-    console.error("Error deleting notification:", error);
+    console.error("Error deleting conversation:", error);
     return NextResponse.json(
-      { message: "An error occurred while deleting the notification.", error: error.message },
+      { message: "An error occurred while deleting the conversation.", error: error.message },
       { status: 500 }
     );
   }

@@ -123,7 +123,9 @@ const TeamDetail = async ({ params, searchParams }) => {
 
       {/* Chat Popup */}
       <div className="fixed bottom-4 right-4 lg:static lg:mt-6">
-        <ChatPopup conversationId={teamInfo?.conversation?.id} teamId={teamId} messages={messages.data} />
+        {
+          teamInfo?.conversation?.id &&  <ChatPopup conversationId={teamInfo?.conversation?.id} teamId={teamId} messages={messages.data} />
+        }
       </div>
     </div>
     </div>

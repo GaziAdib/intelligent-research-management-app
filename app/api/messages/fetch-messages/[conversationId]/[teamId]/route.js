@@ -9,8 +9,7 @@ export async function GET(req, { params }) {
   let messages;
 
   try {
-    // Fetch chat messages
-
+    
     try {
       // Fetch team details, including members and conversation
       const teamDetails = await ChatMessageService.checkTeamMembersavailable(teamId);
@@ -21,7 +20,6 @@ export async function GET(req, { params }) {
         messages = await ChatMessageService.fetchChatMessages(conversationId);
       } else {
         console.error("Cannot fetch messages: Team has no members or no valid conversation.");
-        // Handle the case where messages cannot be fetched (e.g., return an empty array or throw an error)
         messages = [];
       }
     } catch (error) {

@@ -81,7 +81,20 @@ class AdminService {
 
     // AdminFetch ALL Conversations
     async adminFetchAllConversations() {
-        return await prisma.conversation.findMany({})
+        return await prisma.conversation.findMany({
+            include: {
+                creator: {
+                    select: {
+                        username: true
+                    }
+                },
+                team: {
+                    select: {
+                        teamName: true
+                    }
+                }
+            }
+        })
     }
 
 
