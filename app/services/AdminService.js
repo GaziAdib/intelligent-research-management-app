@@ -45,7 +45,15 @@ class AdminService {
 
     
     async adminFetchAllNotifications() {
-        return await prisma.notification.findMany({})
+        return await prisma.notification.findMany({
+            include: {
+                team: {
+                   select: {
+                    teamName: true
+                   }
+                }
+            }
+        })
     }
 
     // fetch team members count for each team

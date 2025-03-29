@@ -1,4 +1,5 @@
 import AdminGridStates from "../_components/AdminGridStates";
+import AdminManageNotifications from "../_components/manage-datatables/AdminManageNotifications";
 import AdminManageTasks from "../_components/manage-datatables/AdminManageTasks";
 import AdminManageTeams from "../_components/manage-datatables/AdminManageTeams";
 import AdminManageUsers from "../_components/manage-datatables/AdminManageUsers";
@@ -116,6 +117,12 @@ const AdminDashboard = async () => {
           {/* Tasks Management */}
           <div className="container mx-auto my-5 py-6">
             <AdminManageTasks tasks={tasks.data} />
+        </div>
+
+        
+          {/* Notifications Management */}
+          <div className="container mx-auto my-5 py-6">
+            <AdminManageNotifications notifications={notifications.data} />
         </div>
     </div>
   )
