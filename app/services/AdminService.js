@@ -116,6 +116,28 @@ class AdminService {
         })
     }
 
+       // ADMIN Delete Multiple Notifications
+       async adminDeleteMultipleNotifications(notificationIds) {
+        if (!Array.isArray(notificationIds) || notificationIds.length === 0) {
+            throw new Error("Invalid notification IDs. Provide a non-empty array.");
+        }
+    
+        try {
+             await prisma.notification.deleteMany({
+                where: {
+                    id: {
+                        in: notificationIds,
+                    },
+                },
+            });
+    
+        } catch (error) {
+            console.error("Error deleting multiple notifications:", error);
+            throw new Error("Failed to delete notifications.");
+        }
+    }
+
+
     // ADMIN Delete Conversation
     async adminDeleteConversation(conversationId) {
         return await prisma.conversation.delete({
