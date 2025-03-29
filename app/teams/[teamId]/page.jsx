@@ -8,6 +8,7 @@ import ChatPopup from "@/app/components/ChatPopup";
 import Pagination from "./_components/pagination/Pagination";
 import SearchTasks from "./_components/search/SearchTasks";
 import FilterTasks from "./_components/filter/FilterTasks";
+import { redirect } from "next/navigation";
 
 async function fetchSingleTeamInfo(teamid) {
   const res = await fetch(`http://localhost:3000/api/teams/${teamid}`, {
@@ -61,6 +62,19 @@ const TeamDetail = async ({ params, searchParams }) => {
   const { teamId } = params;
   const { user } = await auth();
   const currentUserId = user?.id;
+
+   if(!user) {
+      return redirect('/login')
+    }
+
+    if(user?.role === 'ADMIN') {
+      return redirect('/admin/dashboard')
+    }
+    
+    if(user?.role === 'USER') {
+      return redirect('/')
+    }  
+  
   const { status, query, pageNumber } = await searchParams;
 
   let pageNumber1 = pageNumber ? Number(pageNumber) : 1;

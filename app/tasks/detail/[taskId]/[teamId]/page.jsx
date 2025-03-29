@@ -1,5 +1,6 @@
 import { auth } from "@/app/auth";
 import TaskContainer from "@/app/tasks/_components/TaskContainer";
+import { redirect } from "next/navigation";
 
 // Fetch task detail from backend
 async function fetchSingleTaskInfo(teamId, taskId) {
@@ -18,6 +19,19 @@ async function fetchSingleTaskInfo(teamId, taskId) {
 const TaskDetail = async ({params}) => {
 
   const session = await auth()
+
+    if(!session) {
+        return redirect('/login')
+      }
+  
+    if(session?.user?.role === 'ADMIN') {
+      return redirect('/admin/dashboard')
+    }
+      
+    if(session?.user?.role === 'USER') {
+      return redirect('/')
+    }  
+
   const {taskId, teamId} = await params;
 
   let taskInfo = await fetchSingleTaskInfo(teamId, taskId);
@@ -25,6 +39,12 @@ const TaskDetail = async ({params}) => {
   taskInfo = taskInfo?.data
 
   let teamMembers = taskInfo?.team?.teamMembers
+
+  const exist = teamMembers.filter((member) => member?.userId === session?.user?.id)
+
+  if(!exist) {
+    return redirect('/')
+  }
 
   console.log('Task Info', taskInfo)
 

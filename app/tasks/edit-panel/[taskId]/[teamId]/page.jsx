@@ -1,6 +1,7 @@
 import { auth } from "@/app/auth";
 import ChatPopup from "@/app/components/ChatPopup";
 import TaskWorkContainer from "@/app/tasks/_components/TaskWorkPanel";
+import { redirect } from "next/navigation";
 
 // Fetch task detail from backend
 async function fetchSingleTaskInfo(teamId, taskId) {
@@ -33,6 +34,19 @@ async function fetchSingleTaskInfo(teamId, taskId) {
 
 const TaskEditPanel = async ({ params }) => {
   const session = await auth();
+
+  if(!session) {
+        return redirect('/login')
+      }
+    
+    if(session?.user?.role === 'ADMIN') {
+      return redirect('/admin/dashboard')
+    }
+        
+    if(session?.user?.role === 'USER') {
+      return redirect('/')
+    }  
+
   const { taskId, teamId } = await params;
 
   let taskInfo = await fetchSingleTaskInfo(teamId, taskId);

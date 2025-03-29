@@ -349,7 +349,7 @@ export default function TaskEditForm({ initialData }) {
           <div className="pt-6">
           <button
             type="submit"
-            disabled={isSubmitting || loading}
+            disabled={isSubmitting || loading || !initialData?.taskAssignedTo.includes(currentUserId)}
             className="w-full bg-white cursor-pointer text-xl text-slate-900 py-2 px-6 rounded-lg transition-all duration-200 transform hover:scale-105 disabled:opacity-50 disabled:hover:scale-100"
           >
             {loading ? 'Updating...' : 'Update Task'}

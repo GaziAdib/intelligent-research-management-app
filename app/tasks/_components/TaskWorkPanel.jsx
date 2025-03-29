@@ -5,6 +5,7 @@ import RenderMedia from './grid/RenderMedia';
 
 
 const TaskWorkContainer = ({ task }) => {
+
   const {
     id,
     taskTitle,

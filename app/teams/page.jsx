@@ -1,3 +1,4 @@
+import { redirect } from "next/navigation";
 import { auth } from "../auth";
 import ModalButton from "./_components/buttons/ModalButton";
 import TeamLists from "./_components/TeamLists";
@@ -19,15 +20,24 @@ async function fetchTeamsByUserId(userid) {
 }
 
 const Teams = async () => {
-  // Fetch teams data
+
 
   const session = await auth();
   let userCurrentId = session?.user?.id;
 
+  if(!session) {
+    return redirect('/login')
+  }
+
+
   let data = await fetchTeamsByUserId(userCurrentId);
   let teams =  data?.data 
 
-  console.log("Fetched teams:", teams); // Debugging
+  const matchId = teams?.filter((team) => team.teamMembers?.some((member) => member?.userId === userCurrentId))
+
+  if(matchId.length === 0 && session?.user?.role === 'ADMIN') {
+    return redirect('/admin/dashboard')
+  }
 
   // // Get the current user's session
   // const session = await auth();
