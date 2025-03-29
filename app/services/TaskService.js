@@ -304,6 +304,222 @@ class TaskService {
             }
         })
     }
+
+
+    // async removeMediaFromTaskReference(taskId, publicId) {
+
+    //     const taskRef = await prisma.taskReference.findFirst({
+    //         where: {
+    //             taskId: taskId
+    //         },
+    //         select: {
+    //             id: true,
+    //             taskId: true,
+    //             mediaUrls: true,
+    //             publicIds: true
+    //         }
+            
+    //     })
+
+    // // Filter out mediaUrls that contain the publicId as a substring
+    // const updatedMediaUrls = taskRef.mediaUrls?.filter((url) => !url.includes(publicId));
+    // const updatedPublicIds = taskRef.publicIds?.filter((id) => id !== publicId);
+    // return await prisma.taskReference.update({
+    //         where: {
+    //             id: taskId
+    //         },
+    //         data: {
+    //             mediaUrls: { set: updatedMediaUrls },
+    //             publicIds: { set: updatedPublicIds },
+    //           }
+    //     })
+    // }
+
+    // async removeMediaFromTaskReference(taskId, publicId) {
+    //     try {
+    //       // 1. First find the task reference
+    //       const taskRef = await prisma.taskReference.findFirst({
+    //         where: { taskId },
+    //         select: {
+    //           id: true,
+    //           taskId: true,
+    //           mediaUrls: true,
+    //           publicIds: true
+    //         }
+    //       });
+      
+    //       if (!taskRef) {
+    //         throw new Error(`Task reference not found for taskId: ${taskId}`);
+    //       }
+      
+    //       // 2. Prepare updated arrays
+    //       const updatedMediaUrls = taskRef.mediaUrls?.filter(url => {
+    //         // More precise matching - extract publicId from URL for comparison
+    //         const urlPublicId = url.match(/\/v\d+\/(.+?)(\.\w+)?$/)?.[1];
+    //         return urlPublicId !== publicId;
+    //       }) || [];
+      
+    //       const updatedPublicIds = taskRef.publicIds?.filter(id => id !== publicId) || [];
+      
+    //       // 3. Update the task reference
+    //       return await prisma.taskReference.update({
+    //         where: { id: taskRef.id },  // Use taskRef.id instead of taskId
+    //         data: {
+    //           mediaUrls: updatedMediaUrls.length > 0 ? { set: updatedMediaUrls } : { set: [] },
+    //           publicIds: updatedPublicIds.length > 0 ? { set: updatedPublicIds } : { set: [] },
+    //         }
+    //       });
+      
+    //     } catch (error) {
+    //       console.error('Error in removeMediaFromTaskReference:', {
+    //         taskId,
+    //         publicId,
+    //         error: error.message
+    //       });
+    //       throw error; // Re-throw for the calling function to handle
+    //     }
+    //   }
+
+    // async removeMediaFromTaskReference(taskId, publicIdToRemove) {
+    //     try {
+    //       // 1. Find the task reference
+    //       const taskRef = await prisma.taskReference.findMany({
+    //         where: { taskId: taskId },
+    //         select: {
+    //           id: true,
+    //           taskId: true,
+    //           mediaUrls: true,
+    //           publicIds: true
+    //         }
+    //       });
+
+    //       taskRef.map((t) => t.mediaUrls)
+      
+    //       if (!taskRef) {
+    //         throw new Error(`Task reference not found for task ${taskId}`);
+    //       }
+      
+    //       // 2. Find the index of the publicId to remove
+    //       const indexToRemove = taskRef.publicIds?.findIndex(
+    //         id => id === publicIdToRemove
+    //       );
+      
+    //       if (indexToRemove === -1 || indexToRemove === undefined) {
+    //         throw new Error(`Public ID ${publicIdToRemove} not found in task ${taskId}`);
+    //       }
+      
+    //       // 3. Verify the corresponding media URL exists
+    //       if (!taskRef.mediaUrls || indexToRemove >= taskRef.mediaUrls.length) {
+    //         throw new Error(`No corresponding media URL found for public ID ${publicIdToRemove}`);
+    //       }
+      
+    //       // 4. Create new arrays with the item removed from both
+    //       const updatedPublicIds = [
+    //         ...taskRef.publicIds.slice(0, indexToRemove),
+    //         ...taskRef.publicIds.slice(indexToRemove + 1)
+    //       ];
+      
+    //       const updatedMediaUrls = [
+    //         ...taskRef.mediaUrls.slice(0, indexToRemove),
+    //         ...taskRef.mediaUrls.slice(indexToRemove + 1)
+    //       ];
+      
+    //       // 5. Update the task reference
+    //       return await prisma.taskReference.update({
+    //         where: { id: taskRef.id },
+    //         data: {
+    //           publicIds: { set: updatedPublicIds },
+    //           mediaUrls: { set: updatedMediaUrls }
+    //         }
+    //       });
+      
+    //     } catch (error) {
+    //       console.error('Failed to remove media reference:', {
+    //         taskId,
+    //         publicIdToRemove,
+    //         error: error.message
+    //       });
+    //       throw error;
+    //     }
+    //   }
+
+
+    async removeMediaFromTaskReference(taskId, publicIdToRemove) {
+        try {
+          // 1. Find all task references for this task
+          const taskReferences = await prisma.taskReference.findMany({
+            where: { taskId },
+            select: {
+              id: true,
+              mediaUrls: true,
+              publicIds: true
+            }
+          });
+      
+          if (!taskReferences || taskReferences.length === 0) {
+            throw new Error(`No task references found for task ${taskId}`);
+          }
+      
+          // 2. Process each task reference to remove the matching publicId/mediaUrl
+          const updatePromises = taskReferences.map(async (taskRef) => {
+            // Find index of the publicId to remove
+            const indexToRemove = taskRef.publicIds?.findIndex(
+              id => id === publicIdToRemove
+            );
+      
+            // If publicId not found in this task reference, skip
+            if (indexToRemove === -1 || indexToRemove === undefined) {
+              return null;
+            }
+      
+            // Verify corresponding media URL exists
+            if (!taskRef.mediaUrls || indexToRemove >= taskRef.mediaUrls.length) {
+              console.warn(`Mismatch in arrays for task reference ${taskRef.id}`);
+              return null;
+            }
+      
+            // Create updated arrays
+            const updatedPublicIds = [
+              ...taskRef.publicIds.slice(0, indexToRemove),
+              ...taskRef.publicIds.slice(indexToRemove + 1)
+            ];
+      
+            const updatedMediaUrls = [
+              ...taskRef.mediaUrls.slice(0, indexToRemove),
+              ...taskRef.mediaUrls.slice(indexToRemove + 1)
+            ];
+      
+            // Return the update promise
+            return prisma.taskReference.update({
+              where: { id: taskRef.id },
+              data: {
+                publicIds: { set: updatedPublicIds },
+                mediaUrls: { set: updatedMediaUrls }
+              }
+            });
+          });
+      
+          // 3. Execute all updates and filter out nulls (where publicId wasn't found)
+          const updateResults = await Promise.all(updatePromises);
+          const successfulUpdates = updateResults.filter(result => result !== null);
+      
+          if (successfulUpdates.length === 0) {
+            throw new Error(`Public ID ${publicIdToRemove} not found in any task reference for task ${taskId}`);
+          }
+      
+          return successfulUpdates;
+      
+        } catch (error) {
+          console.error('Failed to remove media reference:', {
+            taskId,
+            publicIdToRemove,
+            error: error.message
+          });
+          throw error;
+        }
+      }
+
+    
 }
 
 export default new TaskService();

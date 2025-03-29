@@ -72,7 +72,7 @@ const TaskEditPanel = async ({ params }) => {
 
         {/* Task Work Container */}
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-2xl border border-white/10">
-          <TaskWorkContainer task={taskInfo} />
+          <TaskWorkContainer task={taskInfo}  />
         </div>
 
         <div className="chat panel">

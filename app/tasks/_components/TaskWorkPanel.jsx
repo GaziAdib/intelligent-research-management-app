@@ -69,7 +69,7 @@ const TaskWorkContainer = ({ task }) => {
       </div>
 
       <div className='my-2 py-4 render pdfs link and image links with view capablity in cards'>
-        <RenderMedia mediaUrls={totalPdfsImages} />
+        <RenderMedia mediaUrls={totalPdfsImages} taskId={id} />
       </div>
 
       <div className='my-2 py-2'>
