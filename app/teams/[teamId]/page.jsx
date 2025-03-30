@@ -9,6 +9,8 @@ import Pagination from "./_components/pagination/Pagination";
 import SearchTasks from "./_components/search/SearchTasks";
 import FilterTasks from "./_components/filter/FilterTasks";
 import { redirect } from "next/navigation";
+import MergeTasks from "./_components/buttons/MergeTasks";
+import TaskShowMergedContents from "./_components/TaskShowMergedContents";
 
 async function fetchSingleTeamInfo(teamid) {
   const res = await fetch(`http://localhost:3000/api/teams/${teamid}`, {
@@ -58,8 +60,20 @@ async function fetchConversationMessages(conversationId, teamId) {
   return res.json();
 }
 
+
+async function fetchMergeContents(leaderId) {
+  const res = await fetch(`http://localhost:3000/api/leader/merged-contents?userId=${leaderId}`, {
+    method: "GET",
+    headers: { "Content-Type": "application/json" },
+  });
+
+  if (!res.ok) throw new Error("Failed to fetch teams");
+
+  return res.json();
+}
+
 const TeamDetail = async ({ params, searchParams }) => {
-  const { teamId } = params;
+  const { teamId } = await params;
   const { user } = await auth();
   const currentUserId = user?.id;
 
@@ -79,19 +93,30 @@ const TeamDetail = async ({ params, searchParams }) => {
 
   let pageNumber1 = pageNumber ? Number(pageNumber) : 1;
 
+  // this is for single tean Info 
   let teamInfo = await fetchSingleTeamInfo(teamId);
   teamInfo = teamInfo.data;
 
+  // fetch tasks by sttaus or pagination etc or query
   let data = await fetchTasks(teamId, pageNumber1, status, query);
   let tasks = data?.data;
   let totalPages = data?.totalPages;
 
+
+  // this is for comversations for chat messages
   let conversationsId = teamInfo?.conversation?.id;
   let messages = await fetchConversationMessages(conversationsId, teamId);
 
+  // merge approved tasks
+
+  const mergedContentData = await fetchMergeContents(teamInfo?.leaderId)
+
+  console.log('Merged contentsss', mergedContentData.data);
+
+
   return (
     <div className="container mx-auto py-10 mt-5">
- <div className="min-h-screen text-white p-4 md:p-6">
+  <div className="min-h-screen text-white p-4 md:p-6">
       {/* Header Section */}
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl sm:text-4xl font-extrabold">📋 Team Tasks</h1>
@@ -118,7 +143,14 @@ const TeamDetail = async ({ params, searchParams }) => {
             </div>
           ) : (
             <>
+              <MergeTasks teamId={teamId} leaderId={teamInfo?.leaderId} />
+
               <TaskLists tasks={tasks} teamId={teamId} />
+
+              <div className="">
+                <TaskShowMergedContents mergedContent={mergedContentData.data}/>
+            </div>
+              
               {tasks?.length > 0 && (
                 <div className="mt-4">
                   <Pagination totalPages={totalPages} />
@@ -127,6 +159,8 @@ const TeamDetail = async ({ params, searchParams }) => {
             </>
           )}
         </div>
+
+        
 
         {/* Members Section */}
         <div className="bg-[#1a1a1a] rounded-2xl p-6 shadow-xl">

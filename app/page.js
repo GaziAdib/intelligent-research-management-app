@@ -1,4 +1,5 @@
 import { auth } from "./auth";
+import HeroSection from "./components/HeroSections";
 import LogoutButton from "./ui/LogoutButton";
 
 export default async function Home() {
@@ -18,6 +19,11 @@ export default async function Home() {
         {
           session?.user && <h3 className="text-center text-2xl my-5 py-5">Hi, {session?.user?.username}</h3>
         }
+
+        <div className="container mx-auto my-5 py-6">
+          <HeroSection />
+        </div>
+
 
         <LogoutButton label={'Logout'} color={'red'} />
           

@@ -290,6 +290,48 @@ class TaskService {
         })
     }
 
+    // Leader Merge ALL approved tasks
+
+    async leaderMergeApprovedTasks(leaderId, teamId) {
+        let tasks = await prisma.task.findMany({
+            where: {
+                teamId: teamId
+            }
+        })
+
+        const mergedContent = tasks
+        .filter((t) => t.status === "Approved")
+        .map((m) => m.taskMemberFinalContent)
+        .join("\n\n---\n\n"); // Separator for better readability
+
+        if (!mergedContent) {
+            throw new Error("No approved tasks found to merge.");
+        }
+    
+       // Save merged Markdown content
+        await prisma.taskLeaderMergedContent.create({
+            data: {
+                leader: {connect: {id: leaderId}},
+                mergedContent: mergedContent
+            }
+        });
+
+    }
+
+    // fetch merge contents
+
+    async leaderFetchMergedContents(leaderId) {
+        return await prisma.taskLeaderMergedContent.findFirst({
+            where: {
+                leaderId: leaderId
+            },
+            select: {
+                mergedContent:true
+            }
+        })
+
+    }
+
 
     // Add task Reference to Task by task id, userid
 
