@@ -52,6 +52,7 @@ model Team {
   createdAt            DateTime  @default(now())
   updatedAt            DateTime  @updatedAt
   conversation         Conversation?
+  taskLeaderMergedContent TaskLeaderMergedContent[]
 }
 
 model TeamMember {
@@ -120,8 +121,10 @@ model Task {
 model TaskLeaderMergedContent {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
   leaderId       String   @db.ObjectId
+  teamId         String   @db.ObjectId
+  team           Team?    @relation(fields: [teamId], references: [id], onDelete: Cascade)
   leader         User?    @relation(fields: [leaderId], references: [id])
-  mergedContent  String   // Final content merged by the leader
+  mergedContent  String   
   createdAt      DateTime @default(now())
 }
 

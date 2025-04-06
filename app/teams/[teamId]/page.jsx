@@ -111,7 +111,7 @@ const TeamDetail = async ({ params, searchParams }) => {
 
   const mergedContentData = await fetchMergeContents(teamInfo?.leaderId)
 
-  console.log('Merged contentsss', mergedContentData.data);
+  console.log('Merged contentsss', mergedContentData?.data);
 
 
   return (
@@ -148,8 +148,8 @@ const TeamDetail = async ({ params, searchParams }) => {
               <TaskLists tasks={tasks} teamId={teamId} />
 
               <div className="">
-                <TaskShowMergedContents mergedContent={mergedContentData.data}/>
-            </div>
+                <TaskShowMergedContents mergedContent={mergedContentData?.data}/>
+             </div>
               
               {tasks?.length > 0 && (
                 <div className="mt-4">

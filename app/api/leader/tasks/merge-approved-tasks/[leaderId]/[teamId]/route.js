@@ -24,7 +24,7 @@ export async function POST(req, {params}) {
 
     const newMergedTask = await TaskService.leaderMergeApprovedTasks(leaderId, teamId)
 
-    revalidatePath(`/teams/${teamId}`);
+    revalidatePath(`/teams/${newMergedTask?.teamId}`);
 
     return NextResponse.json(
       { message: "Tasks Merged successfully!", data: newMergedTask },

@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import { formatTaskContent } from "../utils/formatTaskContent";
 
 const prisma = new PrismaClient();
 
@@ -295,22 +296,57 @@ class TaskService {
     async leaderMergeApprovedTasks(leaderId, teamId) {
         let tasks = await prisma.task.findMany({
             where: {
-                teamId: teamId
+                leaderId: leaderId,
+                teamId: teamId,
+                status: 'Approved'
+            },
+            select: {
+                id: true,
+                taskTitle: true,
+                taskMemberFinalContent: true,
+                taskAssignedTo: true,
+                updatedAt: true,
+                createdAt: true
             }
         })
 
-        const mergedContent = tasks
-        .filter((t) => t.status === "Approved")
-        .map((m) => m.taskMemberFinalContent)
-        .join("\n\n---\n\n"); // Separator for better readability
-
-        if (!mergedContent) {
+        if (tasks.length === 0) {
             throw new Error("No approved tasks found to merge.");
         }
+
+        // Create a structured markdown with better task separation
+        const mergedContent = tasks.map(task => {
+            return `# 🚀 Task: ${task.taskTitle}
+        
+        **Task ID:** \`${task.id}\`  
+        **Last Updated:** ${new Date(task.updatedAt).toLocaleString()}  
+        
+        ### Content:
+        ${formatTaskContent(task.taskMemberFinalContent)}
+        
+        ${'='.repeat(60)}
+        
+        `;
+        }).join('\n\n');
+
+        // Create a structured markdown with clear task separation
+
+        // const mergedContent = tasks
+        // .filter((t) => t.status === "Approved")
+        // .map((m) => m.taskMemberFinalContent)
+        // .join("\n\n---\n\n"); // Separator for better readability
+
+        // if (!mergedContent) {
+        //     throw new Error("No approved tasks found to merge.");
+        // }
     
        // Save merged Markdown content
-        await prisma.taskLeaderMergedContent.create({
+
+       // Use the helper function for consistent formatting
+
+        return await prisma.taskLeaderMergedContent.create({
             data: {
+                team: {connect: {id: teamId}},
                 leader: {connect: {id: leaderId}},
                 mergedContent: mergedContent
             }
@@ -326,7 +362,11 @@ class TaskService {
                 leaderId: leaderId
             },
             select: {
-                mergedContent:true
+                mergedContent:true,
+                teamId: true
+            },
+            orderBy: {
+                createdAt: 'desc'
             }
         })
 

@@ -112,6 +112,8 @@ const TaskCard = ({ task }) => {
             {/* Title */}
             <h3 className="text-xl font-bold mb-2">{task?.taskTitle}</h3>
 
+        
+
             {/* Description */}
             <p className="text-gray-400 mb-4">{task?.taskShortDescription}</p>
 
