@@ -11,7 +11,7 @@ export async function GET(req) {
 
     const mergedContent = await TaskService.leaderFetchMergedContents(leaderId);
 
-    return NextResponse.json({ data: mergedContent?.mergedContent }, { status: 200 });
+    return NextResponse.json({ data: mergedContent }, { status: 200 });
 
   } catch (error) {
     console.error("Error fetching merged content data:", error);

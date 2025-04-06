@@ -363,7 +363,8 @@ class TaskService {
             },
             select: {
                 mergedContent:true,
-                teamId: true
+                teamId: true,
+                leaderId:true
             },
             orderBy: {
                 createdAt: 'desc'

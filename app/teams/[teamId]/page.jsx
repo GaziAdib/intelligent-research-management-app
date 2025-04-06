@@ -149,7 +149,7 @@ const TeamDetail = async ({ params, searchParams }) => {
 
               <div className="">
                 <TaskShowMergedContents mergedContent={mergedContentData?.data}/>
-             </div>
+              </div>
               
               {tasks?.length > 0 && (
                 <div className="mt-4">
@@ -182,6 +182,194 @@ const TeamDetail = async ({ params, searchParams }) => {
 };
 
 export default TeamDetail;
+
+
+
+
+
+// import { auth } from "@/app/auth";
+// import ModalTaskButton from "./_components/buttons/ModalTaskButton";
+// import TaskLists from "./_components/TaskLists";
+// import MemberLists from "../_components/MemberLists";
+// import ModalConversationButton from "./_components/modals/ConversationModalButton";
+// import ChatPopup from "@/app/components/ChatPopup";
+// import Pagination from "./_components/pagination/Pagination";
+// import SearchTasks from "./_components/search/SearchTasks";
+// import FilterTasks from "./_components/filter/FilterTasks";
+// import { redirect } from "next/navigation";
+// import MergeTasks from "./_components/buttons/MergeTasks";
+// import TaskShowMergedContents from "./_components/TaskShowMergedContents";
+
+// async function fetchSingleTeamInfo(teamid) {
+//   const res = await fetch(`http://localhost:3000/api/teams/${teamid}`, {
+//     method: "GET",
+//     headers: { "Content-Type": "application/json" },
+//   });
+
+//   if (!res.ok) throw new Error("Failed to fetch teams");
+
+//   return res.json();
+// }
+
+// const fetchTasks = async (teamId, pageNumber, currentStatus, query = "") => {
+//   try {
+//     const baseUrl = `http://localhost:3000/api/tasks/${teamId}`;
+//     const url = new URL(baseUrl);
+
+//     if (query) url.searchParams.append("query", query);
+//     if (pageNumber) url.searchParams.append("pageNumber", pageNumber);
+//     if (currentStatus) url.searchParams.append("status", currentStatus);
+
+//     const res = await fetch(url, {
+//       method: "GET",
+//       headers: { "Content-Type": "application/json" },
+//     });
+
+//     if (!res.ok) throw new Error("Failed to fetch tasks");
+
+//     return res.json();
+//   } catch (error) {
+//     console.log("Error fetching tasks:", error);
+//     return [];
+//   }
+// };
+
+// async function fetchConversationMessages(conversationId, teamId) {
+//   const res = await fetch(
+//     `http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`,
+//     {
+//       method: "GET",
+//       headers: { "Content-Type": "application/json" },
+//     }
+//   );
+
+//   if (!res.ok) throw new Error("Failed to fetch messages");
+
+//   return res.json();
+// }
+
+
+// async function fetchMergeContents(leaderId) {
+//   const res = await fetch(`http://localhost:3000/api/leader/merged-contents?userId=${leaderId}`, {
+//     method: "GET",
+//     headers: { "Content-Type": "application/json" },
+//   });
+
+//   if (!res.ok) throw new Error("Failed to fetch teams");
+
+//   return res.json();
+// }
+
+// const TeamDetail = async ({ params, searchParams }) => {
+//   const { teamId } = await params;
+//   const { user } = await auth();
+//   const currentUserId = user?.id;
+
+//    if(!user) {
+//       return redirect('/login')
+//     }
+
+//     if(user?.role === 'ADMIN') {
+//       return redirect('/admin/dashboard')
+//     }
+    
+//     if(user?.role === 'USER') {
+//       return redirect('/')
+//     }  
+  
+//   const { status, query, pageNumber } = await searchParams;
+
+//   let pageNumber1 = pageNumber ? Number(pageNumber) : 1;
+
+//   // this is for single tean Info 
+//   let teamInfo = await fetchSingleTeamInfo(teamId);
+//   teamInfo = teamInfo.data;
+
+//   // fetch tasks by sttaus or pagination etc or query
+//   let data = await fetchTasks(teamId, pageNumber1, status, query);
+//   let tasks = data?.data;
+//   let totalPages = data?.totalPages;
+
+
+//   // this is for comversations for chat messages
+//   let conversationsId = teamInfo?.conversation?.id;
+//   let messages = await fetchConversationMessages(conversationsId, teamId);
+
+//   // merge approved tasks
+
+//   const mergedContentData = await fetchMergeContents(teamInfo?.leaderId)
+
+//   console.log('Merged contentsss', mergedContentData?.data);
+
+
+//   return (
+//     <div className="container mx-auto py-10 mt-5">
+//   <div className="min-h-screen text-white p-4 md:p-6">
+//       {/* Header Section */}
+//       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+//         <h1 className="text-3xl sm:text-4xl font-extrabold">📋 Team Tasks</h1>
+//         <ModalConversationButton teamInfo={teamInfo} currentUserId={currentUserId} />
+//       </div>
+
+//       {/* Action Buttons */}
+//       <div className="flex justify-center sm:justify-start mb-4">
+//         <ModalTaskButton buttonLabel={"+ Add task"} teamInfo={teamInfo} />
+//       </div>
+
+//       {/* Main Content */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+//         {/* Tasks Section */}
+//         <div className="md:col-span-2 lg:col-span-3 bg-[#1a1a1a] rounded-2xl p-4 shadow-xl">
+//           <div className="flex flex-col md:flex-row gap-6 items-center mt-2 mb-6">
+//             <SearchTasks />
+//             <FilterTasks />
+//           </div>
+
+//           {tasks?.length === 0 ? (
+//             <div className="text-gray-400 text-center mt-10">
+//               <h2 className="text-xl">No tasks created yet.</h2>
+//             </div>
+//           ) : (
+//             <>
+//               <MergeTasks teamId={teamId} leaderId={teamInfo?.leaderId} />
+
+//               <TaskLists tasks={tasks} teamId={teamId} />
+
+//               <div className="">
+//                 <TaskShowMergedContents mergedContent={mergedContentData?.data}/>
+//              </div>
+              
+//               {tasks?.length > 0 && (
+//                 <div className="mt-4">
+//                   <Pagination totalPages={totalPages} />
+//                 </div>
+//               )}
+//             </>
+//           )}
+//         </div>
+
+        
+
+//         {/* Members Section */}
+//         <div className="bg-[#1a1a1a] rounded-2xl p-6 shadow-xl">
+//           <h2 className="text-lg lg:text-2xl font-bold mb-4 text-center">👥 Members</h2>
+//           <MemberLists members={teamInfo?.teamMembers} />
+//         </div>
+//       </div>
+
+//       {/* Chat Popup */}
+//       <div className="fixed bottom-4 right-4 lg:static lg:mt-6">
+//         {
+//           teamInfo?.conversation?.id &&  <ChatPopup conversationId={teamInfo?.conversation?.id} teamId={teamId} messages={messages.data} />
+//         }
+//       </div>
+//     </div>
+//     </div>
+   
+//   );
+// };
+
+// export default TeamDetail;
 
 
 
