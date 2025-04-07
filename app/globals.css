@@ -71,7 +71,7 @@ body {
 .markdown-content {
     line-height: 1.6;
     font-size: 1.05rem;
-    color: #e5e7eb;
+    color: #d9e5fc;
   }
   
   .markdown-content p {
@@ -82,7 +82,7 @@ body {
     margin-bottom: 1.25em;
     padding-left: 1.2em;
   }
-  
+
   .markdown-content li {
     margin-bottom: 0.2em;
   }
