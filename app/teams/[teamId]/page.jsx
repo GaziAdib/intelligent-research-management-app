@@ -11,6 +11,7 @@ import FilterTasks from "./_components/filter/FilterTasks";
 import { redirect } from "next/navigation";
 import MergeTasks from "./_components/buttons/MergeTasks";
 import TaskShowMergedContents from "./_components/TaskShowMergedContents";
+import MergedContentReader from "@/app/tasks/_components/MergedContentReader";
 
 async function fetchSingleTeamInfo(teamid) {
   const res = await fetch(`http://localhost:3000/api/teams/${teamid}`, {
@@ -61,8 +62,8 @@ async function fetchConversationMessages(conversationId, teamId) {
 }
 
 
-async function fetchMergeContents(leaderId) {
-  const res = await fetch(`http://localhost:3000/api/leader/merged-contents?userId=${leaderId}`, {
+async function fetchMergeContents(teamId, userId) {
+  const res = await fetch(`http://localhost:3000/api/leader/merged-contents?userId=${userId}&teamId=${teamId}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
   });
@@ -109,7 +110,7 @@ const TeamDetail = async ({ params, searchParams }) => {
 
   // merge approved tasks
 
-  const mergedContentData = await fetchMergeContents(teamInfo?.leaderId)
+  const mergedContentData = await fetchMergeContents(teamInfo.id, user.id)
 
   console.log('Merged contentsss', mergedContentData?.data);
 
@@ -148,7 +149,7 @@ const TeamDetail = async ({ params, searchParams }) => {
               <TaskLists tasks={tasks} teamId={teamId} />
 
               <div className="">
-                <TaskShowMergedContents mergedContent={mergedContentData?.data}/>
+                <MergedContentReader mergedContent={mergedContentData?.data}/>
               </div>
               
               {tasks?.length > 0 && (

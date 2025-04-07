@@ -167,8 +167,20 @@ const MergedContentReader = ({ mergedContent }) => {
         backgroundColor: null,
         logging: false,
         quality: 0.98,
-        removeContainer:true
+        removeContainer:false
       });
+
+      // const canvas = await html2canvas(element, {
+      //   scale: 1.2,
+      //   useCORS: true,
+      //   backgroundColor: null,
+      //   logging: false,
+      //   allowTaint: true,
+      //   ignoreElements: (element) => {
+      //     // Ignore any background elements you don't want in the PDF
+      //     return element.classList.contains('background-element');
+      //   }
+      // });
   
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
@@ -288,7 +300,7 @@ const MergedContentReader = ({ mergedContent }) => {
   return (
     <div
       id="content-to-export"
-      className="bg-white dark:bg-gray-900 dark:text-white text-gray-900"
+      className="bg-white dark:bg-transparent dark:text-white text-gray-900"
     >
       {/* Header */}
       <div className="px-6 py-4 border-b border-gray-300 flex items-center justify-between">

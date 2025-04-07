@@ -5,11 +5,13 @@ import { NextResponse } from "next/server";
 
 export async function GET(req) {
 
-  const leaderId = req.nextUrl.searchParams?.get("userId");
+  const userId = req.nextUrl.searchParams?.get("userId");
+
+  const teamId = req.nextUrl.searchParams?.get("teamId");
 
   try {
 
-    const mergedContent = await TaskService.leaderFetchMergedContents(leaderId);
+    const mergedContent = await TaskService.leaderFetchMergedContents(teamId, userId);
 
     return NextResponse.json({ data: mergedContent }, { status: 200 });
 

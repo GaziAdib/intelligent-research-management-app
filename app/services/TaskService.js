@@ -356,15 +356,38 @@ class TaskService {
 
     // fetch merge contents
 
-    async leaderFetchMergedContents(leaderId) {
+    async leaderFetchMergedContents(teamId, userId) {
         return await prisma.taskLeaderMergedContent.findFirst({
             where: {
-                leaderId: leaderId
+                teamId: teamId,
+                team: {
+                    teamMembers: {
+                        some: {
+                            userId: userId
+                        }
+                    }
+                }
             },
+            
             select: {
                 mergedContent:true,
                 teamId: true,
-                leaderId:true
+                leaderId:true,
+                team: {
+                    include: {
+                        teamMembers: {
+                            include: {
+                                user: {
+                                    select: {
+                                        id: true,
+                                        username: true,
+                                        email:true
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
             },
             orderBy: {
                 createdAt: 'desc'
