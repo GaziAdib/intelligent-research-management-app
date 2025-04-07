@@ -2,14 +2,9 @@ import TaskService from "@/app/services/TaskService";
 import { NextResponse } from "next/server";
 
 export async function GET(req, {params}) {
-
-
-  // const session = await auth();
+ 
   const { teamId } = await params
 
-  // const {user} = await auth()
-
-  // let userId = user?.id
 
   // use pagination 
 
@@ -22,7 +17,7 @@ export async function GET(req, {params}) {
 
   const page = Number(pageNumber);
 
-  let limit = 6
+  let limit = 2
 
   try {
 

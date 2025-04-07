@@ -16,8 +16,6 @@ class TaskService {
             },
         });
 
-        console.log('Total Tasks Count---', totalTasksCount)
-
         //  search filter if query exists
         const searchFilter = query
         ? {

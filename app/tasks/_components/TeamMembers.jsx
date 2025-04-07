@@ -24,30 +24,6 @@ const TeamMembers = ({ members, taskId, teamId, leaderId, assignedMembers }) => 
     (member) => !assignedMembers?.includes(member?.user?.id)
   );
 
-  // const handleRemoveAssignedMember = async (assignedMemberId) => {
-
-
-  //   if(currentUserId !== leaderId) {
-  //     alert('You are not allowed to do this')
-  //   }
-  //     try {
-  //       const res = await fetch(`/api/leader/tasks/remove-assigned-member/${assignedMemberId}/${taskId}/${teamId}`, {
-  //         method: "PUT",
-  //         headers: {"Content-Type": "application/json"}
-  //       });
-  //       if (res.ok) {
-  //         router.refresh();
-  //         alert("Member Removed From Assigned Tasks Successfully");
-  //       } else {
-  //         alert("Error removing user from assigned tasks panel!!!");
-  //       }
-  //     } catch (error) {
-  //       alert("Something went wrong!");
-  //     }
-
-      
-     
-  // }
 
   const handleAssignMemberToTask = async (memberId) => {
 
@@ -106,8 +82,8 @@ const TeamMembers = ({ members, taskId, teamId, leaderId, assignedMembers }) => 
                 </div>
               </div>
               {/* Assign button */}
-              <button disabled={currentUserId !== leaderId} onClick={() => handleAssignMemberToTask(member?.user?.id)} className="px-4 py-2 cursor-pointer bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full text-xs">
-                Assign to Task
+              <button disabled={currentUserId !== leaderId} onClick={() => handleAssignMemberToTask(member?.user?.id)} className="px-4 py-2 cursor-pointer bg-gradient-to-r from-purple-500 to-blue-500 text-white rounded-full text-xs lg:text-md md:text-md">
+                Assign
               </button>
             </div>
           ))

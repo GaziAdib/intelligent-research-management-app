@@ -1,188 +1,474 @@
-
 import { auth } from "@/app/auth";
-import ModalTaskButton from "./_components/buttons/ModalTaskButton";
-import TaskLists from "./_components/TaskLists";
-import MemberLists from "../_components/MemberLists";
-import ModalConversationButton from "./_components/modals/ConversationModalButton";
-import ChatPopup from "@/app/components/ChatPopup";
-import Pagination from "./_components/pagination/Pagination";
-import SearchTasks from "./_components/search/SearchTasks";
-import FilterTasks from "./_components/filter/FilterTasks";
+import { Suspense, lazy } from "react";
 import { redirect } from "next/navigation";
-import MergeTasks from "./_components/buttons/MergeTasks";
-import TaskShowMergedContents from "./_components/TaskShowMergedContents";
-import MergedContentReader from "@/app/tasks/_components/MergedContentReader";
+import Link from "next/link";
 
-async function fetchSingleTeamInfo(teamid) {
-  const res = await fetch(`http://localhost:3000/api/teams/${teamid}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
+// Lazy loaded components
+const ModalTaskButton = lazy(() => import("./_components/buttons/ModalTaskButton"));
+const TaskLists = lazy(() => import("./_components/TaskLists"));
+const MemberLists = lazy(() => import("../_components/MemberLists"));
+const ModalConversationButton = lazy(() => import("./_components/modals/ConversationModalButton"));
+const ChatPopup = lazy(() => import("@/app/components/ChatPopup"));
+const Pagination = lazy(() => import("./_components/pagination/Pagination"));
+const SearchTasks = lazy(() => import("./_components/search/SearchTasks"));
+const FilterTasks = lazy(() => import("./_components/filter/FilterTasks"));
+const MergeTasks = lazy(() => import("./_components/buttons/MergeTasks"));
+const MergedContentReader = lazy(() => import("@/app/tasks/_components/MergedContentReader"));
 
-  if (!res.ok) throw new Error("Failed to fetch teams");
-
-  return res.json();
-}
-
-const fetchTasks = async (teamId, pageNumber, currentStatus, query = "") => {
+// Improved API caller for real-time data
+async function fetchAPI(url) {
   try {
-    const baseUrl = `http://localhost:3000/api/tasks/${teamId}`;
-    const url = new URL(baseUrl);
-
-    if (query) url.searchParams.append("query", query);
-    if (pageNumber) url.searchParams.append("pageNumber", pageNumber);
-    if (currentStatus) url.searchParams.append("status", currentStatus);
-
-    const res = await fetch(url, {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
+    // Using timestamp to ensure we always get fresh data
+    const timestamp = Date.now();
+    const separator = url.includes('?') ? '&' : '?';
+    const urlWithTimestamp = `${url}${separator}_t=${timestamp}`;
+    
+    const res = await fetch(urlWithTimestamp, {
+      cache: 'no-store',
+      next: { revalidate: 0 }, // Disable Next.js caching completely
+      headers: { 
+        'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0'
+      }
     });
-
-    if (!res.ok) throw new Error("Failed to fetch tasks");
-
+    
+    if (!res.ok) {
+      console.error(`Error response: ${res.status} ${res.statusText}`);
+      throw new Error(`Failed to fetch: ${url}`);
+    }
+    
     return res.json();
   } catch (error) {
-    console.log("Error fetching tasks:", error);
-    return [];
+    console.error(`Error fetching ${url}:`, error);
+    return { data: null, error: error.message };
   }
-};
+}
+
+// Optimized fetchers with better real-time support
+async function fetchSingleTeamInfo(teamId) {
+  return fetchAPI(`http://localhost:3000/api/teams/${teamId}`);
+}
+
+async function fetchTasks(teamId, pageNumber, status, query = "") {
+  // Build the URL correctly
+  const baseUrl = new URL(`http://localhost:3000/api/tasks/${teamId}`);
+  
+  // Make sure we correctly handle all query parameters
+  if (query && query.trim() !== '') baseUrl.searchParams.append("query", query);
+  if (pageNumber) baseUrl.searchParams.append("pageNumber", pageNumber.toString());
+  if (status && status !== 'undefined' && status !== 'null') {
+    baseUrl.searchParams.append("status", status);
+  }
+  
+  // Log the URL to debug status filtering
+  console.log('Fetching tasks with URL:', baseUrl.toString());
+  
+  return fetchAPI(baseUrl.toString());
+}
 
 async function fetchConversationMessages(conversationId, teamId) {
-  const res = await fetch(
-    `http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`,
-    {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    }
-  );
-
-  if (!res.ok) throw new Error("Failed to fetch messages");
-
-  return res.json();
+  return fetchAPI(`http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`);
 }
-
 
 async function fetchMergeContents(teamId, userId) {
-  const res = await fetch(`http://localhost:3000/api/leader/merged-contents?userId=${userId}&teamId=${teamId}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
-
-  if (!res.ok) throw new Error("Failed to fetch teams");
-
-  return res.json();
+  return fetchAPI(`http://localhost:3000/api/leader/merged-contents?userId=${userId}&teamId=${teamId}`);
 }
+
+// Loading fallback components
+const LoadingTaskList = () => (
+  <div className="animate-pulse space-y-4">
+    <div className="h-12 bg-gray-700 rounded w-full"></div>
+    <div className="h-12 bg-gray-700 rounded w-full"></div>
+    <div className="h-12 bg-gray-700 rounded w-full"></div>
+  </div>
+);
+
+const LoadingMembers = () => (
+  <div className="animate-pulse space-y-4">
+    <div className="h-10 bg-gray-700 rounded w-full"></div>
+    <div className="h-10 bg-gray-700 rounded w-full"></div>
+  </div>
+);
 
 const TeamDetail = async ({ params, searchParams }) => {
   const { teamId } = await params;
   const { user } = await auth();
   const currentUserId = user?.id;
 
-   if(!user) {
-      return redirect('/login')
-    }
-
-    if(user?.role === 'ADMIN') {
-      return redirect('/admin/dashboard')
-    }
-    
-    if(user?.role === 'USER') {
-      return redirect('/')
-    }  
+  // Handle authentication and role redirects early
+  if (!user) return redirect('/login');
+  if (user?.role === 'ADMIN') return redirect('/admin/dashboard');
+  if (user?.role === 'USER') return redirect('/');
   
-  const { status, query, pageNumber } = await searchParams;
+  // Ensure we properly extract and process search params
+  
+  // const {status} = await searchParams|| null;
+  // const {query} = await searchParams|| "";
+  // const {pageNumber} = await searchParams ? Number(pageNumber) : 1;
 
-  let pageNumber1 = pageNumber ? Number(pageNumber) : 1;
+  const search = await searchParams || {};
 
-  // this is for single tean Info 
-  let teamInfo = await fetchSingleTeamInfo(teamId);
-  teamInfo = teamInfo.data;
-
-  // fetch tasks by sttaus or pagination etc or query
-  let data = await fetchTasks(teamId, pageNumber1, status, query);
-  let tasks = data?.data;
-  let totalPages = data?.totalPages;
+const status = search.status ?? null;
+const query = search.query ?? "";
+const pageNumber = search.pageNumber ? Number(search.pageNumber) : 1;
 
 
-  // this is for comversations for chat messages
-  let conversationsId = teamInfo?.conversation?.id;
-  let messages = await fetchConversationMessages(conversationsId, teamId);
+  
 
-  // merge approved tasks
+  // Force revalidation for each request by adding a unique timestamp
+  const requestTimestamp = Date.now();
 
-  const mergedContentData = await fetchMergeContents(teamInfo.id, user.id)
+  // Parallel data fetching with proper error handling
+  let teamInfo, tasks = [], totalPages = 1;
+  
+  try {
+    // Fetch team info and tasks in parallel
+    const [teamInfoResult, tasksResult] = await Promise.all([
+      fetchSingleTeamInfo(teamId),
+      fetchTasks(teamId, pageNumber, status, query)
+    ]);
 
-  console.log('Merged contentsss', mergedContentData?.data);
+    teamInfo = teamInfoResult.data;
+    tasks = tasksResult?.data || [];
+    totalPages = tasksResult?.totalPages || 1;
+    
+    console.log(`Fetched ${tasks.length} tasks with status filter: ${status}`);
+  } catch (error) {
+    console.error("Error loading data:", error);
+    // Continue with empty data rather than crashing
+  }
 
+  // Only fetch conversation messages if a conversation exists
+  let messages = { data: [] };
+  if (teamInfo?.conversation?.id) {
+    try {
+      const messagesResult = await fetchConversationMessages(teamInfo.conversation.id, teamId);
+      messages = messagesResult || { data: [] };
+    } catch (error) {
+      console.error("Error loading messages:", error);
+    }
+  }
+
+  // Only fetch merged content if needed
+  let mergedContentData = { data: null };
+  try {
+    mergedContentData = await fetchMergeContents(teamInfo.id, user.id);
+  } catch (error) {
+    console.error("Error loading merged content:", error);
+  }
 
   return (
     <div className="container mx-auto py-10 mt-5">
-  <div className="min-h-screen text-white p-4 md:p-6">
-      {/* Header Section */}
-      <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
-        <h1 className="text-3xl sm:text-4xl font-extrabold">📋 Team Tasks</h1>
-        <ModalConversationButton teamInfo={teamInfo} currentUserId={currentUserId} />
-      </div>
+      <div className="min-h-screen text-white p-4 md:p-6">
+        {/* Debug info - remove in production */}
+        <div className="text-xs text-gray-500 mb-2">
+          Request time: {new Date(requestTimestamp).toISOString()}
+          {status && <span> | Status filter: {status}</span>}
+        </div>
+        
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+          <h1 className="text-3xl sm:text-4xl font-extrabold">📋 Team Tasks</h1>
+          <Suspense fallback={<div className="w-36 h-10 bg-gray-700 rounded animate-pulse"></div>}>
+            <ModalConversationButton teamInfo={teamInfo} currentUserId={currentUserId} />
+          </Suspense>
+        </div>
 
-      {/* Action Buttons */}
-      <div className="flex justify-center sm:justify-start mb-4">
-        <ModalTaskButton buttonLabel={"+ Add task"} teamInfo={teamInfo} />
-      </div>
+        {/* Action Buttons */}
+        <div className="flex justify-center sm:justify-start mb-4">
+          <Suspense fallback={<div className="w-28 h-10 bg-gray-700 rounded animate-pulse"></div>}>
+            <ModalTaskButton buttonLabel="+ Add task" teamInfo={teamInfo} />
+          </Suspense>
+        </div>
 
-      {/* Main Content */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        {/* Tasks Section */}
-        <div className="md:col-span-2 lg:col-span-3 bg-[#1a1a1a] rounded-2xl p-4 shadow-xl">
-          <div className="flex flex-col md:flex-row gap-6 items-center mt-2 mb-6">
-            <SearchTasks />
-            <FilterTasks />
+        {/* Main Content */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {/* Tasks Section */}
+          <div className="md:col-span-2 lg:col-span-3 bg-[#1a1a1a] rounded-2xl p-4 shadow-xl">
+            <div className="flex flex-col md:flex-row gap-6 items-center mt-2 mb-6">
+              <Suspense fallback={<div className="w-full h-10 bg-gray-700 rounded animate-pulse"></div>}>
+                <SearchTasks />
+              </Suspense>
+              <Suspense fallback={<div className="w-full h-10 bg-gray-700 rounded animate-pulse"></div>}>
+                <FilterTasks currentStatus={status} />
+              </Suspense>
+              
+            </div>
+
+            {tasks?.length === 0 ? (
+              <div className="text-gray-400 text-center mt-10">
+                <h2 className="text-xl">
+                  {status ? `No tasks with status "${status}" found.` : "No tasks created yet."}
+                </h2>
+              </div>
+            ) : (
+              <>
+                <Suspense fallback={<div className="w-full h-10 bg-gray-700 rounded animate-pulse"></div>}>
+                  <MergeTasks teamId={teamId} leaderId={teamInfo?.leaderId} />
+                </Suspense>
+
+                {mergedContentData?.data && (
+                      <div className="mt-4 text-center">
+                        <Link
+                          href={`/tasks/merged-tasks/${mergedContentData.data.teamId}`}
+                          className="inline-block px-5 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-200 shadow-md"
+                        >
+                          View Full Merged Content
+                        </Link>
+                      </div>
+                    )}
+
+                <Suspense fallback={<LoadingTaskList />}>
+                  <TaskLists tasks={tasks} teamId={teamId} />
+                </Suspense>
+
+                {/* <div className="">
+                  <Suspense fallback={<div className="w-full h-20 bg-gray-700 rounded animate-pulse"></div>}>
+                    <MergedContentReader mergedContent={mergedContentData?.data} />
+                  </Suspense>
+                </div> */}
+                
+                {tasks?.length > 0 && (
+                  <div className="mt-4">
+                    <Suspense fallback={<div className="w-full h-10 bg-gray-700 rounded animate-pulse"></div>}>
+                      <Pagination totalPages={totalPages} currentStatus={status} />
+                    </Suspense>
+                  </div>
+                )}
+              </>
+            )}
           </div>
 
-          {tasks?.length === 0 ? (
-            <div className="text-gray-400 text-center mt-10">
-              <h2 className="text-xl">No tasks created yet.</h2>
-            </div>
-          ) : (
-            <>
-              <MergeTasks teamId={teamId} leaderId={teamInfo?.leaderId} />
+          {/* Members Section */}
+          <div className="bg-[#1a1a1a] rounded-2xl p-6 shadow-xl">
+            <h2 className="text-lg lg:text-2xl font-bold mb-4 text-center">👥 Members</h2>
+            <Suspense fallback={<LoadingMembers />}>
+              <MemberLists members={teamInfo?.teamMembers} />
+            </Suspense>
+          </div>
+        </div>
 
-              <TaskLists tasks={tasks} teamId={teamId} />
-
-              <div className="">
-                <MergedContentReader mergedContent={mergedContentData?.data}/>
-              </div>
-              
-              {tasks?.length > 0 && (
-                <div className="mt-4">
-                  <Pagination totalPages={totalPages} />
-                </div>
-              )}
-            </>
+        {/* Chat Popup */}
+        <div className="fixed bottom-4 right-4 lg:static lg:mt-6">
+          {teamInfo?.conversation?.id && (
+            <Suspense fallback={<div className="w-16 h-16 rounded-full bg-gray-700 animate-pulse"></div>}>
+              <ChatPopup 
+                conversationId={teamInfo.conversation.id} 
+                teamId={teamId} 
+                messages={messages.data} 
+              />
+            </Suspense>
           )}
         </div>
-
-        
-
-        {/* Members Section */}
-        <div className="bg-[#1a1a1a] rounded-2xl p-6 shadow-xl">
-          <h2 className="text-lg lg:text-2xl font-bold mb-4 text-center">👥 Members</h2>
-          <MemberLists members={teamInfo?.teamMembers} />
-        </div>
-      </div>
-
-      {/* Chat Popup */}
-      <div className="fixed bottom-4 right-4 lg:static lg:mt-6">
-        {
-          teamInfo?.conversation?.id &&  <ChatPopup conversationId={teamInfo?.conversation?.id} teamId={teamId} messages={messages.data} />
-        }
       </div>
     </div>
-    </div>
-   
   );
 };
 
 export default TeamDetail;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// import { auth } from "@/app/auth";
+// import ModalTaskButton from "./_components/buttons/ModalTaskButton";
+// import TaskLists from "./_components/TaskLists";
+// import MemberLists from "../_components/MemberLists";
+// import ModalConversationButton from "./_components/modals/ConversationModalButton";
+// import ChatPopup from "@/app/components/ChatPopup";
+// import Pagination from "./_components/pagination/Pagination";
+// import SearchTasks from "./_components/search/SearchTasks";
+// import FilterTasks from "./_components/filter/FilterTasks";
+// import { redirect } from "next/navigation";
+// import MergeTasks from "./_components/buttons/MergeTasks";
+// import MergedContentReader from "@/app/tasks/_components/MergedContentReader";
+
+// async function fetchSingleTeamInfo(teamid) {
+//   const res = await fetch(`http://localhost:3000/api/teams/${teamid}`, {
+//     method: "GET",
+//     headers: { "Content-Type": "application/json" },
+//   });
+
+//   if (!res.ok) throw new Error("Failed to fetch teams");
+
+//   return res.json();
+// }
+
+// const fetchTasks = async (teamId, pageNumber, currentStatus, query = "") => {
+//   try {
+//     const baseUrl = `http://localhost:3000/api/tasks/${teamId}`;
+//     const url = new URL(baseUrl);
+
+//     if (query) url.searchParams.append("query", query);
+//     if (pageNumber) url.searchParams.append("pageNumber", pageNumber);
+//     if (currentStatus) url.searchParams.append("status", currentStatus);
+
+//     const res = await fetch(url, {
+//       method: "GET",
+//       headers: { "Content-Type": "application/json" },
+//     });
+
+//     if (!res.ok) throw new Error("Failed to fetch tasks");
+
+//     return res.json();
+//   } catch (error) {
+//     console.log("Error fetching tasks:", error);
+//     return [];
+//   }
+// };
+
+// async function fetchConversationMessages(conversationId, teamId) {
+//   const res = await fetch(
+//     `http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`,
+//     {
+//       method: "GET",
+//       headers: { "Content-Type": "application/json" },
+//     }
+//   );
+
+//   if (!res.ok) throw new Error("Failed to fetch messages");
+
+//   return res.json();
+// }
+
+
+// async function fetchMergeContents(teamId, userId) {
+//   const res = await fetch(`http://localhost:3000/api/leader/merged-contents?userId=${userId}&teamId=${teamId}`, {
+//     method: "GET",
+//     headers: { "Content-Type": "application/json" },
+//   });
+
+//   if (!res.ok) throw new Error("Failed to fetch teams");
+
+//   return res.json();
+// }
+
+// const TeamDetail = async ({ params, searchParams }) => {
+//   const { teamId } = await params;
+//   const { user } = await auth();
+//   const currentUserId = user?.id;
+
+//    if(!user) {
+//       return redirect('/login')
+//     }
+
+//     if(user?.role === 'ADMIN') {
+//       return redirect('/admin/dashboard')
+//     }
+    
+//     if(user?.role === 'USER') {
+//       return redirect('/')
+//     }  
+  
+//   const { status, query, pageNumber } = await searchParams;
+
+//   let pageNumber1 = pageNumber ? Number(pageNumber) : 1;
+
+//   // this is for single tean Info 
+//   let teamInfo = await fetchSingleTeamInfo(teamId);
+//   teamInfo = teamInfo.data;
+
+//   // fetch tasks by sttaus or pagination etc or query
+//   let data = await fetchTasks(teamId, pageNumber1, status, query);
+//   let tasks = data?.data;
+//   let totalPages = data?.totalPages;
+
+
+//   // this is for comversations for chat messages
+//   let conversationsId = teamInfo?.conversation?.id;
+//   let messages = await fetchConversationMessages(conversationsId, teamId);
+
+//   // merge approved tasks
+
+//   const mergedContentData = await fetchMergeContents(teamInfo.id, user.id)
+
+//   console.log('Merged contentsss', mergedContentData?.data);
+
+
+//   return (
+//     <div className="container mx-auto py-10 mt-5">
+//   <div className="min-h-screen text-white p-4 md:p-6">
+//       {/* Header Section */}
+//       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
+//         <h1 className="text-3xl sm:text-4xl font-extrabold">📋 Team Tasks</h1>
+//         <ModalConversationButton teamInfo={teamInfo} currentUserId={currentUserId} />
+//       </div>
+
+//       {/* Action Buttons */}
+//       <div className="flex justify-center sm:justify-start mb-4">
+//         <ModalTaskButton buttonLabel={"+ Add task"} teamInfo={teamInfo} />
+//       </div>
+
+//       {/* Main Content */}
+//       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+//         {/* Tasks Section */}
+//         <div className="md:col-span-2 lg:col-span-3 bg-[#1a1a1a] rounded-2xl p-4 shadow-xl">
+//           <div className="flex flex-col md:flex-row gap-6 items-center mt-2 mb-6">
+//             <SearchTasks />
+//             <FilterTasks />
+//           </div>
+
+//           {tasks?.length === 0 ? (
+//             <div className="text-gray-400 text-center mt-10">
+//               <h2 className="text-xl">No tasks created yet.</h2>
+//             </div>
+//           ) : (
+//             <>
+//               <MergeTasks teamId={teamId} leaderId={teamInfo?.leaderId} />
+
+//               <TaskLists tasks={tasks} teamId={teamId} />
+
+//               <div className="">
+//                 <MergedContentReader mergedContent={mergedContentData?.data}/>
+//               </div>
+              
+//               {tasks?.length > 0 && (
+//                 <div className="mt-4">
+//                   <Pagination totalPages={totalPages} />
+//                 </div>
+//               )}
+//             </>
+//           )}
+//         </div>
+
+        
+
+//         {/* Members Section */}
+//         <div className="bg-[#1a1a1a] rounded-2xl p-6 shadow-xl">
+//           <h2 className="text-lg lg:text-2xl font-bold mb-4 text-center">👥 Members</h2>
+//           <MemberLists members={teamInfo?.teamMembers} />
+//         </div>
+//       </div>
+
+//       {/* Chat Popup */}
+//       <div className="fixed bottom-4 right-4 lg:static lg:mt-6">
+//         {
+//           teamInfo?.conversation?.id &&  <ChatPopup conversationId={teamInfo?.conversation?.id} teamId={teamId} messages={messages.data} />
+//         }
+//       </div>
+//     </div>
+//     </div>
+   
+//   );
+// };
+
+// export default TeamDetail;
 
 
 

@@ -39,25 +39,6 @@ const Teams = async () => {
     return redirect('/admin/dashboard')
   }
 
-  // // Get the current user's session
-  // const session = await auth();
-  // const currentUserId = session?.user?.id;
-
-  // console.log("Current user ID:", currentUserId); // Debugging
-
-  // // Filter teams where the current user is NOT a member
-  // const userInTeams = teams.filter(
-  //   (team) => team.teamMembers.some((m) => m === currentUserId)
-  // );
-
-  //console.log("Teams where user is NOT a member:", userInTeams); // Debugging
-
-  // If the user is not a member of any team, set teams to an empty array
-  // if (userNotInTeams.length === teams.length) {
-  //   teams = [];
-  // }
-
-  //console.log("Final teams to display:", teams); // Debugging
 
   return (
     <div className="min-h-screen bg-black text-white p-6">
@@ -74,7 +55,9 @@ const Teams = async () => {
       )}
 
       {/* Render the list of teams */}
-      <TeamLists teams={teams} />
+      <div className="container mx-auto flex justify-center items-center">
+        <TeamLists teams={teams} />
+    </div>
     </div>
   );
 };
