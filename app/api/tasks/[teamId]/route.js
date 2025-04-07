@@ -17,7 +17,7 @@ export async function GET(req, {params}) {
 
   const page = Number(pageNumber);
 
-  let limit = 2
+  let limit = 6
 
   try {
 

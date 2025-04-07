@@ -205,30 +205,28 @@ const pageNumber = search.pageNumber ? Number(search.pageNumber) : 1;
               </div>
             ) : (
               <>
+                <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                 <Suspense fallback={<div className="w-full h-10 bg-gray-700 rounded animate-pulse"></div>}>
                   <MergeTasks teamId={teamId} leaderId={teamInfo?.leaderId} />
                 </Suspense>
 
                 {mergedContentData?.data && (
-                      <div className="mt-4 text-center">
-                        <Link
-                          href={`/tasks/merged-tasks/${mergedContentData.data.teamId}`}
-                          className="inline-block px-5 py-2 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition duration-200 shadow-md"
-                        >
-                          View Full Merged Content
-                        </Link>
-                      </div>
-                    )}
-
+                  <Link
+                    href={`/tasks/merged-tasks/${mergedContentData.data.teamId}`}
+                    className="inline-flex items-center px-6 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-shadow duration-300 shadow-lg"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m4 4h1a2 2 0 001-3.732M12 6v6h4l1 2h-5.268a4.992 4.992 0 01-.732-1.732M12 2a10 10 0 100 20 10 10 0 000-20z" />
+                    </svg>
+                    View Merged Content
+                  </Link>
+                )}
+              </div>
                 <Suspense fallback={<LoadingTaskList />}>
                   <TaskLists tasks={tasks} teamId={teamId} />
                 </Suspense>
 
-                {/* <div className="">
-                  <Suspense fallback={<div className="w-full h-20 bg-gray-700 rounded animate-pulse"></div>}>
-                    <MergedContentReader mergedContent={mergedContentData?.data} />
-                  </Suspense>
-                </div> */}
+          
                 
                 {tasks?.length > 0 && (
                   <div className="mt-4">
