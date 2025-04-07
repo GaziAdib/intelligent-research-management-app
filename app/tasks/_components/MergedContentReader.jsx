@@ -88,39 +88,115 @@ const MergedContentReader = ({ mergedContent }) => {
     setTimeout(() => setCopied(false), 2000);
   };
 
+  // const exportToPDF = async () => {
+  //   setIsPrinting(true);
+  //   try {
+  //     const element = document.getElementById('content-to-export');
+  //     if (!element) return;
+
+  //     const canvas = await html2canvas(element, {
+  //       scale: 1.2,
+  //       useCORS: true,
+  //       backgroundColor: null,
+  //     });
+
+  //     const imgWidth = canvas.width;
+  //     const imgHeight = canvas.height;
+
+  //     const pdf = new jsPDF('p', 'mm', 'a4');
+  //     const pdfWidth = pdf.internal.pageSize.getWidth();
+  //     const pdfHeight = pdf.internal.pageSize.getHeight();
+  //     const marginTopBottom = 3;
+  //     const usableHeight = pdfHeight - 2 * marginTopBottom;
+
+  //     const imgHeightRatio = pdfWidth / imgWidth;
+  //     const fullImgHeightInPDF = imgHeight * imgHeightRatio;
+  //     const totalPages = Math.ceil(fullImgHeightInPDF / usableHeight);
+
+  //     for (let page = 0; page < totalPages; page++) {
+  //       const canvasPage = document.createElement('canvas');
+  //       const context = canvasPage.getContext('2d');
+  //       const sliceHeight = usableHeight / imgHeightRatio;
+
+  //       canvasPage.width = imgWidth;
+  //       canvasPage.height = sliceHeight;
+
+  //       context.drawImage(
+  //         canvas,
+  //         0,
+  //         page * sliceHeight,
+  //         imgWidth,
+  //         sliceHeight,
+  //         0,
+  //         0,
+  //         imgWidth,
+  //         sliceHeight
+  //       );
+
+  //       const imgData = canvasPage.toDataURL('image/png');
+
+  //       if (page > 0) pdf.addPage();
+
+  //       pdf.setFillColor('#0f172a');
+  //       pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
+  //       pdf.addImage(imgData, 'PNG', 0, marginTopBottom, pdfWidth, usableHeight);
+  //     }
+
+  //     pdf.save('research-document.pdf');
+  //   } catch (err) {
+  //     console.error('PDF export error:', err);
+  //   } finally {
+  //     setIsPrinting(false);
+  //   }
+  // };
+
   const exportToPDF = async () => {
     setIsPrinting(true);
     try {
       const element = document.getElementById('content-to-export');
       if (!element) return;
-
+  
+      const getOptimalScale = () => {
+        const width = element.offsetWidth;
+        return Math.min(2, Math.max(1, 1920 / width));
+      };
+  
       const canvas = await html2canvas(element, {
-        scale: 2,
+        scale: getOptimalScale(),
         useCORS: true,
         backgroundColor: null,
+        logging: false,
+        quality: 0.98,
+        removeContainer:true
       });
-
+  
       const imgWidth = canvas.width;
       const imgHeight = canvas.height;
-
-      const pdf = new jsPDF('p', 'mm', 'a4');
+  
+      const pdf = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: 'a4',
+        compress: true
+      });
+      
       const pdfWidth = pdf.internal.pageSize.getWidth();
       const pdfHeight = pdf.internal.pageSize.getHeight();
       const marginTopBottom = 3;
       const usableHeight = pdfHeight - 2 * marginTopBottom;
-
+  
       const imgHeightRatio = pdfWidth / imgWidth;
       const fullImgHeightInPDF = imgHeight * imgHeightRatio;
       const totalPages = Math.ceil(fullImgHeightInPDF / usableHeight);
-
+  
       for (let page = 0; page < totalPages; page++) {
         const canvasPage = document.createElement('canvas');
         const context = canvasPage.getContext('2d');
         const sliceHeight = usableHeight / imgHeightRatio;
-
+  
         canvasPage.width = imgWidth;
         canvasPage.height = sliceHeight;
-
+  
         context.drawImage(
           canvas,
           0,
@@ -132,16 +208,16 @@ const MergedContentReader = ({ mergedContent }) => {
           imgWidth,
           sliceHeight
         );
-
-        const imgData = canvasPage.toDataURL('image/png');
-
+  
+        const imgData = canvasPage.toDataURL('image/jpeg', 0.85);
+  
         if (page > 0) pdf.addPage();
-
+  
         pdf.setFillColor('#0f172a');
         pdf.rect(0, 0, pdfWidth, pdfHeight, 'F');
-        pdf.addImage(imgData, 'PNG', 0, marginTopBottom, pdfWidth, usableHeight);
+        pdf.addImage(imgData, 'JPEG', 0, marginTopBottom, pdfWidth, usableHeight);
       }
-
+  
       pdf.save('research-document.pdf');
     } catch (err) {
       console.error('PDF export error:', err);
@@ -258,7 +334,7 @@ const MergedContentReader = ({ mergedContent }) => {
       </div>
 
       {/* Content display with custom renderer */}
-      <div className="p-6 md:p-8 lg:p-10">
+      <div className="p-6 md:p-8 lg:p-10 markdown-content">
         <ContentRenderer htmlContent={processedContent} />
       </div>
     </div>
