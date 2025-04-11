@@ -13,7 +13,6 @@ const Pagination = lazy(() => import("./_components/pagination/Pagination"));
 const SearchTasks = lazy(() => import("./_components/search/SearchTasks"));
 const FilterTasks = lazy(() => import("./_components/filter/FilterTasks"));
 const MergeTasks = lazy(() => import("./_components/buttons/MergeTasks"));
-const MergedContentReader = lazy(() => import("@/app/tasks/_components/MergedContentReader"));
 
 // Improved API caller for real-time data
 async function fetchAPI(url) {
@@ -103,16 +102,13 @@ const TeamDetail = async ({ params, searchParams }) => {
   if (user?.role === 'USER') return redirect('/');
   
   // Ensure we properly extract and process search params
-  
-  // const {status} = await searchParams|| null;
-  // const {query} = await searchParams|| "";
-  // const {pageNumber} = await searchParams ? Number(pageNumber) : 1;
+ 
 
   const search = await searchParams || {};
 
-const status = search.status ?? null;
-const query = search.query ?? "";
-const pageNumber = search.pageNumber ? Number(search.pageNumber) : 1;
+  const status = search.status ?? null;
+  const query = search.query ?? "";
+  const pageNumber = search.pageNumber ? Number(search.pageNumber) : 1;
 
 
   
@@ -137,14 +133,14 @@ const pageNumber = search.pageNumber ? Number(search.pageNumber) : 1;
     console.log(`Fetched ${tasks.length} tasks with status filter: ${status}`);
   } catch (error) {
     console.error("Error loading data:", error);
-    // Continue with empty data rather than crashing
+
   }
 
   // Only fetch conversation messages if a conversation exists
   let messages = { data: [] };
   if (teamInfo?.conversation?.id) {
     try {
-      const messagesResult = await fetchConversationMessages(teamInfo.conversation.id, teamId);
+      const messagesResult = await fetchConversationMessages(teamInfo?.conversation?.id, teamId);
       messages = messagesResult || { data: [] };
     } catch (error) {
       console.error("Error loading messages:", error);
@@ -154,7 +150,7 @@ const pageNumber = search.pageNumber ? Number(search.pageNumber) : 1;
   // Only fetch merged content if needed
   let mergedContentData = { data: null };
   try {
-    mergedContentData = await fetchMergeContents(teamInfo.id, user.id);
+    mergedContentData = await fetchMergeContents(teamInfo?.id, user?.id);
   } catch (error) {
     console.error("Error loading merged content:", error);
   }
@@ -207,12 +203,12 @@ const pageNumber = search.pageNumber ? Number(search.pageNumber) : 1;
               <>
                 <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-6">
                 <Suspense fallback={<div className="w-full h-10 bg-gray-700 rounded animate-pulse"></div>}>
-                  <MergeTasks teamId={teamId} leaderId={teamInfo?.leaderId} />
+                  <MergeTasks teamId={teamId}  leaderId={teamInfo?.leaderId} mergedData={mergedContentData?.data} />
                 </Suspense>
 
                 {mergedContentData?.data && (
                   <Link
-                    href={`/tasks/merged-tasks/${mergedContentData.data.teamId}`}
+                    href={`/tasks/merged-tasks/${mergedContentData?.data?.teamId}`}
                     className="inline-flex items-center px-6 py-2 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold hover:from-blue-700 hover:to-indigo-700 transition-shadow duration-300 shadow-lg"
                   >
                     <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">

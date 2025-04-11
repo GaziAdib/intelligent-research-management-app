@@ -13,7 +13,6 @@ export async function POST(req, {params}) {
 
   try {
 
-    // const { taskTitle, taskShortDescription, priority, taskBgColor, taskTextColor } = await req.json();
 
     if(leaderId !== currentUserId) {
       return NextResponse.json(
@@ -23,7 +22,22 @@ export async function POST(req, {params}) {
     }
 
     const newMergedTask = await TaskService.leaderMergeApprovedTasks(leaderId, teamId)
+    
+    if(newMergedTask?.status === 'already_merged') {
+      revalidatePath(`/teams/${newMergedTask?.teamId}`);
+      return NextResponse.json(
+        { message: "Tasks Already Merged!", data: newMergedTask},
+        { status: 200 }
+      );
+    }
 
+    if (newMergedTask?.message) {
+      return NextResponse.json(
+        { message: "No Tasks Are Approved"},
+        { status: 404 }
+      );
+    }
+    
     revalidatePath(`/teams/${newMergedTask?.teamId}`);
 
     return NextResponse.json(

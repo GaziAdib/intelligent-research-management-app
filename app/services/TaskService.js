@@ -292,6 +292,27 @@ class TaskService {
     // Leader Merge ALL approved tasks
 
     async leaderMergeApprovedTasks(leaderId, teamId) {
+
+       let isTaskMerged = await prisma.taskLeaderMergedContent.findFirst({
+            where: {
+                teamId: teamId,
+                leaderId: leaderId
+            },
+            select: {
+                id: true,
+                teamId: true,
+                leaderId: true
+            }
+        })
+
+        if (isTaskMerged) {
+            // Return a message indicating tasks are already merged
+            return {
+                status: 'already_merged',
+                message: 'Tasks for this leader and team have already been merged.',
+            };
+        }
+
         let tasks = await prisma.task.findMany({
             where: {
                 leaderId: leaderId,
@@ -308,8 +329,16 @@ class TaskService {
             }
         })
 
-        if (tasks.length === 0) {
-            throw new Error("No approved tasks found to merge.");
+        // if (tasks?.length === 0) {
+        //     throw new Error("No approved tasks found to merge.");
+            
+        // }
+
+        // if no tasks are approved then it cannot be merged!
+        if (tasks?.length === 0) {
+            return {
+                message: 'No approved tasks found to merge!',
+            };
         }
 
         // Create a structured markdown with better task separation
@@ -329,18 +358,6 @@ class TaskService {
 
         // Create a structured markdown with clear task separation
 
-        // const mergedContent = tasks
-        // .filter((t) => t.status === "Approved")
-        // .map((m) => m.taskMemberFinalContent)
-        // .join("\n\n---\n\n"); // Separator for better readability
-
-        // if (!mergedContent) {
-        //     throw new Error("No approved tasks found to merge.");
-        // }
-    
-       // Save merged Markdown content
-
-       // Use the helper function for consistent formatting
 
         return await prisma.taskLeaderMergedContent.create({
             data: {
@@ -351,6 +368,10 @@ class TaskService {
         });
 
     }
+
+
+
+    
 
     // fetch merge contents
 

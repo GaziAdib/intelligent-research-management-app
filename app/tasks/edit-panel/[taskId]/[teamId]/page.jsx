@@ -1,5 +1,4 @@
 import { auth } from "@/app/auth";
-import AIChatComponent from "@/app/components/AIChatComponent";
 import AIChatWrapper from "@/app/components/AIChatWrapper";
 import TaskWorkContainer from "@/app/tasks/_components/TaskWorkPanel";
 import { redirect } from "next/navigation";
