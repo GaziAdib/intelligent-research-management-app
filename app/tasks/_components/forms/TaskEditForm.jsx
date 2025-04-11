@@ -181,7 +181,7 @@ export default function TaskEditForm({ initialData }) {
             disabled={true}
             {...register('taskTitle')}
             placeholder=" "
-            className="w-full px-4 py-2 md:py-3 text-sm md:text-base bg-transparent text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
+            className="w-full px-4 py-2 md:py-3 text-sm md:text-base bg-transparent text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 rounded-lg cursor-not-allowed opacity-80 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
           />
           <label className="absolute left-4 top-2 md:top-3 px-1 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-sm md:text-base transition-all duration-200 transform -translate-y-5 md:-translate-y-6 scale-75 origin-[0] peer-focus:scale-75 peer-focus:-translate-y-5 md:peer-focus:-translate-y-6 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2">
             Task Title
@@ -196,7 +196,7 @@ export default function TaskEditForm({ initialData }) {
             disabled={true}
             placeholder=" "
             rows={3}
-            className="w-full px-4 py-2 md:py-3 text-sm md:text-base bg-transparent text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
+            className="w-full px-4 py-2 md:py-3 text-sm md:text-base cursor-not-allowed opacity-80 bg-transparent text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
           />
           <label className="absolute left-4 top-2 md:top-3 px-1 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-sm md:text-base transition-all duration-200 transform -translate-y-5 md:-translate-y-6 scale-75 origin-[0] peer-focus:scale-75 peer-focus:-translate-y-5 md:peer-focus:-translate-y-6 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2">
             Short Description
@@ -244,27 +244,35 @@ export default function TaskEditForm({ initialData }) {
 
         {/* Remark By Leader */}
         <div className="relative">
+          
+
           <textarea
             {...register('remarkByLeader')}
+            disabled={initialData.leaderId !== currentUserId}
             placeholder=" "
             rows={3}
-            className="w-full px-4 py-2 md:py-3 text-sm md:text-base bg-transparent text-gray-900 dark:text-gray-100 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer"
+            className={`w-full px-4 py-2 md:py-3 text-sm md:text-base bg-transparent text-gray-900 dark:text-gray-50 border border-gray-300 dark:border-gray-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent peer
+              ${initialData.leaderId !== currentUserId ? 'bg-gray-50 dark:bg-gray-800 cursor-not-allowed opacity-80' : ''}`}
           />
-          <label className="absolute left-4 top-2 md:top-3 px-1 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-sm md:text-base transition-all duration-200 transform -translate-y-5 md:-translate-y-6 scale-75 origin-[0] peer-focus:scale-75 peer-focus:-translate-y-5 md:peer-focus:-translate-y-6 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2">
+          <label className="absolute  left-4 top-2 md:top-3 px-1 bg-white dark:bg-gray-900 text-gray-500 dark:text-gray-400 text-sm md:text-base transition-all duration-200 transform -translate-y-5 md:-translate-y-6 scale-75 origin-[0] peer-focus:scale-75 peer-focus:-translate-y-5 md:peer-focus:-translate-y-6 peer-placeholder-shown:scale-100 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2">
             Remark By Leader
           </label>
         </div>
 
+
         {/* Button to Submit Remark */}
-        <div className="flex justify-center">
-          <button
-            type="button"
-            onClick={() => handleAddRemark(initialData?.id)}
-            className="px-4 py-2 text-sm md:text-base bg-gray-800 border-2 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
-          >
-            {loading ? 'Adding Remark...' : 'Add Remark'}
-          </button>
+        {
+          initialData.leaderId === currentUserId &&
+          <div className="flex justify-center">
+            <button
+              type="button"
+              onClick={() => handleAddRemark(initialData?.id)}
+              className="px-4 py-2 text-sm md:text-base bg-gray-800 border-2 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200"
+            >
+              {loading ? 'Adding Remark...' : 'Add Remark'}
+            </button>
         </div>
+        }
 
         {/* AI Generated Text */}
         <div className="relative">

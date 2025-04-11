@@ -12,8 +12,6 @@ const TaskWorkContainer = ({ task }) => {
     taskShortDescription,
     priority,
     status,
-    taskBgColor,
-    taskTextColor,
     createdAt,
     team,
     leaderId,

@@ -9,12 +9,10 @@ const TaskContainer = ({ task, teamMembers }) => {
     taskShortDescription,
     priority,
     status,
-    taskBgColor,
-    taskTextColor,
     createdAt,
     team,
     leaderId,
-    taskAssignedTo,
+    taskAssignedTo
   } = task || {};
 
   return (
@@ -57,28 +55,7 @@ const TaskContainer = ({ task, teamMembers }) => {
         </div>
       </div>
 
-      {/* Team Description */}
-      {/* {task?.taskShortDescription && (
-        <div>
-          <h3 className="font-semibold text-lg">Task Description</h3>
-          <p className="leading-relaxed mt-1">{task?.taskShortDescription}</p>
-        </div>
-      )} */}
-
-      {/* Assigned Members */}
-      <div>
-        {/* <h3 className="font-semibold text-lg">Assigned Members {taskAssignedTo?.length}</h3> */}
-        {/* {taskAssignedTo?.length > 0 ? (
-          <ul className="list-disc list-inside mt-2 space-y-1">
-            {taskAssignedTo.map((memberId, index) => (
-              <li key={index}>{memberId || 'Unnamed Member'}</li>
-            ))}
-          </ul>
-        ) : (
-          <p className="italic text-sm mt-2">No members assigned yet.</p>
-        )} */}
-      </div>
-
+  
       <div className='team-members my-4'>
         <TeamMembers members={teamMembers} teamId={team?.id} leaderId={leaderId} taskId={id} assignedMembers={taskAssignedTo} />
       </div>
