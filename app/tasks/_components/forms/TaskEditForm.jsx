@@ -351,7 +351,7 @@ export default function TaskEditForm({ initialData }) {
             </button>
           )}
 
-          {initialData?.leaderId !== currentUserId && initialData.status !== 'Approved' && (
+          {initialData?.leaderId !== currentUserId && initialData.taskAssignedTo.includes(currentUserId) && initialData.status !== 'Approved' && (
             <button
               type="button"
               onClick={() => handleRequestForApproval(initialData?.id)}
