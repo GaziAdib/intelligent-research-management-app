@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const MergeTasks = ({ teamId, leaderId, mergedData }) => {
     const router = useRouter();
@@ -9,41 +9,41 @@ const MergeTasks = ({ teamId, leaderId, mergedData }) => {
     const [isMerged, setIsMerged] = useState(!!mergedData);
 
     // Check for merge status from the server on component mount and at intervals
-    useEffect(() => {
-        // Set initial state based on prop
-        if (mergedData) {
-            setIsMerged(true);
-        }
+    // useEffect(() => {
+    //     // Set initial state based on prop
+    //     if (mergedData) {
+    //         setIsMerged(true);
+    //     }
 
-        // Function to check merge status from the server
-        const checkMergeStatus = async () => {
-            try {
-                const response = await fetch(`/api/team/merge-status/${teamId}`, {
-                    method: 'GET',
-                    headers: {
-                        'Cache-Control': 'no-cache'
-                    }
-                });
+    //     // Function to check merge status from the server
+    //     const checkMergeStatus = async () => {
+    //         try {
+    //             const response = await fetch(`/api/team/merge-status/${teamId}`, {
+    //                 method: 'GET',
+    //                 headers: {
+    //                     'Cache-Control': 'no-cache'
+    //                 }
+    //             });
                 
-                if (response.ok) {
-                    const data = await response.json();
-                    // Update the isMerged state based on server response
-                    setIsMerged(!!data.isMerged || !!data.mergedData);
-                }
-            } catch (error) {
-                console.error('Error checking merge status:', error);
-            }
-        };
+    //             if (response.ok) {
+    //                 const data = await response.json();
+    //                 // Update the isMerged state based on server response
+    //                 setIsMerged(!!data.isMerged || !!data.mergedData);
+    //             }
+    //         } catch (error) {
+    //             console.error('Error checking merge status:', error);
+    //         }
+    //     };
 
-        // Check immediately on mount
-        checkMergeStatus();
+    //     // Check immediately on mount
+    //     checkMergeStatus();
 
-        // Set up polling to periodically check merge status (every 30 seconds)
-        const intervalId = setInterval(checkMergeStatus, 30000);
+    //     // Set up polling to periodically check merge status (every 30 seconds)
+    //     const intervalId = setInterval(checkMergeStatus, 30000);
 
-        // Clean up interval on component unmount
-        return () => clearInterval(intervalId);
-    }, [teamId, mergedData]);
+    //     // Clean up interval on component unmount
+    //     return () => clearInterval(intervalId);
+    // }, [teamId, mergedData]);
 
     const handleMergeTasks = async () => {
         setIsLoading(true);
@@ -97,6 +97,26 @@ const MergeTasks = ({ teamId, leaderId, mergedData }) => {
 };
 
 export default MergeTasks;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // "use client";
 

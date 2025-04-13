@@ -2,6 +2,7 @@ import { auth } from "@/app/auth";
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 import MergedContentReader from "../../_components/MergedContentReader";
+import MergedMediaContent from "../../_components/MergedMediaContent";
 
 async function fetchMergeContents(teamId, userId) {
   const res = await fetch(
@@ -105,6 +106,13 @@ const MergedTasksPage = async ({ params }) => {
               <p className="text-gray-400 mt-1 text-sm">
                 Collaborative space for {user?.username}'s team
               </p>
+            </div>
+
+             {/* Content area with Suspense */}
+             <div className="p-6">
+              <Suspense fallback={<ContentLoader />}>
+                <MergedMediaContent teamId={mergedContentData?.data?.teamId} />
+              </Suspense>
             </div>
 
             {/* Content area with Suspense */}

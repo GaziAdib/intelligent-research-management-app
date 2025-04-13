@@ -412,6 +412,40 @@ class TaskService {
 
     }
 
+        // fetch merge contents for leader and team members
+    async leaderFetchMergedMediaContents(teamId, userId) {
+        return await prisma.taskReference.findMany({
+            where: {
+                task:{
+                    teamId: teamId,
+                    team: {
+                        teamMembers: {
+                            some: {
+                                userId: userId
+                            }
+                        }
+                    }
+                },
+            },
+            select: {
+                id:true,
+                task: {
+                    select: {
+                        taskTitle: true,
+                        id:true,
+                    }
+                },
+                mediaUrls: true,
+                uploadedBy:true,
+                createdAt:true
+            },
+            orderBy: {
+                createdAt: 'desc'
+            }
+        })
+
+    }
+
 
 
     // Add task Reference to Task by task id, userid

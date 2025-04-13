@@ -51,18 +51,16 @@ async function fetchSingleTeamInfo(teamId) {
 }
 
 async function fetchTasks(teamId, pageNumber, status, query = "") {
-  // Build the URL correctly
+
   const baseUrl = new URL(`http://localhost:3000/api/tasks/${teamId}`);
   
-  // Make sure we correctly handle all query parameters
+
   if (query && query.trim() !== '') baseUrl.searchParams.append("query", query);
   if (pageNumber) baseUrl.searchParams.append("pageNumber", pageNumber.toString());
   if (status && status !== 'undefined' && status !== 'null') {
     baseUrl.searchParams.append("status", status);
   }
   
-  // Log the URL to debug status filtering
-  console.log('Fetching tasks with URL:', baseUrl.toString());
   
   return fetchAPI(baseUrl.toString());
 }
@@ -92,18 +90,18 @@ const LoadingMembers = () => (
 );
 
 const TeamDetail = async ({ params, searchParams }) => {
+
   const { teamId } = await params;
   const { user } = await auth();
   const currentUserId = user?.id;
 
-  // Handle authentication and role redirects early
+  // Handle auth and role wide redirection
+
   if (!user) return redirect('/login');
   if (user?.role === 'ADMIN') return redirect('/admin/dashboard');
   if (user?.role === 'USER') return redirect('/');
   
-  // Ensure we properly extract and process search params
  
-
   const search = await searchParams || {};
 
   const status = search.status ?? null;
@@ -111,7 +109,6 @@ const TeamDetail = async ({ params, searchParams }) => {
   const pageNumber = search.pageNumber ? Number(search.pageNumber) : 1;
 
 
-  
 
   // Force revalidation for each request by adding a unique timestamp
   const requestTimestamp = Date.now();
@@ -130,7 +127,6 @@ const TeamDetail = async ({ params, searchParams }) => {
     tasks = tasksResult?.data || [];
     totalPages = tasksResult?.totalPages || 1;
     
-    console.log(`Fetched ${tasks.length} tasks with status filter: ${status}`);
   } catch (error) {
     console.error("Error loading data:", error);
 
