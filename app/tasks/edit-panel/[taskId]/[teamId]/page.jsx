@@ -33,7 +33,7 @@ const TaskEditPanel = async ({ params }) => {
     return redirect('/');
   }
   
-  const { taskId, teamId } = params;
+  const { taskId, teamId } = await params;
   
   let taskInfo = await fetchSingleTaskInfo(teamId, taskId);
   taskInfo = taskInfo?.data;
