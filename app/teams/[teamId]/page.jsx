@@ -156,8 +156,8 @@ const TeamDetail = async ({ params, searchParams }) => {
   }
 
   return (
-    <div className="container mx-auto py-10 mt-5">
-      <div className="min-h-screen text-white p-4 md:p-6">
+    <div className="container mx-auto py-8 mt-5">
+      <div className="min-h-screen  text-white p-4 md:p-6">
         {/* Debug info - remove in production */}
         <div className="text-xs text-gray-500 mb-2">
           Request time: {new Date(requestTimestamp).toISOString()}
@@ -182,7 +182,7 @@ const TeamDetail = async ({ params, searchParams }) => {
         {/* Main Content */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {/* Tasks Section */}
-          <div className="md:col-span-2 lg:col-span-3 bg-[#1a1a1a] rounded-2xl p-4 shadow-xl">
+          <div className="md:col-span-2 lg:col-span-3 bg-[#131319] rounded-2xl p-4 shadow-xl">
             <div className="flex flex-col md:flex-row gap-6 items-center mt-2 mb-6">
               <Suspense fallback={<div className="w-full h-10 bg-gray-700 rounded animate-pulse"></div>}>
                 <SearchTasks />
@@ -218,6 +218,7 @@ const TeamDetail = async ({ params, searchParams }) => {
                   </Link>
                 )}
               </div>
+              
                 <Suspense fallback={<LoadingTaskList />}>
                   <TaskLists tasks={tasks} teamId={teamId} />
                 </Suspense>
