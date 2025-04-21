@@ -40,7 +40,7 @@ const TaskDetail = async ({params}) => {
 
   let teamMembers = taskInfo?.team?.teamMembers
 
-  const exist = teamMembers.filter((member) => member?.userId === session?.user?.id)
+  const exist = teamMembers?.filter((member) => member?.userId === session?.user?.id)
 
   if(!exist) {
     return redirect('/')
@@ -51,8 +51,7 @@ const TaskDetail = async ({params}) => {
   return (
     <div className="min-h-screen bg-black text-white p-6">
       <div className="mt-8 justify-between items-center mb-8">
-        <h1 className="text-4xl font-bold">Task Detail</h1>
-        <h2 className="text-2xl font-bold my-4 py-4">{taskInfo?.taskTitle}</h2>
+        <h2 className="text-4xl text-center font-bold">Task Detail</h2>
       </div>
 
       {/* Show a message if no teams are available */}

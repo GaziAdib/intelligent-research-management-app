@@ -65,8 +65,7 @@ const currentUserId = session?.user?.id;
       
       )
 
-      // console.log('Notification', newNotification)
-
+     
       await pusher.trigger(`user`, "send-notification", {
         notification: {
           id: newNotification?.id,

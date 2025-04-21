@@ -498,7 +498,7 @@ class TaskService {
               return null;
             }
       
-            // Create updated arrays
+            // Created updated arrays
             const updatedPublicIds = [
               ...taskRef.publicIds.slice(0, indexToRemove),
               ...taskRef.publicIds.slice(indexToRemove + 1)
@@ -519,11 +519,11 @@ class TaskService {
             });
           });
       
-          // 3. Execute all updates and filter out nulls (where publicId wasn't found)
+          //  Executed all updates and filter out nulls (where publicId wasn't found)
           const updateResults = await Promise.all(updatePromises);
           const successfulUpdates = updateResults.filter(result => result !== null);
       
-          if (successfulUpdates.length === 0) {
+          if (successfulUpdates?.length === 0) {
             throw new Error(`Public ID ${publicIdToRemove} not found in any task reference for task ${taskId}`);
           }
       

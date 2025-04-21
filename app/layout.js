@@ -3,6 +3,7 @@ import "./globals.css";
 import { SessionProviders } from "./sessionProvider";
 import Navbar from "./components/NavBar";
 import ToasterProvider from "./ToastProvider";
+import TopLoaderProgressBar from "./components/TopLoaderProgressBar";
 
 
 const geistSans = Geist({
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
        <body className="bg-gray-50 dark:bg-slate-900">
         <SessionProviders>
+            <TopLoaderProgressBar />
             <Navbar />
             <ToasterProvider />
             <div className="my-10">

@@ -16,7 +16,7 @@ export async function POST(req, {params}) {
 
     if(leaderId !== currentUserId) {
       return NextResponse.json(
-        { message: "You Are Not Authorized to add task" },
+        { message: "You Are Not Authorized to Merge tasks On Leader can Merge!" },
         { status: 403 }
       );
     }

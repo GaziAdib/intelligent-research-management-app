@@ -2,48 +2,13 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 
 const MergeTasks = ({ teamId, leaderId, mergedData }) => {
     const router = useRouter();
     const [isLoading, setIsLoading] = useState(false);
     const [isMerged, setIsMerged] = useState(!!mergedData);
 
-    // Check for merge status from the server on component mount and at intervals
-    // useEffect(() => {
-    //     // Set initial state based on prop
-    //     if (mergedData) {
-    //         setIsMerged(true);
-    //     }
-
-    //     // Function to check merge status from the server
-    //     const checkMergeStatus = async () => {
-    //         try {
-    //             const response = await fetch(`/api/team/merge-status/${teamId}`, {
-    //                 method: 'GET',
-    //                 headers: {
-    //                     'Cache-Control': 'no-cache'
-    //                 }
-    //             });
-                
-    //             if (response.ok) {
-    //                 const data = await response.json();
-    //                 // Update the isMerged state based on server response
-    //                 setIsMerged(!!data.isMerged || !!data.mergedData);
-    //             }
-    //         } catch (error) {
-    //             console.error('Error checking merge status:', error);
-    //         }
-    //     };
-
-    //     // Check immediately on mount
-    //     checkMergeStatus();
-
-    //     // Set up polling to periodically check merge status (every 30 seconds)
-    //     const intervalId = setInterval(checkMergeStatus, 30000);
-
-    //     // Clean up interval on component unmount
-    //     return () => clearInterval(intervalId);
-    // }, [teamId, mergedData]);
 
     const handleMergeTasks = async () => {
         setIsLoading(true);
@@ -56,21 +21,14 @@ const MergeTasks = ({ teamId, leaderId, mergedData }) => {
             const data = await res.json();
 
             if (res.ok) {
-                console.log('data', data.data.status);
-                
-                // Set local merged state
                 setIsMerged(true);
-                
-                // Refresh the page to get updated data from server
                 router.refresh();
-                
-                alert(data.message);
+                toast.success(data.message)
             } else {
-                alert(data.message || 'Failed to merge tasks');
+                toast.error(data.message || 'Failed to merge tasks')
             }
         } catch (error) {
-            console.error('Error merging tasks:', error);
-            alert('An error occurred while merging tasks');
+            toast.error('Error merging tasks')
         } finally {
             setIsLoading(false);
         }

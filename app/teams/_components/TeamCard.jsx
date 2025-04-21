@@ -6,6 +6,7 @@ import MemberLists from "./MemberLists";
 import Link from "next/link";
 import { useSession } from "next-auth/react";
 import { FiUserPlus, FiInfo, FiTrash2, FiX, FiCalendar, FiUser } from "react-icons/fi";
+import { toast } from "sonner";
 
 async function fetchAllUsers() {
   const res = await fetch("/api/users", {
@@ -67,25 +68,24 @@ const TeamCard = ({ team }) => {
       if (res.ok) {
         router.refresh();
         setIsModalOpen(false);
-        // Use a toast notification instead of alert for better UX
-        // toast.success("New member added successfully");
-        alert('New member added to team successfully');
+        toast.success("New member added successfully");
       } else {
         const errorData = await res.json();
-        // toast.error(errorData?.message || "Failed to add member");
-        alert(`Error happened! ${errorData?.message || "Failed to add member"}`);
+        toast.error(errorData?.message || "Failed to add member");
       }
     } catch (error) {
-      // toast.error("Something went wrong");
-      alert('Something went wrong!');
-      console.error(error);
+      toast.error("Something went wrong while deleting this team!");
     }
   };
 
+
+  // Confirmation before Team Deletion
   const confirmDeleteTeam = () => {
     setIsConfirmingDelete(true);
   };
 
+
+  // Delete Team 
   const handleDeleteTeam = async () => {
     try {
       const res = await fetch(`/api/leader/teams/delete-team/${teamId}`, {
@@ -94,17 +94,13 @@ const TeamCard = ({ team }) => {
 
       if (res.ok) {
         router.refresh();
-        // toast.success("Team deleted successfully");
-        alert('Team deleted successfully');
+        toast.success("Team deleted successfully");
       } else {
         const errorData = await res.json();
-        // toast.error(errorData.message || "Failed to delete team");
-        alert(errorData.message || "Failed to delete team");
+        toast.error(errorData.message || "Failed to delete team");
       }
     } catch (error) {
-      // toast.error("Something went wrong");
-      alert('Something went wrong!');
-      console.error('Error deleting team:', error.message);
+      toast.error("Something went wrong while deleting this team!");
     } finally {
       setIsConfirmingDelete(false);
     }

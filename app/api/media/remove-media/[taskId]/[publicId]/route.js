@@ -42,7 +42,7 @@ export async function PUT(req, { params }) {
 
     const task = await TaskService.fetchTaskById(taskId);
 
-    // if (!task) {
+    
     //   return NextResponse.json(
     //     { message: "Task not found." },
     //     { status: 404 }
@@ -65,10 +65,9 @@ export async function PUT(req, { params }) {
 
     // First verify the resource exists
     const resource = await cloudinary.api.resource(decodedPublicId);
-    console.log('Cloudinary resource found:', resource);
-
+  
     const cloudinaryResult = await cloudinary.uploader.destroy(decodedPublicId, {invalidate: true})
-    console.log('---Cloudinary Result---', cloudinaryResult);
+
     
     if (cloudinaryResult.result !== 'ok') {
       throw new Error(`Cloudinary deletion failed: ${cloudinaryResult.result}`);
@@ -76,9 +75,8 @@ export async function PUT(req, { params }) {
 
 
     // Update database
-    console.log('---Removing Media Reference---');
+   
     const updatedTaskReference = await TaskService.removeMediaFromTaskReference(taskId, decodedPublicId);
-    console.log('---Update Result---', updatedTaskReference);
 
     // Revalidate
     revalidatePath(`/tasks/edit-panel/${taskId}/${task.teamId}`);

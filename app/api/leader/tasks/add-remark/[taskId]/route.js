@@ -31,7 +31,6 @@ const { remarkByLeader } = await req.json();
             remarkByLeader
         );
 
-    // http://localhost:3000/tasks/edit-panel/67ce1dfa613c9daebd9c472c/67ce0efc629cdce32d08eb57
 
     revalidatePath(`/teams/${task?.teamId}`);
 
