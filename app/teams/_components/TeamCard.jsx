@@ -112,7 +112,7 @@ const TeamCard = ({ team }) => {
       <div className="p-6">
         {/* Team Header */}
         <div className="flex flex-col items-center mb-5">
-          <h3 className="text-2xl font-bold text-white bg-clip-text text-transparent bg-gradient-to-r from-blue-300 to-green-300">{teamName}</h3>
+          <h3 className="text-2xl font-bold text-white bg-clip-text bg-gradient-to-r from-blue-300 to-green-300">{teamName}</h3>
           <div className="flex items-center mt-2">
             <FiUser className="text-green-400 mr-1" />
             <p className="text-sm text-green-400 bg-gray-800/70 px-3 py-1 rounded-full">

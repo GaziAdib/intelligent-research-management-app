@@ -3,6 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useState } from "react";
 
 const taskSchema = z.object({
   taskTitle: z.string().min(3, "Task title is required"),
@@ -17,8 +18,12 @@ const AddTaskForm = ({teamInfo, onSuccess}) => {
 
 const router = useRouter();
 
+
 const teamId = teamInfo?.id
 const leaderId = teamInfo?.leaderId
+
+const [loading, setLoading] = useState(false)
+
 
   const {
     register,
@@ -31,6 +36,7 @@ const leaderId = teamInfo?.leaderId
 
   const onSubmit = async (data) => {
     try {
+      setLoading(true)
       const res = await fetch(`/api/leader/tasks/add-task/${teamId}/${leaderId}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -41,12 +47,15 @@ const leaderId = teamInfo?.leaderId
         router.refresh();
         reset();
         onSuccess();
+        setLoading(false)
       } else {
         const errData = await res.json()
         toast.error(errData.message)
       }
     } catch (error) {
       toast.error("Something went wrong while adding a new task!")
+    } finally {
+      setLoading(false)
     }
 
   };
@@ -111,9 +120,10 @@ const leaderId = teamInfo?.leaderId
         
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:opacity-90 text-white font-semibold p-3 rounded-lg transition duration-200"
         >
-          Create Task
+          {loading ? 'Creating Task...' : 'Create Task'}
         </button>
       </form>
     </div>

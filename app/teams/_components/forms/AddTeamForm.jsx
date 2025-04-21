@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useState } from "react";
 
 
 // Define Zod schema for form validation
@@ -24,6 +25,7 @@ const teamSchema = z.object({
 const AddTeamForm = ({onSuccess}) => {
 
   const router = useRouter()
+  const [loading, setLoading] = useState(false)
 
   const {
     register,
@@ -36,6 +38,7 @@ const AddTeamForm = ({onSuccess}) => {
 
   const onSubmit = async (data) => {
       try {
+        setLoading(true)
           const res = await fetch("/api/teams/create-team", {
               method: "POST",
               headers: {
@@ -47,8 +50,8 @@ const AddTeamForm = ({onSuccess}) => {
               toast.success("Team Created Successfully!");
               reset();
               router.refresh()
-              // for modal close after success response
               onSuccess()
+              setLoading(false)
               
           } else {
               const errorData = await res.json();
@@ -56,6 +59,8 @@ const AddTeamForm = ({onSuccess}) => {
           }
       } catch (error) {
            toast.error("Something went wrong while adding new team!");
+      } finally {
+        setLoading(false)
       }
 
   };
@@ -132,9 +137,10 @@ const AddTeamForm = ({onSuccess}) => {
         {/* Submit Button */}
         <button
           type="submit"
+          disabled={loading}
           className="w-full bg-gradient-to-r from-green-500 to-blue-500 hover:opacity-90 text-white font-semibold p-3 rounded-lg transition duration-200"
         >
-          Create Team
+          {loading ? 'Creating Team...' : 'Create Team'}
         </button>
       </form>
     </div>
