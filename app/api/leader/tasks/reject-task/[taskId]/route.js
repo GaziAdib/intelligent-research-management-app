@@ -41,8 +41,7 @@ const currentUserId = session?.user?.id;
            .filter(member => receiversIds?.includes(member?.user?.id))
            .map(member => member?.user?.email);
          
-    
-           console.log('email', receiversEmails)
+  
     
            //let teamName = task?.team?.teamName;
         

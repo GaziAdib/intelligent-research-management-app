@@ -32,7 +32,7 @@ const Notifications = () => {
         if (!res.ok) throw new Error("Failed to fetch notifications");
 
         const data = await res.json();
-        setNotifications(data.data); // Set the fetched notifications
+        setNotifications(data.data);
       } catch (error) {
         console.error("Error fetching notifications:", error);
         setError("Failed to fetch notifications");
@@ -41,14 +41,15 @@ const Notifications = () => {
       }
     };
 
-    getNotifications(); // Fetch notifications
-  }, [currentUserId]); // Re-run effect if currentUserId changes
+    getNotifications(); 
+  }, [currentUserId]);
+
 
   // Subscribe to Pusher for real-time notifications
   useEffect(() => {
-    if (!currentUserId) return; // Don't subscribe if userId is not available
+    if (!currentUserId) return;
 
-    const pusher = new Pusher("fbd04a7c8844115f0fd9", {
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
       cluster: "us3",
       forceTLS: true,
     });
@@ -62,9 +63,6 @@ const Notifications = () => {
       setNotifications((prev) => [data.notification, ...prev]); // Add new notification to the list
     });
 
-
-
-    // Cleanup
     return () => {
       channel.unbind_all();
       channel.unsubscribe();

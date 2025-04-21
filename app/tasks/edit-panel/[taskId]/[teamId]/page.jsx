@@ -1,5 +1,6 @@
 import { auth } from "@/app/auth";
 import AIChatWrapper from "@/app/components/AIChatWrapper";
+import ChatPopup from "@/app/components/ChatPopup";
 import TaskWorkContainer from "@/app/tasks/_components/TaskWorkPanel";
 import { redirect } from "next/navigation";
 
@@ -17,6 +18,28 @@ async function fetchSingleTaskInfo(teamId, taskId) {
   
   return res.json();
 }
+
+
+
+// fetch messages and conversations 
+
+async function fetchConversationMessages(conversationId, teamId) {
+  const res = await fetch(`http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  
+  if (!res.ok) throw new Error("Failed to fetch Conversation Messages Info");
+  
+  return res.json();
+}
+
+
+
+
+
 
 const TaskEditPanel = async ({ params }) => {
   const session = await auth();
@@ -37,6 +60,18 @@ const TaskEditPanel = async ({ params }) => {
   
   let taskInfo = await fetchSingleTaskInfo(teamId, taskId);
   taskInfo = taskInfo?.data;
+
+
+  // Only fetch conversation messages if a conversation exists
+  let messages = { data: [] };
+  if (taskInfo?.team?.conversation?.id) {
+    try {
+      const messagesResult = await fetchConversationMessages(taskInfo?.team?.conversation?.id, teamId);
+      messages = messagesResult || { data: [] };
+    } catch (error) {
+      console.error("Error loading messages:", error);
+    }
+  }
   
 
   return (
@@ -53,6 +88,10 @@ const TaskEditPanel = async ({ params }) => {
         <div className="bg-white/10 backdrop-blur-lg rounded-xl p-6 shadow-2xl border border-white/10">
           <TaskWorkContainer task={taskInfo} />
         </div>
+
+        <div className="chat panel py-2 my-2">
+            <ChatPopup conversationId={taskInfo?.team?.conversation?.id} teamId={teamId} messages={messages?.data} />
+         </div>
         
         {/* AI Chat Component (Client Side) */}
         <AIChatWrapper />

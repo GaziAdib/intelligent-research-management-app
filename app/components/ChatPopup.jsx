@@ -18,8 +18,9 @@ export default function ChatPopup({ conversationId, teamId, messages }) {
 
     if (!isChatOpen) return
 
+    
     if(!window.pusherInstance) {
-      window.pusherInstance = new Pusher('fbd04a7c8844115f0fd9', {
+      window.pusherInstance = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
         cluster: "us3",
         forceTLS: true,
       })
@@ -113,9 +114,9 @@ export default function ChatPopup({ conversationId, teamId, messages }) {
     <>
       <button
         onClick={() => setIsChatOpen(!isChatOpen)}
-        className="fixed bottom-6 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-all z-50"
+        className="fixed bottom-18 right-6 bg-indigo-600 text-white p-4 rounded-full shadow-lg hover:bg-indigo-700 transition-all z-50"
       >
-        <FaComments />
+      <FaComments />
       </button>
 
       {isChatOpen && (

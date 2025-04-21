@@ -12,7 +12,7 @@ export async function DELETE(req, {params}) {
     
         if (!userId) {
         return NextResponse.json(
-            { message: "You must be an authenticated user to create a team." },
+            { message: "You must be an authenticated User" },
             { status: 403 }
         );
         }

@@ -15,19 +15,17 @@ const TaskLists = ({ tasks: initialTasks, teamId }) => {
 
   useEffect(() => {
     // Initialize Pusher
-    const pusher = new Pusher("fbd04a7c8844115f0fd9", {
+    const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY, {
       cluster: "us3",
       forceTLS: true,
-      enabledTransports: ["ws", "wss"], // Ensure WebSockets are used
+      enabledTransports: ["ws", "wss"],
     });
 
     // Subscribe to the team channel
     const channel = pusher.subscribe(`team-${teamId}`);
-    console.log("Subscribed to channel:", `team-${teamId}`);
-
+    
     // Bind to task-approved event
     channel.bind("task-approved", (data) => {
-      console.log("Received event data:", JSON.stringify(data));
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task.id === data.taskId ? { ...task, status: data.status } : task
@@ -37,7 +35,6 @@ const TaskLists = ({ tasks: initialTasks, teamId }) => {
 
     // Bind to task-rejected event
     channel.bind("task-rejected", (data) => {
-      console.log("Received event data:", JSON.stringify(data));
       setTasks((prevTasks) =>
         prevTasks.map((task) =>
           task.id === data.taskId ? { ...task, status: data.status } : task

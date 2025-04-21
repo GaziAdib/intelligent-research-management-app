@@ -67,7 +67,11 @@ class TaskService {
             include: {
                 team: {
                     include: {
-                        conversation: true,
+                        conversation: {
+                            select: {
+                                id:true,
+                            }
+                        },
                         teamMembers: {
                             include: {
                                 user: true
@@ -75,9 +79,6 @@ class TaskService {
                         }
                     }
                 },
-                // team: {
-                //     include: {teamMembers: {include:{user: true}}}
-                // },
                 taskAssignedBy: true,
                 taskRelatedReferences: true
             }
