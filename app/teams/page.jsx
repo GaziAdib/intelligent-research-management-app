@@ -33,9 +33,9 @@ const Teams = async () => {
   let data = await fetchTeamsByUserId(userCurrentId);
   let teams =  data?.data 
 
-  const matchId = teams?.filter((team) => team.teamMembers?.some((member) => member?.userId === userCurrentId))
+  const matchId = teams?.filter((team) => team?.teamMembers?.some((member) => member?.userId === userCurrentId))
 
-  if(matchId.length === 0 && session?.user?.role === 'ADMIN') {
+  if(matchId?.length === 0 && session?.user?.role === 'ADMIN') {
     return redirect('/admin/dashboard')
   }
 

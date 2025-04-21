@@ -2,6 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 const taskSchema = z.object({
   taskTitle: z.string().min(3, "Task title is required"),
@@ -12,13 +13,12 @@ const taskSchema = z.object({
 });
 
 
-const AddTaskForm = ({teamInfo}) => {
+const AddTaskForm = ({teamInfo, onSuccess}) => {
+
+const router = useRouter();
 
 const teamId = teamInfo?.id
 const leaderId = teamInfo?.leaderId
-
-
-  const router = useRouter();
 
   const {
     register,
@@ -37,16 +37,16 @@ const leaderId = teamInfo?.leaderId
         body: JSON.stringify(data),
       });
       if (res.ok) {
+        toast.success("Task Created Successfully")
         router.refresh();
         reset();
-        alert("Task Created Successfully");
+        onSuccess();
       } else {
         const errData = await res.json()
-        alert(errData.message);
-        console.log('Not Authorized to create task!')
+        toast.error(errData.message)
       }
     } catch (error) {
-      alert("Something went wrong!");
+      toast.error("Something went wrong while adding a new task!")
     }
 
   };

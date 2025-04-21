@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { SessionProviders } from "./sessionProvider";
 import Navbar from "./components/NavBar";
+import ToasterProvider from "./ToastProvider";
 
 
 const geistSans = Geist({
@@ -25,10 +26,10 @@ export default function RootLayout({ children }) {
        <body className="bg-gray-50 dark:bg-slate-900">
         <SessionProviders>
             <Navbar />
+            <ToasterProvider />
             <div className="my-10">
               {children}
             </div>
-            {/* <ToastComponent /> */}
         </SessionProviders>
       </body>
     </html>

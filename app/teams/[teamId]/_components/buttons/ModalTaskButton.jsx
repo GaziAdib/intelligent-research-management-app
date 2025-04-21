@@ -17,7 +17,7 @@ const ModalTaskButton = ({buttonLabel, teamInfo}) => {
       {/* Show Modal only when opened */}
       {isModalOpen && (
         <AddTaskModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-           <AddTaskForm teamInfo={teamInfo}  />
+           <AddTaskForm teamInfo={teamInfo} onSuccess={() => setIsModalOpen(false)}  />
         </AddTaskModal>
       )}
     </>

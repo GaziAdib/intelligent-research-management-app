@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 
 // Define Zod schema for form validation
@@ -20,7 +21,7 @@ const teamSchema = z.object({
     .optional(), 
 });
 
-const AddTeamForm = () => {
+const AddTeamForm = ({onSuccess}) => {
 
   const router = useRouter()
 
@@ -34,8 +35,6 @@ const AddTeamForm = () => {
   });
 
   const onSubmit = async (data) => {
-    console.log("Form data submitted:", data);
-    // Handle form submission (e.g., send data to an API)
       try {
           const res = await fetch("/api/teams/create-team", {
               method: "POST",
@@ -45,18 +44,18 @@ const AddTeamForm = () => {
               body: JSON.stringify(data),
           });
           if (res.ok) {
-              // toast.success("Registration successful!");
-              router.refresh()
+              toast.success("Team Created Successfully!");
               reset();
-              alert('Team Created Successfully')
+              router.refresh()
+              // for modal close after success response
+              onSuccess()
+              
           } else {
               const errorData = await res.json();
-              alert('Registration Error!')
-              // toast.error(errorData.message);
+              toast.error(errorData.message);
           }
       } catch (error) {
-          alert('Something went wrong!')
-          // toast.error("Something went wrong");
+           toast.error("Something went wrong while adding new team!");
       }
 
   };
@@ -143,3 +142,17 @@ const AddTeamForm = () => {
 };
 
 export default AddTeamForm;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
