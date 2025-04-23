@@ -6,7 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useSession } from "next-auth/react";
 import { useEffect } from "react";
-// import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
+
 
 const registerSchema = z.object({
     profileImageUrl: z.string().url("Invalid URL format"),
@@ -53,17 +54,15 @@ const RegisterPage = () => {
 
             if (res.ok) {
                 reset();
-                alert('Registration successful!')
-                // toast.success("Registration successful!");
+                toast.success("Registration successful!");
                 router.push("/login");
             } else {
                 const errorData = await res.json();
-                alert('Registration Error!')
-                // toast.error(errorData.message);
+                //toast.error('Registration Error!')
+                toast.error(errorData.message);
             }
         } catch (error) {
-            alert('Something went wrong!')
-            // toast.error("Something went wrong");
+            toast.error("Something went wrong while registering the user");
         }
     };
 
