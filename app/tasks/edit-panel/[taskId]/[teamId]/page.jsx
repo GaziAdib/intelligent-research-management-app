@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 // Fetch task detail from backend
 async function fetchSingleTaskInfo(teamId, taskId) {
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/tasks/task-detail/${teamId}/${taskId}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/tasks/task-detail/${teamId}/${taskId}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",

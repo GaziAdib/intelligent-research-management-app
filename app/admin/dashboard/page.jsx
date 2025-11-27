@@ -8,7 +8,7 @@ import AdminManageUsers from "../_components/manage-datatables/AdminManageUsers"
 import { redirect } from "next/navigation";
 
 async function fetchAllUsers() {
-    const res = await fetch(`/api/admin/users`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -23,7 +23,7 @@ async function fetchAllUsers() {
 }
 
 async function fetchAllTeams() {
-    const res = await fetch(`/api/admin/teams`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/teams`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +38,7 @@ async function fetchAllTeams() {
 }
 
 async function fetchAllTasks() {
-    const res = await fetch(`/api/admin/tasks`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/tasks`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -52,7 +52,7 @@ async function fetchAllTasks() {
 }
 
 async function fetchAllNotifications() {
-    const res = await fetch(`/api/admin/notifications`, {
+    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/notifications`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
