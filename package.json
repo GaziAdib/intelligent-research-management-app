@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "npx prisma generate",
-    "vercel-build": "npm install --legacy-peer-deps && next build"
+    "postinstall": "npx prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^4.1.3",
@@ -46,7 +45,6 @@
     "react-player": "^2.16.0",
     "react-quill-new": "^3.3.3",
     "react-syntax-highlighter": "^15.6.1",
-    "react-tagsinput": "^3.20.3",
     "rehype-katex": "^7.0.1",
     "rehype-raw": "^7.0.0",
     "remark-gfm": "^4.0.1",
