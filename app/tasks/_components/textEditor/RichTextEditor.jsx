@@ -2,7 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import ReactQuill from 'react-quill-new'; // or 'react-quill'
-import 'react-quill/dist/quill.snow.css'; // Quill styles
+// import 'react-quill/dist/quill.snow.css'; // Quill styles
 // import 'katex/dist/katex.min.css';
 
 //import 'highlight.js/styles/atom-one-dark.css'; // Highlight.js theme (choose your favorite)
