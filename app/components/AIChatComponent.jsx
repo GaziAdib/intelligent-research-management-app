@@ -1,8 +1,3 @@
-
-
-
-
-
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -243,7 +238,7 @@ export default function AIChatComponent() {
             </div>
           )} */}
 
-        {result?.search_results && (
+        {result?.metadata?.search_results && (
           <div>
             <h2 className="text-lg font-semibold text-indigo-300 mt-6">🔍 Search Results:</h2>
             <div className="prose prose-invert max-w-none mt-2 text-gray-200">
@@ -265,7 +260,7 @@ export default function AIChatComponent() {
                   },
                 }}
               >
-                {result.search_results}
+                {result?.metadata?.search_results}
               </ReactMarkdown>
             </div>
           </div>
@@ -277,6 +272,22 @@ export default function AIChatComponent() {
     </div>
   );
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

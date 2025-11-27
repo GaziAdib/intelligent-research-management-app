@@ -15,7 +15,7 @@ export async function PUT(req, { params }) {
 
   let { taskId, publicId } = await params; // Remove await - params is synchronous
 
-  console.log('---Request Parameters---', { taskId, publicId });
+  // console.log('---Request Parameters---', { taskId, publicId });
 
   const decodedPublicId = decodeURIComponent(publicId);
 
