@@ -1,6 +1,6 @@
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { SessionProviders } from "./sessionProvider";
+import { SessionProviders } from "./SessionProvider";
 import Navbar from "./components/NavBar";
 import ToasterProvider from "./ToastProvider";
 import TopLoaderProgressBar from "./components/TopLoaderProgressBar";
