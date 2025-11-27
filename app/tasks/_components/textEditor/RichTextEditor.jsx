@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import ReactQuill from 'react-quill-new'; // or 'react-quill'
+import "react-quill-new/dist/quill.snow.css";
 // import 'react-quill/dist/quill.snow.css'; // Quill styles
 // import 'katex/dist/katex.min.css';
 
