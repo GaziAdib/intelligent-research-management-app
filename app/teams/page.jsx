@@ -8,7 +8,7 @@ async function fetchTeamsByUserId(userid) {
   if (!userid) throw new Error("User ID is missing");
 
   // Use relative URL for server-side fetch
-  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/teams/fetch-teams/${userid}`, {
+  const res = await fetch(`/api/teams/fetch-teams/${userid}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
@@ -31,7 +31,7 @@ const Teams = async () => {
     return redirect("/login");
   }
 
-  const userCurrentId = session.user.id;
+  const userCurrentId = session?.user?.id;
 
   // Fetch teams safely
   let data;
