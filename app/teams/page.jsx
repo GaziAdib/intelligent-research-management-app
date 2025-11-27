@@ -4,11 +4,16 @@ import ModalButton from "./_components/buttons/ModalButton";
 import TeamLists from "./_components/TeamLists";
 
 // Fetch teams from backend
+
+// adding base URL 
+
+
+
 async function fetchTeamsByUserId(userid) {
   if (!userid) throw new Error("User ID is missing");
 
   // Use relative URL for server-side fetch
-  const res = await fetch(`/api/teams/fetch-teams/${userid}`, {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/teams/fetch-teams/${userid}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
