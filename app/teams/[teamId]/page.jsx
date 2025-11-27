@@ -47,12 +47,12 @@ async function fetchAPI(url) {
 
 // Optimized fetchers with better real-time support
 async function fetchSingleTeamInfo(teamId) {
-  return fetchAPI(`http://localhost:3000/api/teams/${teamId}`);
+  return fetchAPI(`${process.env.NEXTAUTH_URL}/api/teams/${teamId}`);
 }
 
 async function fetchTasks(teamId, pageNumber, status, query = "") {
 
-  const baseUrl = new URL(`http://localhost:3000/api/tasks/${teamId}`);
+  const baseUrl = new URL(`${process.env.NEXTAUTH_URL}/api/tasks/${teamId}`);
   
 
   if (query && query.trim() !== '') baseUrl.searchParams.append("query", query);
@@ -66,11 +66,11 @@ async function fetchTasks(teamId, pageNumber, status, query = "") {
 }
 
 async function fetchConversationMessages(conversationId, teamId) {
-  return fetchAPI(`http://localhost:3000/api/messages/fetch-messages/${conversationId}/${teamId}`);
+  return fetchAPI(`${process.env.NEXTAUTH_URL}/api/messages/fetch-messages/${conversationId}/${teamId}`);
 }
 
 async function fetchMergeContents(teamId, userId) {
-  return fetchAPI(`http://localhost:3000/api/leader/merged-contents?userId=${userId}&teamId=${teamId}`);
+  return fetchAPI(`${process.env.NEXTAUTH_URL}/api/leader/merged-contents?userId=${userId}&teamId=${teamId}`);
 }
 
 // Loading fallback components

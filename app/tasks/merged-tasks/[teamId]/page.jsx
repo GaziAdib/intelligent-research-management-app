@@ -6,7 +6,7 @@ import MergedMediaContent from "../../_components/MergedMediaContent";
 
 async function fetchMergeContents(teamId, userId) {
   const res = await fetch(
-    `http://localhost:3000/api/leader/merged-contents?userId=${userId}&teamId=${teamId}`,
+    `${process.env.NEXTAUTH_URL}/api/leader/merged-contents?userId=${userId}&teamId=${teamId}`,
     {
       headers: { "Content-Type": "application/json" },
       cache: "no-store"

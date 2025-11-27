@@ -8,6 +8,7 @@ import 'react-quill/dist/quill.snow.css'; // Quill styles
 //import 'highlight.js/styles/atom-one-dark.css'; // Highlight.js theme (choose your favorite)
 // import hljs from 'highlight.js'; // Import highlight.js
 
+
 const RichTextEditor = ({ value, onChange, placeholder, readOnly }) => {
   const [isClient, setIsClient] = useState(false);
 

@@ -5,7 +5,7 @@ import TeamLists from "./_components/TeamLists";
 
 // Fetch teams from backend
 async function fetchTeamsByUserId(userid) {
-  const res = await fetch(`http://localhost:3000/api/teams/fetch-teams/${userid}`, {
+  const res = await fetch(`${process.env.NEXTAUTH_URL}/api/teams/fetch-teams/${userid}`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
