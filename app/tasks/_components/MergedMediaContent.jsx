@@ -3,7 +3,7 @@ import Image from "next/image";
 
 async function fetchMergedMediaContents(teamId, userId) {
   const res = await fetch(
-    `http://localhost:3000/api/leader/merged-media-content?userId=${userId}&teamId=${teamId}`,
+    `${process.env.NEXT_PUBLIC_SITE_URL}/api/leader/merged-media-content?userId=${userId}&teamId=${teamId}`,
     {
       headers: { "Content-Type": "application/json" },
       cache: "no-store"
@@ -31,7 +31,7 @@ const MergedMediaContent = async ({ teamId }) => {
     const { data: mediaContents = [] } = await fetchMergedMediaContents(teamId, userId);
 
     // Filter to only include content with valid image URLs
-    const validMediaContents = mediaContents.filter(content => 
+    const validMediaContents = mediaContents?.filter(content => 
       content?.mediaUrls?.some(isImageUrl)
     );
 
