@@ -7,8 +7,10 @@ import AdminManageTeams from "../_components/manage-datatables/AdminManageTeams"
 import AdminManageUsers from "../_components/manage-datatables/AdminManageUsers";
 import { redirect } from "next/navigation";
 
+const BASE_URL = process.env.NEXTAUTH_URL || process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+
 async function fetchAllUsers() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/users`, {
+    const res = await fetch(`${BASE_URL}/api/admin/users`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -23,7 +25,7 @@ async function fetchAllUsers() {
 }
 
 async function fetchAllTeams() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/teams`, {
+    const res = await fetch(`${BASE_URL}/api/admin/teams`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +40,7 @@ async function fetchAllTeams() {
 }
 
 async function fetchAllTasks() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/tasks`, {
+    const res = await fetch(`${BASE_URL}/api/admin/tasks`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -52,7 +54,7 @@ async function fetchAllTasks() {
 }
 
 async function fetchAllNotifications() {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_SITE_URL}/api/admin/notifications`, {
+    const res = await fetch(`${BASE_URL}/api/admin/notifications`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +68,7 @@ async function fetchAllNotifications() {
 }
 
 async function fetchAllConversations() {
-    const res = await fetch(`/api/admin/conversations`, {
+    const res = await fetch(`${BASE_URL}/api/admin/conversations`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
