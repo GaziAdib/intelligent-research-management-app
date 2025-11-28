@@ -11,7 +11,7 @@ Replace the filenames as needed.
 🏠 Dashboard
 
 ### ⭐ Teams Page
-![Teams Page](../intelligent_research_management_app/app/sample_images/research_manage_app_image1.png)
+![Teams Page](./app/sample_images//research_manage_app_image1.png)
 
 **What it shows:**  
 A complete overview of my Teams Listing Page
