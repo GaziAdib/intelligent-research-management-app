@@ -71,10 +71,8 @@ A complete overview tasks work panel for individual Members
 
 
 
-
-
-
 ✨ Core Features
+
 🔷 Next.js Excellence
 
 ⚡ SSR (Server-Side Rendering) for optimized SEO & performance
@@ -85,11 +83,11 @@ A complete overview tasks work panel for individual Members
 
 **🔐 Middleware-based Role System:**
 
-Member
+a. Member
 
-Team Leader
+b. Team Leader
 
-Admin
+c. Admin
 
 👥 Team & Workflow Management
 🏗️ Team Creation
@@ -98,138 +96,148 @@ Leaders can create teams, manage members, and control permission levels.
 
 **✔️ Task Management System**
 
-Members can create tasks and work collaboratively
+1. Members can create tasks and work collaboratively
 
-Each task includes a rich text editor for writing research content
+2. Each task includes a rich text editor for writing research content
 
-Members can upload images, documents, and media via Cloudinary
+3. Members can upload images, documents, and media via Cloudinary
 
-Leaders can merge all tasks into a final structured research document
+4. Leaders can merge all tasks into a final structured research document
 
-Export final merged task as PDF for general users
+5. Export final merged task as PDF for general users
 
 **🔔 Real-Time System (Pusher.js)**
 🚨 Instant Notifications
 
-Powered by Pusher Channels, all events are live:
+Powered by Pusher Channels, all events are live!
 
-New task creation
+1. New task creation
 
-Member contributions
+2. Member contributions
 
-Approval requests
+3. Approval requests
 
-Admin approvals
+4. Admin approvals
 
-Team activity
+5. Team activity
 
-Messages in chat system
+6. Messages in chat system
 
-Leader merges and updates
+7. Leader merges and updates
 
 🔄 Optimistic UI
 
 The UI updates instantly even before server confirmation for smoother UX.
 
-🛡️ Role-Based Workflow
+**🛡️ Role-Based Workflow**
 👤 Member
 
-Work on tasks
+1. Work on tasks
 
-Upload media files
+2. Upload media files
 
-Chat with the team
+3. Chat with the team
 
-Send approval requests
+4. Send approval requests
 
 **🧑‍💼 Leader **
 
-Approve or deny task changes
+1. Approve or deny task changes
 
-Merge tasks
+2. Merge tasks
 
-Manage team structure
+3. Manage team structure
 
-Send real-time notifications
+4. Send real-time notifications
 
-Generate final research PDF
+5. Generate final research PDF
 
 **👨‍✈️ Admin**
 
 **Manage all teams**
 
-View all research progress
+⚙️ Features (Step-by-step)
+1. Team & Role Management
 
-Approve final submissions
+Create teams and invite members.
 
-Control system-wide roles
+Roles: Member, Leader, Admin.
 
-🧠 AI Integration (LangChain + LLM)
+Middleware enforces role-based access to routes and UI.
 
-Your app includes powerful AI features:
+2. Task Lifecycle
 
-Research assistance
+Members create and edit tasks with a rich-text editor.
 
-Text generation
+Attach media (images, docs, video) via Cloudinary.
 
-Summaries and analysis
+Submit tasks for leader approval.
 
-Uses LangChain for chaining prompts and enabling flexible AI workflows.
+Leaders merge tasks into a single final research document.
 
-💬 Real-Time Chat System
+3. Approvals & Admin Controls
 
-A modern, scalable chat system:
+Leaders send approval requests to Admin.
 
-Live chat powered by Pusher.js
+Admins can view progress, approve final submissions, and manage system-wide roles.
 
-Group chat for teams
+4. Real-Time Collaboration
 
-Typing indicators
+Pusher.js drives: live notifications, real-time chat, approval events, and typing indicators.
 
-Message status updates
+Optimistic UI for instant feedback.
 
-Realtime delivery & read receipts
+5. AI Assistance
+
+LangChain + LLMs used for:
+
+Research assistance and context-aware suggestions
+
+Text generation for drafts
+
+Summarization and analysis of merged research
+
+6. Export & Delivery
+
+Leaders can merge contributions and export final result to PDF for distribution.
 
 📦 Tech Stack
-Frontend / Fullstack
 
-Next.js (App Router)
+1. Frontend / Fullstack
 
-React
+2. Next.js (App Router)
 
-Tailwind CSS (if included)
+3. Tailwind CSS (optional)
 
-Optimized rendering (SSR + CSR mix)
+5. SSR + CSR mix for best UX
 
-Backend Architecture
+**Backend Architecture**
 
-Next.js API Routes
+1. Next.js API Routes
 
-Service Layer
+2. Service Layer, Controller Layer
 
-Controller Layer
+3. Middleware-based authentication & authorization
 
-Clean modular structure
+**Infrastructure**
 
-Middleware-based authorization
+1. Pusher.js (real-time)
 
-Infrastructure
+2. Cloudinary (uploads)
 
-Pusher.js (Real-time events)
+3. PDF generation service (server-side)
 
-Cloudinary (File uploads)
+4. Prisma / MongoDB (data layer)
 
-PDF Generation Engine
+5. AI
 
-Prisma / MongoDB 
+6. LangChain
 
-AI
 
-LangChain
+**Project Live** 🌐 https://intelligent-research-management-app.vercel.app/
 
-LLM Models
 
-🛠️ Getting Started
+**🛠️ Getting Started**
 npm install
 npm run dev
 
