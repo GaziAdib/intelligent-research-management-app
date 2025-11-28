@@ -73,7 +73,7 @@ const Teams = async () => {
         <ModalButton buttonLabel={"+ Create team"} />
       </div>
 
-      {teams.length === 0 ? (
+      {teams?.length === 0 ? (
         <div className="text-gray-400 text-center mt-10">
           <h2>You are not a member of any team.</h2>
         </div>
