@@ -20,7 +20,7 @@ const Notifications = () => {
       try {
         setLoading(true);
         const res = await fetch(
-          `http://localhost:3000/api/notifications/fetch-notifications?userId=${currentUserId}`,
+          `${process.env.NEXT_PUBLIC_SITE_URL}/api/notifications/fetch-notifications?userId=${currentUserId}`,
           {
             method: "GET",
             headers: {
